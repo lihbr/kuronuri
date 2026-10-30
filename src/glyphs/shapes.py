@@ -43,10 +43,8 @@ KAPPA = 0.5523  # control point distance of a cubic quarter circle, over its rad
 SHIFTS = 8  # spots within a cell a glyph is tried at, across and up or down (phased)
 NEARBY = 4  # points of the outline a gap of carving moves as, blended
 ALONG = 8  # of them on each segment
-LONGER = 0.1  # most a gap cut again is longer than Redaction's, of its length (score.DEPTH)
 SPECK = 20  # least area of a gap of carving, under which it is noise (score.SPECK)
-STEP = 1 / 16  # of t, that a glyph that does not blend so far is blended by (grown)
-LOOSE = (0.05, 0.25, 0.5, 0.75, 0.95)  # where segments are cut to match loosely (_loose)
+STEP = 1 / 16  # of t, that a glyph that does not blend so far is blended by (enclosed)
 
 
 def slope(smooth):
@@ -119,7 +117,7 @@ class _Sweep(BasePen):
             self._sweep([self.start])
 
 
-def sideways(p, amount, carve=False, pointed=True, thick=None, short=False):
+def sideways(p, amount, carve=False, pointed=True, thick=None):
     """`p` with `amount` added to each side of its strokes across only: as
     wide as `p` moved from `amount` left to right sweeps. Stems grow, strokes
     across do not, an edge as much as it faces across. Tips pointing up or
@@ -129,9 +127,7 @@ def sideways(p, amount, carve=False, pointed=True, thick=None, short=False):
     widened by `amount` first, for the strokes around them to grow back to
     their edges, then cut on through the new edges where they open. Grown
     so, it raises if its pieces or counters change, or its carving closes:
-    fewer gaps of it than `p` has. `short`, each gap cut again is no longer
-    than the one of `p` it is (_short), its carving told closed or not
-    before."""
+    fewer gaps of it than `p` has."""
     if carve:
         around, through = _gaps(p, amount)
         widened = pathops.op(p, around, pathops.PathOp.DIFFERENCE)
@@ -142,8 +138,6 @@ def sideways(p, amount, carve=False, pointed=True, thick=None, short=False):
             out = _pointed(*_tapered(out, widened, amount, thick, carved))
         if len(grooves(out)) < len(grooves(p)):
             raise ValueError(f"grown by {amount:.1f}: its carving closes")
-        if short:  # after: shortened, a gap can be under CARVING, not closed
-            out = _short(out, p, amount)
         if _pieces(out) != _pieces(p):
             raise ValueError(f"grown by {amount:.1f}: its pieces or counters change")
         return out
@@ -451,68 +445,6 @@ def _notches(p):
     return [c for c in carving(p).contours if abs(c.area) >= SPECK]
 
 
-def _short(grown, p, amount):
-    """`grown`, `p` grown by `amount` across (sideways), each gap of its
-    carving (carving, but specks) no longer than LONGER more than the gap of
-    `p` it is, the nearest, measured as score.py measures gaps (the diagonal
-    of their box): from the end nearer where it opens to the air (as
-    _mouths), the rest filled. Cut along a bowl (_band), a gap can run on
-    along the stroke, a slit (Bold's p)."""
-
-    def length(c):
-        x0, y0, x1, y1 = c.bounds
-        return math.hypot(x1 - x0, y1 - y0)
-
-    theirs = [(_centroid(list(c.points)), length(c)) for c in _notches(p)]
-    fill, keep = [], []
-    for gap in _notches(grown) if theirs else []:
-        points = _hull(list(gap.points))
-        _, most = min(theirs, key=lambda g: math.dist(g[0], _centroid(points)))
-        most *= 1 + LONGER
-        if length(gap) <= most or len(points) < 3:
-            continue
-        (ux, uy), (u0, u1), _ = _extent(points)
-        v = sum(y * ux - x * uy for x, y in points) / len(points)  # across, its middle
-
-        def at(u, v, ux=ux, uy=uy):
-            return ux * u - uy * v, uy * u + ux * v
-
-        # Where it opens to the air (as _mouths finds it): it keeps that end
-        air = pathops.op(embolden(gap, 2), union_paths([grown, gap]), pathops.PathOp.DIFFERENCE)
-        air = [c for c in air.contours if abs(c.area) >= 2]
-        if not air:
-            continue
-        mx, my = _centroid([pt for c in air for pt in c.points])
-        d = 1 if mx * ux + my * uy > (u0 + u1) / 2 else -1  # towards where it opens
-        u = u1 if d > 0 else u0
-        reach = (u1 - u0) + 2 * amount + CUT
-        kept = gap
-        for k in range(1, int(u1 - u0)):  # shorter from its other end, a unit at a time
-            far = u - d * ((u1 - u0) - k)
-            box = [at(far, v - reach), at(far, v + reach)]
-            box += [at(u + d * reach, v + reach), at(u + d * reach, v - reach)]
-            kept = pathops.op(gap, union([box]), pathops.PathOp.INTERSECTION)
-            if length(kept) <= most:
-                break
-        # Its largest piece: past where it opens, a cut through the stroke
-        # beyond is filled too (Bold's y, at its tail)
-        pieces = list(kept.contours)
-        kept = max(pieces, key=lambda c: abs(c.area)) if pieces else kept
-        keep.append(kept)
-        # A unit over, for no sliver to stay along where it was cut
-        fill.append(embolden(pathops.op(gap, kept, pathops.PathOp.DIFFERENCE), 1))
-    if not fill:
-        return grown
-    out, near = union_paths([grown, *fill]), embolden(union_paths(fill), 2)
-    # Air the fill leaves narrow against a stroke reads as a gap: filled too
-    kept = union_paths(keep)
-    for c in _notches(out):
-        touches = pathops.op(c, near, pathops.PathOp.INTERSECTION).area
-        if touches and not pathops.op(c, kept, pathops.PathOp.INTERSECTION).area:
-            out = pathops.op(out, embolden(c, 1), pathops.PathOp.UNION)
-    return out
-
-
 def _gaps(p, amount):
     """Redaction's carving in `p` (grooves), to grow it by `amount` across
     only (sideways). Returns its gaps, where they go, widened by `amount`,
@@ -768,7 +700,7 @@ def masters():
     return redaction(None, "Regular"), redaction(None, "Bold")
 
 
-def blend(font, regular, bold, char, t, loose=False, sliver=False):
+def blend(font, regular, bold, char, t, sliver=False):
     """`char` of `font` made heavier as Redaction's Bold is of its Regular, a
     path: its outline plus `t` times the way from `regular`'s to `bold`'s
     (beyond Bold past 1). Italic has no masters: it gets the upright way,
@@ -777,17 +709,17 @@ def blend(font, regular, bold, char, t, loose=False, sliver=False):
     far, strokes run into each other: it raises where the outline turns
     back (_smooth), pieces or counters are not those of `font`'s, or the
     middle of a gap of its carving, moved as the outline around it
-    (NEARBY), is ink. `loose`, it matches more (_match), and, as with
-    `sliver`, does not take for gaps the edges of slivers round a stroke,
-    whose middle is ink, which skia-pathops leaves where edges nearly meet:
-    only for enclosed content, as the superscripts rely on what it refuses."""
+    (NEARBY), is ink. With `sliver`, it does not take for gaps the edges of
+    slivers round a stroke, whose middle is ink, which skia-pathops leaves
+    where edges nearly meet: only for enclosed content, as the superscripts
+    rely on what it refuses."""
     run = slope(font)
     a, b = cubics(regular, char), cubics(bold, char)
-    matched = _match([a], b, 0, loose)
+    matched = _match([a], b, 0)
     if not matched:
         return None
     [a], b = matched
-    matched = _match([a, b], cubics(font, char), run, loose)
+    matched = _match([a, b], cubics(font, char), run)
     if not matched:
         return None
     [a, b], own = matched
@@ -818,7 +750,7 @@ def blend(font, regular, bold, char, t, loose=False, sliver=False):
         raise ValueError(f"{char} blended by {t:.2f}: its pieces or counters change")
     for gap in carving(source).contours:
         x, y = _centroid(list(gap.points))
-        if (loose or sliver) and source.contains((x, y)):  # a sliver round a stroke
+        if sliver and source.contains((x, y)):  # a sliver round a stroke
             continue
         near = sorted(moves, key=lambda m: math.dist(m[0], (x, y)))[:NEARBY]
         dx, dy = (sum(m[1][k] for m in near) / len(near) for k in (0, 1))
@@ -827,27 +759,18 @@ def blend(font, regular, bold, char, t, loose=False, sliver=False):
     return p
 
 
-def blend_text(font, text, t, of=None, notes=None, drawn=None):
+def blend_text(font, text, t):
     """`text` in `font`, each glyph blended by `t` (blend) between Redaction's
     Regular and Bold (masters), as a path. Each stands where its own is
     set as typed, plus `t` times the way from where Regular's is to where
     Bold's is, as its points: heavier, letters are wider. Raises if one
-    does not blend, or, with `of`, the glyph whose stems `t` was solved
-    for, makes it heavier another way (grown, or `drawn`, a function of
-    font, char, t and `of` that returns as grown does), noting in `notes`,
-    a list, (char, t blended to, t reached, whether it matched only
-    loosely). `font` is not to change."""
+    does not blend. `font` is not to change."""
     regular, bold = masters()
     sets = [_set(f, _shaper(f), text)[0] for f in (font, regular, bold)]
     run = slope(font)
     out = pathops.Path()
     for char, (_, x, y), (_, xa, ya), (_, xb, yb) in zip(text, *sets):
-        if of:
-            p, done, reached, loosely = (drawn or grown)(font, char, t, of)
-            if notes is not None:
-                notes.append((char, done, reached, loosely))
-        else:
-            p = blend(font, regular, bold, char, t)
+        p = blend(font, regular, bold, char, t)
         if p is None:
             raise ValueError(f"{char} of Redaction's Regular, Bold and this style do not match")
         out = pathops.op(
@@ -861,53 +784,6 @@ def blend_text(font, text, t, of=None, notes=None, drawn=None):
 @functools.cache
 def _shaper(font):
     return shaper(font)
-
-
-def grown(font, char, t, of):
-    """`char` of `font` blended by `t` (blend, `loose`), by how much it was
-    blended, how much heavier it is in all (in t), and whether its outlines
-    only matched loosely (_loosely). If it does not
-    blend so, its outline folds, its carving closes or skia-pathops fails
-    past a point (Bold's Q past Bold), it is blended as far as it does, to a
-    STEP of `t`, then grown across by the rest, carving cut again (sideways):
-    by as much as the stems of `of` would have grown blended, or less, by a
-    STEP of it, where its carving would close or growing it fails (a gap
-    with air all around it, in Bold's 3); t reached counts it."""
-    regular, bold = masters()
-    loosely = _loosely(font, char)
-
-    def blended(t):
-        try:
-            return blend(font, regular, bold, char, t, loose=True)
-        except (ValueError, pathops.PathOpsError):
-            return None
-
-    p = blended(t)
-    if p is not None:
-        return p, t, t, loosely
-    done, p = 0, blended(0) or path(font, char)
-    for k in range(1, round(1 / STEP)):
-        q = blended(t * k * STEP)
-        if q is None:
-            break
-        done, p = t * k * STEP, q
-    grow = stem(path(bold, of)) - stem(path(regular, of))
-    for k in range(round(1 / STEP), 0, -1):  # as far as it grows clean
-        rest = (t - done) * k * STEP
-        try:
-            return sideways(p, rest * grow / 2, carve=True, short=True), done, done + rest, loosely
-        except (ValueError, ArithmeticError, pathops.PathOpsError):
-            continue
-    return p, done, done, loosely
-
-
-@functools.cache
-def _loosely(font, char):
-    """Whether `char` of `font` and Redaction's Regular and Bold match only
-    loosely (_match): not as they do for blend without `loose`."""
-    regular, bold = masters()
-    matched = _match([cubics(regular, char)], cubics(bold, char), 0)
-    return not matched or not _match([*matched[0], matched[1]], cubics(font, char), slope(font))
 
 
 def _at(seg, s):
@@ -1016,18 +892,17 @@ def _cubic(start, quads):
     )
 
 
-def _match(masters, other, run, loose=False):
+def _match(masters, other, run):
     """`masters`, outlines that match (cubics), and `other` (slanted by
     `run`) made to match: each contour started where it does in the
     masters, and where one has a segment more, the other's cut in two where
-    their points then fall nearest (_cost); failing that, if `loose`,
-    loosely (_loose). None if they cannot."""
+    their points then fall nearest (_cost). None if they cannot."""
     if any(len(m) != len(other) for m in masters):
         return None
     masters, other = [list(m) for m in masters], list(other)
     for k, contour in enumerate(other):
         ours = [m[k] for m in masters]
-        found = _pair(ours, contour, run) or (_loose(ours, contour, run) if loose else None)
+        found = _pair(ours, contour, run)
         if not found:
             return None
         ours, other[k] = found
@@ -1055,69 +930,6 @@ def _pair(ours, contour, run):
     if cost == math.inf:
         return None
     return ours, contour[turn:] + contour[:turn]
-
-
-def _loose(ours, contour, run):
-    """Contours `ours`, which match, and `contour` made to match them where
-    lines and curves do not fall alike (Bold's Q has a line where Regular's
-    has a curve), or one has up to two segments more (the apexes of W, the
-    hook of the italic J): all as curves, cut where their points then fall
-    nearest, at LOOSE along segments, then lines where all are straight.
-    None if not."""
-    ours = [[_curve(s) for s in c] for c in ours]
-    contour = [_curve(s) for s in contour]
-    more = len(contour) - len(ours[0])
-    if abs(more) > 2:
-        return None
-
-    def cuts(c, n):
-        if not n:
-            return [c]
-        spots = [(i, u) for i in range(len(c)) for u in LOOSE]
-        if n == 1:
-            return [_cut(c, i, u) for i, u in spots]
-        # The later first, for the earlier to stay where it is
-        return [_cut(_cut(c, j, v), i, u) for i, u in spots for j, v in spots if j > i]
-
-    if more > 0:
-        candidates = [(list(o), contour) for o in zip(*(cuts(c, more) for c in ours))]
-    else:
-        candidates = [(ours, c) for c in cuts(contour, -more)]
-    best = (math.inf, 0, None)
-    for o, c in candidates:
-        a = np.array([s[0] for s in o[0]])
-        b = np.array([(x - y * run, y) for x, y in (s[0] for s in c)])
-        a, b = a - a.mean(0), b - b.mean(0)
-        turns = (np.arange(len(c))[:, None] + np.arange(len(c))[None, :]) % len(c)
-        costs = ((b[turns] - a) ** 2).sum(axis=(1, 2))
-        turn = int(costs.argmin())
-        if costs[turn] < best[0]:
-            best = (costs[turn], turn, (o, c[turn:] + c[:turn]))
-    ours, contour = best[2]
-    straight = [all(_straight(c[i]) for c in (*ours, contour)) for i in range(len(contour))]
-
-    def lines(c):
-        return [(s[0], s[3]) if flat else s for s, flat in zip(c, straight)]
-
-    return [lines(c) for c in ours], lines(contour)
-
-
-def _curve(seg):
-    """A segment as a cubic: a line's handles at its thirds."""
-    if len(seg) == 4:
-        return seg
-    (x0, y0), (x1, y1) = seg
-    third = ((x1 - x0) / 3, (y1 - y0) / 3)
-    return seg[0], (x0 + third[0], y0 + third[1]), (x1 - third[0], y1 - third[1]), seg[1]
-
-
-def _straight(seg):
-    """Whether a cubic is a line as a curve (_curve), or cut from one."""
-    (x0, y0), *handles, (x1, y1) = seg
-    return all(
-        math.dist(h, (x0 + (x1 - x0) * k / 3, y0 + (y1 - y0) * k / 3)) < 1e-6
-        for k, h in zip((1, 2), handles)
-    )
 
 
 def _cuts(contour):

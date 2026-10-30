@@ -752,7 +752,10 @@ def _small_caps(font, smooth, grid):
     t = (target / scale - stem(path(smooth, "I"))) / grow
     caps = {}
     for c in enclosed.UPPER:
-        p = blend_text(smooth, c, t, "I")
+        try:
+            p = blend_text(smooth, c, t)
+        except (ValueError, pathops.PathOpsError):  # W, Q: measured against all
+            continue
         caps[c] = glyph(p.transform(scale, 0, 0, scale, -p.bounds[0] * scale, 0))
     if grid:
         caps = phased(caps, grid, (z.yMin, z.yMax), [n])
@@ -803,6 +806,7 @@ def enclosed_glyphs(file, grid, style):
     # Lowercase against the superscript letters, those it has none of against all
     letters = {c: _thickness(_path(glyf[name]), grid) for c, name in LETTERS.items()}
     lower = np.concatenate(list(letters.values()))
+    upper = np.concatenate(list(caps.values()))
     frames = {kind: glyph(enclosed.enclosure(smooth, grid, kind)) for kind, *_ in names.values()}
     smooth_frames = {kind: _path(glyph(enclosed.enclosure(smooth, None, kind))) for kind in frames}
     if grid:
@@ -817,7 +821,11 @@ def enclosed_glyphs(file, grid, style):
             continue
         thin, _, thick = _percentiles(_thickness(p, grid))
         refs = [
-            sups.get(c) if c.isdigit() else letters.get(c, lower) if c.islower() else caps.get(c)
+            sups.get(c)
+            if c.isdigit()
+            else letters.get(c, lower)
+            if c.islower()
+            else caps.get(c, upper)
             for c in text
         ]
         ref_thin, _, ref_thick = _percentiles(np.concatenate([r for r in refs if r is not None]))
