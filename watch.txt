@@ -2,12 +2,19 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Enclosed content: Bold and Italic drawn as Redaction's own
-Regular: Ⓠ 🅠 🅀 🆀  Ⓦ 🅦 🅆 🆆  ⓾ ⓵ ⑩  🆨 🆜 🆩  🄬 🄫
-Italic: Ⓡ 🅡 🅁 🆁  Ⓦ 🅦 🅆 🆆  Ⓠ 🅠
-Italic: ⓐ ⓓ ⓔ ⓕ ⓗ ⓘ ⓚ ⓜ ⓝ ⓡ ⓢ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ
-Italic: ⓾ ⓵ ⑩  ㎏ ㎎ ㎉ ㏏ ㎙ ㎚ ㎝ ㎞ ㎧ ㏉ 🆕 🆨
-Bold: Ⓠ 🅠 🅀 🆀  Ⓦ 🅦 🅆 🆆  ⓢ ⓦ ⓾ ⓵ ⑩  🄫 🄬
-Bold: ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑪ ⑬ ⑳ ㉔ ㉕  Ⓐ Ⓑ Ⓒ  ㎏ ㎚ ㎧ 🆕
+# Enclosed content: Redaction's own in every style, thickened a little to the
+# same weight against its n (Bold as much heavier than Regular as Redaction's)
+*: ① ② ③ ⑤ ⑧ ⑳ ㉔ ⓾  Ⓐ Ⓡ Ⓦ Ⓠ 🄰 🅰  ⓐ ⓘ ⓚ ⓢ ⓦ  ㎏ ㎚ ㎧  🆒 🆕 🆨 🅪  🄫 🄬
 
-text: Steps ① to ⑳, ㉔ ㉕ ⓾: Ⓐ Ⓑ Ⓠ Ⓦ ⓐ ⓘ ⓡ ⓢ ⓦ 🅠 🆆 — 手順①と②を確認 — 10 ㎎ ㎏ ㎞ ㎧ 🆕 🆨
+# Thickened less than the rest, their carving would close: Italic's two-ring
+# and disc digits and K; Bold's small lowercase (🄫 🄬, Italic's C R, above)
+Italic: ⓸ ⓺ ⓼ ⓽ ❻ ➑ ⓲ Ⓚ 🅚
+Bold: ㎡ ㎨
+
+# Pixel fallbacks changed (50, 70): Regular's ㉈–㉌ 🅦 now read without, its
+# 🆋–🆏 (50, 70), ③ ⑧ ➂ ➇ 🆒 (70) drawn as before; Italic's ㉊ reads without,
+# its ④ drawn as before (50)
+Regular: ㉈ ㉉ ㉊ ㉋ ㉌ 🅦 🆋 🆌 🆍 🆎 🆏 ➂ ➇
+Italic: ㉊ ④
+
+text: Steps ①②③: weigh 5 ㎏, walk 2 ㎞, then Ⓐ or ⓐ, 🅰 type 🆕 — 手順①②③で5㎏を量り、2㎞歩き、Ⓐとⓐ、🅰型の🆕を確認する。
