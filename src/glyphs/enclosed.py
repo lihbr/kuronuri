@@ -5,50 +5,47 @@ The enclosures are rings (①), two rings (⓵), discs (❶), squares (🄰) and
 blocks (🅰), as thin as Redaction's minus, as its other signs are thin. They
 sit where Noto Serif JP's ring does: across the em (but a cell from its
 sides on a grid), centred on the ideographic em box, as Japanese text
-expects. Their content is Redaction's glyphs as typed, made heavier first so
-their stems match those of n once shrunk, the same size across a family:
-as tall as the x-height for digits, or less if the widest would not fit
-(⑳), and centred between their middle and the middle of their ink, so ④,
-heavier on the right, looks centred. Words (🆒 COOL) are each as big as
-fits. Discs and blocks are cut out by their content. Japanese stays upright
-in italic, and so do enclosures, around italic content.
+expects. Their content is Redaction's glyphs as typed, the same size
+across a family: as tall as the x-height for digits, or less if the
+widest would not fit (⑳), and centred between their middle and the middle
+of their ink, so ④, heavier on the right, looks centred. Words (🆒 COOL)
+are each as big as fits. Discs and blocks are cut out by their content.
+Japanese stays upright in italic, and so do enclosures, around italic
+content.
 
-Content is made heavier as Redaction's Bold is of its Regular
-(shapes.blend), till the stems of n, I or 1 (_of: I with a capital, n
-with lowercase alone, else 1) are those of n at the size it is drawn,
-or, smaller than circled numbers, as heavy as those, and no further than
-T_MAX past its own style (Bold's T_BOLD): further, its forms swell. It
-is shrunk back as tall as its own, its glyphs all one height and one
-weight, as the superscript letters, so it keeps MCKL's hairlines and
-carving. A glyph that folds blends as far as it goes. A glyph whose
-outlines do not match Redaction's Regular and Bold as they are (Italic's
-lowercase, W Q), or that blends less than HALF as far, is drawn as
-before, alone, its word blended: grown sideways, a quarter as much up and
-down, as much as its own n, I or 1 takes to be as heavy as blended
-(superscripts less), its serifs and hairlines nearly as thin, as tall as
-it would blend, its dots scaled, not grown, Redaction's carving swept out
-to its new edge where it cuts cleanly (_before, _bold, _whites, _moved);
-where it does not, emboldened all round and uncarved (UNIFORM). Grown all
-round, W's crotches and Q's tail closed; sideways only, its tops flat;
-matched loosely, its carving was cut where it is not; by its stems
-alone, ragged. Glyphs are spaced as near as typed where their ink comes
-nearest, any way (_nearest); figures as far apart as they look on
-average, all alike (_optically). Content is as big as it fits typed in
-Redaction's Bold, upright, in every style, or smaller where a style's
-own is wider (Italic's M): words take the room their blending adds, up
-to ROOM, sets too, all together; a glyph nearer its enclosure than CLEAR
-of its stroke is fitted alone: its figures nearer, narrowed, then
-shrunk, in the middle of where it is off it (⓾). Lines (Hi-/Res) are set
-one under the other. On a grid (PHASED), a number or a letter is
-pixelated apart from its enclosure, where in a cell it falls best, its
-stems filling cells first (shapes.phased); words are pixelated with it,
-which keeps more of their counters and their letters off it. On 70,
-lowercase is blended and placed as like its smooth drawing as its pixels
-come (_liken), but for a few that read as other letters so; on 35 to 70,
-a few that blended read as other glyphs are drawn as before
-(EMBOLDENED). Content all drawn as before is pixelated as before, with
-its enclosure. On 100 (COARSEST), all content is emboldened: from Bold
-thinned in an upright Regular, which keeps its carving.
+Bold's and Italic's content is Redaction's own as drawn, only scaled and
+placed: lighter than their n, but MCKL's carving, tips and terminals
+(Bold's 🄫 🄬, Italic's C R as drawn). Regular's is made heavier as
+Redaction's Bold is of its Regular (shapes.blend), till the stems of n, I
+or 1 (_of: I with a capital, n with lowercase alone, else 1) are those of
+n at the size it is drawn, or, smaller than circled numbers, as heavy as
+those, and no further than T_MAX (Bold): further, its forms swell. It is
+shrunk back as tall as its own, its glyphs all one height and one weight,
+as the superscript letters, so it keeps MCKL's hairlines and carving. A
+glyph that folds blends as far as it goes. A glyph whose outlines do not
+match Redaction's Regular and Bold as they are (Q W w y, the R of 🄬),
+or that blends less than HALF as far, is drawn as before, alone, its word
+blended (_before): Bold's Q W w y as they are, Italic's R emboldened all
+round. Glyphs are spaced as near as typed where their ink comes nearest,
+any way (_nearest); figures as far apart as they look on average, all
+alike (_optically). Content is as big as it fits typed in Redaction's
+Bold, upright, in every style, or smaller where a style's own is wider
+(Italic's M): words take the room their blending adds, up to ROOM, sets
+too, all together; a glyph nearer its enclosure than CLEAR of its stroke
+is fitted alone, centred as the rest (⓾): its figures nearer, narrowed,
+then shrunk. Lines (Hi-/Res) are set one under the other, centred on
+their box. On a grid (PHASED), a number or a letter is pixelated apart
+from its enclosure, where in a cell it falls best, its stems filling
+cells first (shapes.phased); words are pixelated with it, which keeps
+more of their counters and their letters off it. On 35 to 70 (EASED),
+where its pixels lose a piece or a counter, Regular's is blended less,
+Bold's and Italic's, a stroke thinner than a cell dropped out, emboldened
+a little (_ease). On 70, lowercase is placed, and blended or emboldened,
+as like its smooth drawing as its pixels come (_liken); on 35 to 70, a
+few that read as other glyphs are drawn as before group 4 (EMBOLDENED).
+Content all drawn as before is pixelated as before, with its enclosure.
+On 100 (COARSEST), all content is emboldened: from Bold thinned in an
+upright Regular, which keeps its carving.
 
 Parenthesized and full stop forms (⑴ ⒈ 🄁) are Redaction's glyphs as typed
 (components), as the Roman numerals are, and 🄯 is its © turned over, so in
@@ -69,11 +66,8 @@ from family import log, redaction
 
 from .shapes import (
     SHIFTS,
-    SPECK,
     STEP,
     THIN,
-    _centroid,
-    _hull,
     _pieces,
     _placed,
     _set,
@@ -85,7 +79,6 @@ from .shapes import (
     content,
     embolden,
     glyph,
-    grooves,
     masters,
     path,
     phased,
@@ -94,10 +87,8 @@ from .shapes import (
     runs,
     shaper,
     shrunk,
-    sideways,
     stem,
     typed,
-    union,
     union_paths,
     widths,
 )
@@ -113,44 +104,18 @@ ROOM = 0.9
 ENCLOSING = ("ring", "double", "disc", "square", "block", "boxring")
 NEGATIVE = ("disc", "block", "crossed")
 LINES = 1.25  # cap heights between the lines of content (Hi-/Res), as content() sets them
-T_MAX = 1.0  # farthest content is blended past its own style, Bold's of Regular: further, it swells
-T_BOLD = 1.2  # and Bold's, the owner's call: 1.0 left it as heavy as Regular's
+T_MAX = 1.0  # farthest content is blended past Regular, Bold's of Regular: further, it swells
 # least area of a hole content drawn as before keeps: its carving, closing, leaves less
 SLIVER = 400
-# what a glyph drawn as before is no heavier than, blended
-SIBLINGS = {"Q": "O"}
-# Letters drawn as before that do not grow and carve cleanly: emboldened all
-# round and uncarved, as 29c0292 drew them, and smoothed as it did
-# (UNIFORM_SHORT). Italic's Q came out with a lumpy loop and a loose blob in it
-# (🅀 🆀), its y with its arm split from its ball (ⓨ); Bold's s faceted, its
-# top cut gone. The fifth audit's: carved, Italic's a u d kept a thorn at
-# their foot, its v w a drip over their notch, its W a horn in each crotch,
-# its R a spur by its traps, Bold's Q a barb in its tail gap; Bold's W, grown
-# on its own, its crotches filled (the owner keeps round 4's). Swept out
-# (_moved), Italic's n r kept a thorn and a ledge at their branch, m its second
-# wedge a nick, e a knob by its bar's cut, f a slit in its ball, z a thorn at
-# its top cut, h k s x ledges, lumps and facets by theirs. For a release; the
-# owner's follow-up
-UNIFORM = {"Italic": "QyaudvwWRefhkmnrsxz", "Bold": "sQW"}
-# most of the white between its strokes a W drawn as before fills, all round
-OPEN = 0.5
-UNIFORM_SHORT = 12
+# shortest segment a glyph drawn as before keeps, wherever it turns, as
+# 29c0292 smoothed it (_smoothed)
+SHORT = 12
 # Fallback glyphs grown less, as ¹'s stem is of 1's: superscripts
 SMALL = "¹²³"
-# of what a glyph drawn as before grows sideways: how much its inner joins
-# are rounded by, and how thin what grew may be, twice (W's spurs)
-CLOSE = 0.5
-# how much a glyph drawn as before grows up and down, of how much sideways
-FLAT = 0.25
-SPUR = 0.5
 # how near figures come, and how narrow, for content to fit its enclosure alone (⓾)
 TIGHT = (1, 0.8, 0.6)
 # how near figures come, of their nearest ink typed, spaced as they look
 NEAREST = 0.7
-# shortest segment content drawn as before keeps where it runs on through it
-# (_smoothed): 6 drawn about a third as big (㎮); and how far it turns there
-SHORT = 18
-BEND = math.radians(60)
 # nearest two points of content as placed keep where it runs on through them,
 # turning less than CLEAN_BEND (_cleaned), and any way: under 2, a word's W
 # crotches and curves still left segments a few units long (🆕 ㎯); turning
@@ -162,6 +127,9 @@ ACROSS = (1, 0.98, 0.96, 0.94, 0.92)
 # least of its stroke content keeps off its enclosure (⓾ at half stood crowded)
 CLEAR = 0.75
 SPACED = 300  # farthest glyphs are spaced by their nearest ink, not their boxes
+# Of a cell, how far off centre content may stand on a grid to fit off its
+# enclosure, as phasing it moves it anyway
+SLACK = 0.5
 HALF = 0.5  # least of its t a glyph blends to for its content to be blended, not drawn as before
 INK = 0.5  # how far content is centred on the middle of its ink, from 0 to 1
 # Coarsest grid digits and capitals are blended on: on 100, abstract, their
@@ -178,32 +146,24 @@ EASE = 0.1
 # pixels come (_liken)
 LIKENED = (70,)
 # Content drawn on a grid as before group 4, emboldened and pixelated with
-# its enclosure: blended, it reads as other glyphs, where so it did not. On
-# 70, lowercase as like the smooth font's as it comes (_liken): Italic's e
-# as p, h as A, f without its bar; Bold's z as x. The round-2 audit: Italic
-# ㉊ as 50, ⓴ as 30, 🅹 in two, 🆁 as ñ on 50, ⓿ 🄌 as S, 🆀 as U, ㎁ ㎃ ㎄
-# ㎫ broken or fused, 🄼 fused to its square on 70; Bold ⑪ as U on 50, ➌ ⓭
-# as 5, ㎡ a bar on 70; Regular 🅸 as ) on 70, ㎢ as km³ on 35; ㏇'s full
-# stop a comma on 35, and Italic ㏞'s V and slash broken; Italic ㎮ off
-# centre on 35 and 50, its thin strokes lost. Blended to 1.2, Bold's m counters
-# close in ㎚ ㎞ ㎣ ㎦ ㎷ on 50, ⑧ reads A and ⑨ 8 on 70; Italic ⓴'s 0 breaks
-# its disc on 70. The round-4 audit: Regular ㉊ as 50, 🅊 as KV, 🅦 as \\\ on
-# 50, Ⓗ as X and Ⓜ as x on 70; Italic 🆀 as () and 🆧 as KDR on 35, ⓾ as M,
-# ㉏ as 30, Ⓗ as N, ㎨ off centre on 50; Bold 🆧 as HDX on 35, 🆂 ⓢ as 8, ㏛ as Br, 🄷 as i,
-# ㊵–㊾'s 4 broken on 50, ➐ as T, ➒ as D, ⑩ ➉ a block, Ⓜ as Ж, ⓿ 🄌 as □,
-# ⑥ ➅ as 8, 🅸 as ], 🅾 as -□- on 70. The fifth: Regular ㉈ as J0, ㉉ ㉋ ㉌
-# misread on 50.
+# its enclosure: blended, or as drawn, it reads as other glyphs, where so it
+# did not. On 70, lowercase as like the smooth font's as it comes (_liken).
+# Regular's, the audits of rounds 2 to 5: 🅸 as ) on 70, ㎢ as km³ on 35;
+# ㏇'s full stop a comma on 35; Ⓗ as X and Ⓜ as x on 70, ㉊ as 50, 🅊 as KV,
+# 🅦 as \\\ on 50, ㉈ as J0, ㉉ ㉋ ㉌ misread on 50. Bold's and Italic's,
+# as drawn (round 6, the rest of theirs reading as well without): Italic's
+# ㏞ V/m in two, ㎮'s slash lost, ㎧ ㎨ their slash's foot, on 35 and 50; on
+# 50, ㉊ as JO, ㎨ broken, ⓛ ⓣ as !; on 70, its e as ρ, h as λ, f without
+# its bar, 🄼 and the letters of ㎁ ㎃ ㎄ ㎫ broken; Bold's Ⓜ as Ж, ⓗ a
+# wedge on 70; the words of 🆋–🆏, cut out thinner than a cell, gone on 50
+# (Italic's) and 70.
 EMBOLDENED = {
-    35: {"Regular": "㎢㏇", "Italic": "㏇㏞㎮🆀🆧", "Bold": "㏇🆧"},
-    50: {
-        "Regular": "㉈㉉㉊㉋㉌🅊🅦",
-        "Italic": "㉊⓴🅹🆁㎮⓾㉏Ⓗ㎨",
-        "Bold": "⑪㎚㎞㎣㎦㎷🆂ⓢ㏛🄷㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾",
-    },
+    35: {"Regular": "㎢㏇", "Italic": "㏞㎮㎧㎨"},
+    50: {"Regular": "㉈㉉㉊㉋㉌🅊🅦", "Italic": "㉊㎮㎨ⓛⓣ🆋🆌🆍🆎🆏"},
     70: {
         "Regular": "🅸ⒽⓂ",
-        "Italic": "ⓔⓗⓕ⓿🄌🄼🆀㎁㎃㎄㎫⓴",
-        "Bold": "ⓩ➌⓭㎡⑧⑨➇➈➐➒⑩➉Ⓜ⓿🄌⑥➅🅸🅾",
+        "Italic": "ⓔⓗⓕ🄼㎁㎃㎄㎫🆋🆌🆍🆎🆏",
+        "Bold": "Ⓜⓗ🆋🆌🆍🆎🆏",
     },
 }
 
@@ -314,28 +274,25 @@ def blends(text):
     return any(c.isalnum() for c in text)
 
 
-def heavier(font, text, stems=None, notes=None, t=None, source=None, fell=None, tight=1):
+def heavier(font, text, t, notes=None, source=None, fell=None, tight=1):
     """`text` in `font` (smooth) made heavier as Redaction's Bold is of its
-    Regular (shapes.blend), by `t`, or as far as it takes for the stems of
-    its n, I or 1 (_of) to be `stems` (solve), no farther than T_MAX past
-    `font`: further, its forms swell and fold. Each glyph is blended
+    Regular (shapes.blend), by `t` (solve), or as drawn where it is 0
+    (Bold's and Italic's: Redaction's own). Each glyph is blended
     (_blended), and shrunk back as tall as `font`'s (solve): its letters
     all one height and one weight. A glyph that does not match Redaction's
     Regular and Bold, or blends less than HALF as far, is drawn as before
     from `source` (_before), alone: its word blended. Spaced as typed,
     around their own ink (_spaced), its lines (Hi-/Res) one under the
     other, as content() sets them, each centred on x = 0. Glyphs blended
-    less than `t` or only loosely are noted in `notes`, a list, as (char,
-    t, t blended to, matched loosely); those drawn as before in `fell`."""
+    less than `t` are noted in `notes`, a list, as (char, t, t blended
+    to, False); those drawn as before in `fell`."""
     of = _of(text)
-    if t is None:
-        t = solve(font, text, stems)
     out = pathops.Path()
     for i, line in enumerate(text.split("\n")):
         reached = []
         p = _spaced(font, line, t, reached, source or font, of, fell, tight)
         if notes is not None:
-            notes += [(c, t, *rest) for c, *rest in reached if rest[1] or rest[0] != t]
+            notes += [(c, t, done) for c, done in reached if done != t]
         down = i * font["OS/2"].sCapHeight * LINES
         out.addPath(p.transform(1, 0, 0, 1, -(p.bounds[0] + p.bounds[2]) / 2, -down))
     k = _height(font, of) / _height(font, of, t)  # back as tall as `font`'s
@@ -344,27 +301,28 @@ def heavier(font, text, stems=None, notes=None, t=None, source=None, fell=None, 
 
 
 def _spaced(font, line, t, notes, source, of, fell=None, tight=1):
-    """`line` of `font`, each glyph blended by `t` (_blended), or drawn as
-    before from `source` (_before), its ink as near the last's as typed
+    """`line` of `font`, each glyph as drawn (`t` 0), blended by `t`
+    (_blended), or drawn as before from `source` (_before), its ink as near
+    the last's as typed
     (_nearest): blended, glyphs grow wider than their advances (Bold's
     "less" ran together, ㉔ and ㉕ apart unlike), and toward each other
     where they come nearest, not where their boxes do (Bold's 4 ran into
-    ㊷'s 2, a 1's foot into ⓫'s other 1). Notes (char, t blended to,
-    matched loosely) in `notes`, glyphs drawn as before in `fell`."""
+    ㊷'s 2, a 1's foot into ⓫'s other 1). Notes (char, t blended to) in
+    `notes`, glyphs drawn as before in `fell`."""
     out, last = pathops.Path(), None
     for (char, (_, x, y)), was in zip(
         zip(line, _set(font, _shaper(font), line)[0]), _typed(font, line)
     ):
         if path(font, char).bounds == (0, 0, 0, 0):  # a space
             continue
-        blended = _blended(font, char, t)
+        blended = (path(font, char), 0) if not t else _blended(font, char, t)
         if blended is None or abs(blended[1]) < abs(t) * HALF:  # no match, or paler than the rest
             p = _before(font, source, char, t, of)
             if fell is not None:
                 fell.append(char)
         else:
-            p, done, loosely = blended
-            notes.append((char, done, loosely))
+            p, done = blended
+            notes.append((char, done))
         p = p.transform(1, 0, 0, 1, x, y)
         if last is not None and line.isdigit():
             # Figures, as far apart as they look on average, all alike, but
@@ -500,11 +458,9 @@ def _slid(a, b, step=16):
 
 def _blended(font, char, t):
     """`char` of `font` blended by `t` (shapes.blend), its outline matched to
-    Redaction's Regular and Bold as they are: matched loosely, its carving
-    is not where theirs is (W, Q). Where it folds or its carving closes
-    before `t`, as far as it blends, by a STEP of `t`, and no further: grown
-    another way, its carving is cut again where it was not (Italic's k, y
-    in Bold). (path, t blended to, False), or None if it does not match."""
+    Redaction's Regular and Bold as they are. Where it folds or its carving
+    closes before `t`, as far as it blends, by a STEP of `t`, and no
+    further. (path, t blended to), or None if it does not match (W, Q)."""
     regular, bold = masters()
     for k in range(round(1 / STEP), -1, -1):
         u = t * k * STEP
@@ -519,8 +475,8 @@ def _blended(font, char, t):
                 continue
         except pathops.PathOpsError:
             continue
-        return (p, u, False) if p is not None else None
-    return path(font, char), 0, False
+        return (p, u) if p is not None else None
+    return path(font, char), 0
 
 
 def _of(text):
@@ -533,62 +489,37 @@ def _of(text):
     return "n" if any(c.islower() for c in text) else "1"
 
 
-def solve(font, text, stems, past=0):
+def solve(font, text, stems):
     """How far `text` of `font` is blended for the stems of its n, I or 1
     (_of) to be `stems` once shrunk back as tall as `font`'s (heavier), as
-    the superscript letters are, no farther than T_MAX past its style:
-    `past`, 1 where it is Bold's (🄫, Italic's, in Bold)."""
+    the superscript letters are, no farther than T_MAX."""
     of, (regular, bold) = _of(text), masters()
     s, x = stem(path(font, of)), _height(font, of)
     ds = stem(path(bold, of)) - stem(path(regular, of))
     dx = _height(bold, of) - _height(regular, of)
     # (s + t ds) / (x + t dx) = stems / x
-    return min(past + T_MAX, x * (stems - s) / (ds * x - stems * dx))
+    return min(T_MAX, x * (stems - s) / (ds * x - stems * dx))
 
 
 @functools.cache
 def _before(font, source, char, t, of):
-    """`char` drawn as before: `source`'s (as approved), emboldened as much
-    as its own n, I or 1 of `font` blended by `t` takes to be as heavy, as
-    its word's blended letters are, its inner joins rounded and the narrow
-    whites emboldening closes kept (_bold): solved on the word's capital,
-    Italic's lowercase came out as heavy as it. Q no heavier than O's bowl
-    (SIBLINGS). No further than its pieces and counters stay. Holes under
-    SLIVER filled."""
+    """`char` drawn as before: `source`'s, emboldened all round as much as
+    its own n, I or 1 of `font` blended by `t` takes to be as heavy, as its
+    word's blended letters are (Italic's R, in Regular's 🄬), or as it is
+    where that is lighter (Regular's Q W w y, from Bold): thinned, Q's tail
+    and W's notches came out cut. As tall as it would blend. No heavier
+    than its pieces and counters stay; holes under SLIVER filled.
+    Smoothed as 29c0292 did (_smoothed)."""
     p = path(source, char)
     own = _of(char) if char.isalnum() else of
-    uniform = char in UNIFORM.get(font["name"].getDebugName(2), "")
-    flat = 1 if uniform else FLAT
     # Superscripts as ¹ is of 1: ³ came out heavy
     ratio = stem(path(source, "¹")) / stem(path(source, "1")) if char in SMALL else 1
-    amount = max(-THIN, _amount(font, source, own, t, own, flat=flat) * ratio)
-    if char in SIBLINGS:  # no heavier than its sibling's blended
-        sibling = SIBLINGS[char]
-        amount = min(amount, _amount(font, source, sibling, t, sibling, True, flat))
-    pieces, gaps = _pieces(p), len(grooves(p)) if uniform and char in SIBLINGS else 0
-    # Uniform, W's middle no more than OPEN filled, as round 4 drew it
-    s = stem(path(source, own))
-    air = (
-        [c for c in _air(p).contours if abs(c.area) >= (1.5 * s) ** 2]
-        if uniform and char in "Ww"
-        else []
-    )
-
-    def closes(q):
-        """Whether its pieces or counters change; uniform, Q's tail fuses to
-        its bowl, or W's middle fills more than OPEN."""
-        if _pieces(q) != pieces or (gaps and len(grooves(q)) < gaps):
-            return True
-        left = _air(q) if air else None
-        return any(
-            abs(pathops.op(c, left, pathops.PathOp.INTERSECTION).area) < (1 - OPEN) * abs(c.area)
-            for c in air
-        )
-
-    q = _bold(p, amount, uniform)
-    while amount > 0.5 and closes(q):
+    amount = max(0, _amount(font, source, own, t, own) * ratio)
+    pieces = _pieces(p)
+    q = embolden(p, amount if amount >= 0.5 else 0)
+    while amount > 0.5 and _pieces(q) != pieces:
         amount *= 0.8
-        q = _bold(p, amount, uniform)
+        q = embolden(p, amount)
     if amount > 0.5:
         contours = list(q.contours)
         outer = max(contours, key=lambda c: abs(c.area)).clockwise
@@ -601,20 +532,18 @@ def _before(font, source, char, t, of):
     # foot, W stood low in 🆕; by its n, I or 1, J R W tall, grown down too
     k = _height(font, char, t) / (q.bounds[3] - q.bounds[1])
     dy = _top(font, char, t) - q.bounds[3] * k
+    q = _smoothed(q.transform(k, 0, 0, k, 0, dy))
     # Rounded, as the font will be: skia-pathops fails on it, spacing it
     rounded = pathops.Path()
-    # Thinned or uniform, as 29c0292 smoothed it: Regular's W serifs slanted
-    smooth = {} if amount > 0.5 and not uniform else {"short": UNIFORM_SHORT, "bend": math.pi}
-    glyph(_smoothed(q.transform(k, 0, 0, k, 0, dy), **smooth)).draw(pathops.PathPen(rounded), None)
+    glyph(q).draw(pathops.PathPen(rounded), None)
     return rounded
 
 
-def _smoothed(p, short=SHORT, bend=BEND):
-    """`p` without its segments shorter than `short` where it runs on
-    through them, turning less than BEND, or a third as short, which
-    growing leaves along its curves and round its tips: the next goes on
-    from the last, no further off than they are long. Where it turns more
-    (a serif's end), kept: dropped, W's serifs came out slanted."""
+def _smoothed(p):
+    """`p` without its segments shorter than SHORT, but where it turns right
+    back, or a third as short any way, which emboldening leaves along its
+    curves and round its tips: the next goes on from the last, no further
+    off than they are long."""
     out = pathops.Path()
     pen, start, at, heading = out.getPen(), None, None, None
     for verb, pts in p.segments:
@@ -630,7 +559,7 @@ def _smoothed(p, short=SHORT, bend=BEND):
             off = 0 if heading is None else way - heading
             turn = abs((off + math.pi) % (2 * math.pi) - math.pi)
             run = math.dist(at, end)
-            if end != start and (run < short / 3 or run < short and turn < bend):
+            if end != start and (run < SHORT / 3 or run < SHORT and turn < math.pi):
                 continue  # dropped: the next starts where this one did
             getattr(pen, verb)(*pts)
             last = pts[-2] if len(pts) > 1 and pts[-2] != end else at
@@ -684,25 +613,17 @@ def _cleaned(p):
 
 
 @functools.cache
-def _amount(font, source, char, t, of, blended=False, flat=FLAT):
-    """How much `char` of `source` is emboldened for the stems of its `of` to
-    be those of `font` blended by `t`, once as tall as `font`'s `char` would
-    blend; or, `blended`, those of `char` blended itself (O, for Q). Grown
-    `flat` as much up and down as sideways (1: all round)."""
+def _amount(font, source, char, t, of):
+    """How much `char` of `source` is emboldened all round (thinned below 0)
+    for the stems of its `of` to be those of `font` blended by `t`, once as
+    tall as `font`'s `char` would blend."""
     regular, bold = masters()
-    if blended:
-        stems = stem(_blended(font, char, t)[0])
-    else:
-        stems = stem(path(font, of)) + t * (stem(path(bold, of)) - stem(path(regular, of)))
+    stems = stem(path(font, of)) + t * (stem(path(bold, of)) - stem(path(regular, of)))
     tall = _height(font, char, t)
     h = path(source, char).bounds
     h = h[3] - h[1]
     s = stem(path(source, of))
-    # Grown sideways, flat as much up and down: (s + 2a) tall / (h + 2 flat a) = stems
-    grown = (stems * h - s * tall) / (2 * (tall - flat * stems))
-    if grown >= 0:
-        return grown
-    # Thinned all round: (s + 2a) tall / (h + 2a) = stems
+    # (s + 2a) tall / (h + 2a) = stems
     return (stems * h - s * tall) / (2 * (tall - stems))
 
 
@@ -712,259 +633,6 @@ def _top(font, char, t):
     return path(font, char).bounds[3] + t * (
         path(bold, char).bounds[3] - path(regular, char).bounds[3]
     )
-
-
-def _bold(p, amount, uniform=False):
-    """`p` grown by `amount` sideways and a quarter as much up and down
-    (_oval): its stems grow, its serifs and level hairlines hardly, as
-    Redaction's Bold is of its Regular; grown all round, W's crotches and
-    the gaps between its serifs closed, Q's bowl and s's counters filled,
-    its hairlines heavy. Its carving filled before, its inner joins rounded
-    by half as much after (CLOSE; emboldened, Italic's exit hooks pinched to
-    corners), what grew thinner than as much taken off (SPUR, _spurless),
-    and the whites growing closes kept (_whites):
-    Redaction's carving, the gaps between W's serifs. Its pieces under a
-    quarter of the largest (i's dot, a full stop) scaled about their middle
-    by half as much, not grown, and kept as far from it: grown, Italic's i
-    dot came out flat; scaled as far, too big and near its stem. Less than
-    half a unit, as it is: skia-pathops drops outlines stroked so thin
-    (Regular's W, from Bold's). Thinned, as it is thinned."""
-    if abs(amount) < 0.5:
-        return p
-    if amount < 0 or uniform:
-        q = embolden(p, amount)
-    else:
-        # Its carving filled first, cut back after: grown, its notches stood
-        # out as teeth
-        q = _oval(union_paths([p, *(gap for gap, _ in grooves(p))]), amount)
-        q = _spurless(p, _closed(q, amount * CLOSE), amount * SPUR)
-        q = _whites(p, q, amount)
-    contours = list(pathops.op(p, pathops.Path(), pathops.PathOp.UNION).contours)
-    largest = max(contours, key=lambda c: abs(c.area))
-    for c in contours:
-        if c.clockwise != largest.clockwise or abs(c.area) >= abs(largest.area) / 4:
-            continue
-        x0, y0, x1, y1 = c.bounds
-        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
-        f = 1 + amount / max(x1 - x0, y1 - y0)
-        # Above it (a dot), its foot where it was, or where its top grows,
-        # all round; else (a full stop) its top, or its foot
-        rise = amount if uniform else 0
-        dy = (rise + (f - 1) * (y1 - y0) / 2) * (1 if y0 >= largest.bounds[3] - 1 else -1)
-        q = pathops.op(q, embolden(c, abs(amount) + 1), pathops.PathOp.DIFFERENCE)
-        scaled = c.transform(f, 0, 0, f, cx - f * cx, cy - f * cy + dy)
-        q = pathops.op(q, scaled, pathops.PathOp.UNION)
-    return q
-
-
-def _oval(p, amount):
-    """`p` grown by `amount` sideways and FLAT as much up and down: round
-    about an oval as wide as twice `amount`, so its stems grow, its serifs
-    and level hairlines a little, and its tops and balls stay round. Swept
-    sideways only, they came out flat (the owner's flat tops, square balls).
-    Where skia-pathops fails, a little further, else swept."""
-    tall = p.transform(1, 0, 0, 1 / FLAT, 0, 0)
-    for k in (1, 1.01, 0.99, 1.02):
-        try:
-            return embolden(tall, amount * k).transform(1, 0, 0, FLAT, 0, 0)
-        except pathops.PathOpsError:
-            continue
-    return sideways(p, amount, pointed=False)
-
-
-def _spurless(p, q, o):
-    """`q`, `p` grown, without what grew thinner than twice `o`: sideways,
-    a notch of Redaction's (where W's hairline meets its stem) ran out
-    into a shelf as long as it grew."""
-    for rounded in (False, True):
-        try:
-            opened = embolden(embolden(q, -o, round=rounded), o, round=rounded)
-            return union_paths([p, opened])
-        except pathops.PathOpsError:
-            continue
-    return q
-
-
-def _closed(p, r):
-    """`p` grown by `r`, round, and thinned back: its concave joins and its
-    whites narrower than twice `r` filled. Where skia-pathops fails, with
-    sharp corners, or a little further."""
-    for k, rounded in ((1, True), (1, False), (1.01, True), (0.99, True)):
-        try:
-            return embolden(embolden(p, r * k, round=rounded), -r * k, round=rounded)
-        except pathops.PathOpsError:
-            continue
-    return p
-
-
-def _whites(p, q, amount):
-    """`q`, `p` grown by `amount`, with the whites of `p` growing closes
-    kept as Redaction draws them, each cut back out of what grew: its
-    carving (shapes.grooves), moved out to the new edges it opens to
-    (_moved), as deep and as pointed (Italic's n h d came out with
-    square-ended slots), and its gaps open at both ends (between W's
-    serifs), carried on out at each. Not where it would leave a piece or a
-    counter of its own: cut so, it floats (Italic's z, W). Whites closed a
-    part only are not: kept, they left horns of what grew beside them."""
-    reach = amount * (1 + CLOSE)
-    narrow = pathops.op(_closed(p, reach), p, pathops.PathOp.DIFFERENCE)
-    traps = union_paths([gap for gap, _ in grooves(p)])
-    holes = max(_pieces(q)[1], _pieces(p)[1])
-    o = reach / 4.5  # a third of what it grew
-    for white in narrow.contours:
-        if abs(white.area) < SLIVER:
-            continue
-        mouths = _mouths(p, white)
-        trap = abs(pathops.op(white, traps, pathops.PathOp.INTERSECTION).area) > SPECK
-        points = _hull(list(white.points))
-        if trap and mouths:  # a wedge: moved out to the new edges (Q's tail gap, at each)
-            cut = union_paths([_moved(white, mouth, q, amount) for mouth in mouths])
-        elif len(mouths) > 1:  # open at both ends (W's serifs): on out at each
-            ends = []
-            for ux, uy in mouths:
-                ends += [(x + ux * 1.5 * reach, y + uy * 1.5 * reach) for x, y in points]
-            cut = union([_hull(points + ends)])
-        else:
-            continue
-        cut = pathops.op(cut, p, pathops.PathOp.DIFFERENCE)  # only what grew
-        trial = _dehorned(_crumbs(pathops.op(q, cut, pathops.PathOp.DIFFERENCE)), q, cut, o)
-        if (
-            _pieces(trial)[0] == _pieces(q)[0]
-            and _pieces(trial)[1] <= holes
-            and _spikes(trial, o) <= _spikes(q, o) + SLIVER
-        ):
-            q = trial
-    return q
-
-
-def _moved(white, mouth, q, amount):
-    """Redaction's wedge `white`, moved out along its `mouth` till its mouth
-    is in the white of `q` (grown), as long, a little longer to open: cut
-    so, it is as deep and as pointed as Redaction's from the new edge.
-    Scaled about its tip out to it, it came out longer, and where it ended
-    inside a narrow white (W's crotches), what grew past it stood as a
-    tooth."""
-    ux, uy = mouth
-    points = _hull(list(white.points))
-    along = [x * ux + y * uy for x, y in points]
-    length = max(max(along) - min(along), 1)
-    tx, ty = points[along.index(min(along))]
-    # Its last fifth, the mouth: a band across it
-    nx, ny = -uy, ux
-    far = max(abs((x - tx) * nx + (y - ty) * ny) for x, y in points) + 1
-    a, b = min(along) + 0.8 * length, max(along) + 1
-    corners = ((a, -far), (b, -far), (b, far), (a, far))
-    band = union([[(ux * u + nx * v, uy * u + ny * v) for u, v in corners]])
-    mouth = pathops.op(white, band, pathops.PathOp.INTERSECTION)
-    d = 0
-    while d < 3 * amount:
-        moved = mouth.transform(1, 0, 0, 1, ux * d, uy * d)
-        inked = abs(pathops.op(moved, q, pathops.PathOp.INTERSECTION).area)
-        if inked <= 0.02 * abs(moved.area):
-            break
-        d += 2
-    f = 1 + 0.1 * amount / length
-    wedge = white.transform(f, 0, 0, f, tx - f * tx, ty - f * ty)
-    if d < 1:
-        return wedge
-    # All it sweeps moving out, where it was to where it is: moved alone, the
-    # edge it left stood beside it, as horns (Italic's W), thorns (a's foot)
-    along = wedge.transform(ux, -uy, uy, ux, d / 2, 0)  # its mouth's way along x
-    swept = sideways(along, d / 2, pointed=False)
-    return swept.transform(ux, uy, -uy, ux, 0, 0)
-
-
-def _dehorned(p, q, cut, o):
-    """`p`, `q` with `cut` out, without the horns the cut leaves: what of it
-    thinner than twice `o` touches the cut and was not so in `q` (the grown
-    serif beside W's crotches, Q's tail gap)."""
-    try:
-        opened = embolden(embolden(p, -o, round=True), o, round=True)
-    except pathops.PathOpsError:
-        return p
-    horns = pathops.op(p, opened, pathops.PathOp.DIFFERENCE)
-    near = embolden(cut, o)
-    out = pathops.Path()
-    for h in horns.contours:
-        if abs(pathops.op(h, near, pathops.PathOp.INTERSECTION).area) > SPECK:
-            out.addPath(h)
-    if not list(out.contours):
-        return p
-    return _crumbs(pathops.op(p, out, pathops.PathOp.DIFFERENCE))
-
-
-def _spikes(p, o):
-    """How much of `p` is thinner than twice `o`: what opening it by `o`
-    takes off. A cut that leaves more stands Redaction's own thin teeth, or
-    what grew beside it, as spikes (Italic's k, z)."""
-    try:
-        opened = embolden(embolden(p, -o, round=True), o, round=True)
-    except pathops.PathOpsError:
-        return 0
-    return abs(pathops.op(p, opened, pathops.PathOp.DIFFERENCE).area)
-
-
-def _crumbs(p):
-    """`p` without its pieces and holes under SLIVER: crumbs of what grew a
-    cut leaves by its edge, and pinholes."""
-    contours = list(p.contours)
-    if not contours:
-        return p
-    kept = pathops.Path()
-    for c in contours:
-        if abs(c.area) >= SLIVER:
-            kept.addPath(c)
-    return pathops.op(kept, pathops.Path(), pathops.PathOp.UNION)
-
-
-def _mouths(p, white):
-    """Which ways a white of `p` opens to the rest of its white: unit
-    directions from its middle to where it touches it."""
-    points = _hull(list(white.points))
-    cx, cy = _centroid(points)
-    air = pathops.op(embolden(white, 2), union_paths([p, white]), pathops.PathOp.DIFFERENCE)
-    out = []
-    for mouth in air.contours:
-        if abs(mouth.area) < 2:
-            continue
-        mx, my = _centroid(list(mouth.points))
-        d = math.hypot(mx - cx, my - cy) or 1
-        out.append(((mx - cx) / d, (my - cy) / d))
-    return out
-
-
-def _air(p):
-    """The white of `p` within its convex hull, but its counters: between
-    its strokes (W's middle)."""
-    outer = max(p.contours, key=lambda c: abs(c.area)).clockwise
-    filled = pathops.Path()
-    for c in p.contours:
-        if c.clockwise == outer:
-            filled.addPath(c)
-    p = pathops.op(filled, pathops.Path(), pathops.PathOp.UNION)
-    # Its hull on its outline, not its control points, which growing moves
-    on, last = [], (0, 0)
-    for verb, pts in p.segments:
-        if verb in ("curveTo", "qCurveTo") and len(pts) == 3:
-            (x0, y0), (x1, y1), (x2, y2), (x3, y3) = last, *pts
-            for t in (0.25, 0.5, 0.75):
-                u = 1 - t
-                on.append(
-                    (
-                        u**3 * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t**3 * x3,
-                        u**3 * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t**3 * y3,
-                    )
-                )
-        if pts:
-            last = pts[-1]
-            on.append(last)
-    hull = _hull(on)
-    h = pathops.Path()
-    h.moveTo(*hull[0])
-    for pt in hull[1:]:
-        h.lineTo(*pt)
-    h.close()
-    return pathops.op(h, p, pathops.PathOp.DIFFERENCE)
 
 
 def _height(font, of, t=0):
@@ -1028,7 +696,7 @@ def _enclosed(
     `radius` and `stroke`. Digits and capitals blended (blends), unless not
     `blended`, their stems those of n at the size they are drawn, or, drawn
     smaller than digits (NUMBERS), as heavy as those. It logs those that do
-    not blend so far or match only loosely (heavier), with `notes`, the
+    not blend so far (heavier), with `notes`, the
     variant drawn: each grid draws its own, as big as its enclosures.
     Also how far each blended glyph is ({code point: t}), and a function to
     draw its content again, blended by another t, where it stands. If
@@ -1058,6 +726,7 @@ def _enclosed(
     ring = _enclosure("ring", cx, cy, radius, stroke)[1]
     digits = min(fit(text, sources[False], height, ring) for text in NUMBERS.values())
     style = smooth["name"].getDebugName(2)
+    regular = style == "Regular"  # blended; Bold's and Italic's content as drawn
     enclosed, ts, again = {}, {}, {}
 
     def place(p, kind, scale, centred=False, shift=0, clean=False):
@@ -1111,12 +780,10 @@ def _enclosed(
         floor = 0 if kind == "raised" else digits
         font = italic if slanted else smooth
         heavy = [cp for cp in texts if blended and blends(contents[cp]) and cp not in emboldened]
-        # Bold's to T_BOLD; Italic's, in Bold (🄫), as far past Bold as Bold's own
-        bold = smooth["OS/2"].usWeightClass >= 700
-        past = (1 if slanted else 0) + T_BOLD - T_MAX if bold else 0
         drawn = {}
         for cp in heavy:
-            ts[cp] = solve(font, contents[cp], thick / max(scales[cp], floor), past)
+            # Bold's and Italic's as drawn (t 0): Redaction's own, scaled
+            ts[cp] = solve(font, contents[cp], thick / max(scales[cp], floor)) if regular else 0
             if not solved:
                 drawn[cp] = _drawn(font, contents[cp], ts[cp], source)
         if solved:
@@ -1135,21 +802,26 @@ def _enclosed(
             # On a grid, a cell and a half off at least, as it snaps: ⓾ fused
             # with its ring on 35, 50
             apart = max(stroke * CLEAR, 1.5 * (grid or 0))
-            near, fits = _near(kind, frame, cx, cy, radius, apart, place)
+            near, fits = _near(kind, frame, cx, cy, radius, apart, place, grid)
             for cp in heavy:
                 at = room[cp]
                 if not near(drawn[cp][0], at):
                     continue
                 pair = contents[cp].isdigit() and len(contents[cp]) > 1
+                # Centred as the rest, within SLACK on a grid: in the smooth
+                # font, and ⓾ on a grid; the rest there on its box, anywhere
+                # across, as approved
+                centring = not grid or kind == "double"
+                box = "\n" in contents[cp] if centring else True
                 found = None
                 for tight in TIGHT if pair else (1,):
                     q = (
                         drawn[cp][0]
                         if tight == 1
-                        else heavier(font, contents[cp], t=ts[cp], source=source, tight=tight)
+                        else heavier(font, contents[cp], ts[cp], source=source, tight=tight)
                     )
                     for across in ACROSS:
-                        if fits(q.transform(across, 0, 0, 1, 0, 0), at):
+                        if fits(q.transform(across, 0, 0, 1, 0, 0), at, box, centring):
                             found = tight, across
                             break
                     if found:
@@ -1163,19 +835,26 @@ def _enclosed(
                     lo, hi = at * 0.7, at
                     while hi - lo > 0.001:
                         mid = (lo + hi) / 2
-                        lo, hi = (mid, hi) if fits(q, mid) else (lo, mid)
+                        lo, hi = (mid, hi) if fits(q, mid, box, centring) else (lo, mid)
                     room[cp] = lo
-                # In the middle of where it is off its enclosure, across: on
-                # its box, ⓾'s 1 stood near its ring, its 0 far
-                clear = [d for d in range(-80, 81, 4) if not near(q, room[cp], True, d)]
-                shaped[cp] = tight, across, (min(clear) + max(clear)) / 2 if clear else 0
+                # Centred as the rest, or the nearest it is off its
+                # enclosure: on its box, ⓾'s 1 stood near its ring, its 0 far;
+                # in the middle of where it is off it, its 0 stood near. Not
+                # centring, in the middle of where it is off it
+                if centring:
+                    clear = [d for d in _around(80) if not near(q, room[cp], box, d)]
+                    shift = min(clear, key=abs) if clear else 0
+                else:
+                    clear = [d for d in range(-80, 81, 4) if not near(q, room[cp], True, d)]
+                    shift = (min(clear) + max(clear)) / 2 if clear else 0
+                shaped[cp] = tight, across, shift, box
                 if notes:
                     log(f"{notes} {style} {chr(cp)}: {tight:.1f} as near, {across:.2f} as wide")
         for cp, less in room.items() if kind != "raised" else ():
             if less < scales[cp]:
                 scales[cp] = less
-                if cp in drawn:
-                    ts[cp] = solve(font, contents[cp], thick / max(less, floor), past)
+                if cp in drawn and regular:
+                    ts[cp] = solve(font, contents[cp], thick / max(less, floor))
                     drawn[cp] = _drawn(font, contents[cp], ts[cp], source, shaped.get(cp, (1,))[0])
                 if notes:
                     log(f"{notes} {style} {chr(cp)}: shrunk to {less:.3f}, blended wider")
@@ -1193,37 +872,50 @@ def _enclosed(
                 scale = _fit(p, most, inner) if each else typed
             if cp in drawn:
                 p, noted, fell, _ = drawn[cp]
-                for char, t, done, loosely in noted if notes else []:
-                    how = ", matched loosely" if loosely else ""
-                    log(f"{notes} {style} {chr(cp)} {char}: t {t:.2f}, blended to {done:.2f}{how}")
+                for char, t, done in noted if notes else []:
+                    log(f"{notes} {style} {chr(cp)} {char}: t {t:.2f}, blended to {done:.2f}")
                 if fell and notes:
                     log(f"{notes} {style} {chr(cp)} {''.join(fell)}: drawn as before")
             else:
                 # Smaller than digits (🆩, ㎑), not heavier than them: strokes would merge
                 p = embolden(p, max(-THIN, (thick / max(scale, height) - own) / 2))
-            tight, across, shift = shaped.get(cp, (1, 1, 0))
+            # Lines (Hi-/Res) on their box: on their ink, H and R drew them right
+            tight, across, shift, box = shaped.get(cp, (1, 1, 0, "\n" in contents[cp]))
             p = p.transform(across, 0, 0, 1, 0, 0)
             # Cleaned where it has letters drawn as before, in the smooth font
             clean = not grid and cp in drawn and bool(drawn[cp][2])
-            enclosed[cp] = kind, frame, place(p, kind, scale, cp in shaped, shift, clean)
+            enclosed[cp] = kind, frame, place(p, kind, scale, box, shift, clean)
             if cp in drawn and cp not in before:
-                again[cp] = font, contents[cp], kind, scale, source, shaped.get(cp)
+                bolder = max(-THIN, (thick / max(scale, height) - own) / 2)
+                again[cp] = font, contents[cp], kind, scale, source, shaped.get(cp), bolder
     if solved:
         return ts
 
+    drawn_as_is = {}
+
     def redraw(cp, t):
-        font, text, kind, scale, source, shape = again[cp]
-        tight, across, shift = shape or (1, 1, 0)
-        p = heavier(font, text, t=t, source=source, tight=tight)
+        """Content of `cp` blended by `t` (Regular's), or, as drawn (Bold's
+        and Italic's), emboldened `t` of the way to the stems of n at the size
+        it is drawn, as on 100."""
+        font, text, kind, scale, source, shape, bolder = again[cp]
+        tight, across, shift, box = shape or (1, 1, 0, "\n" in text)
+        if regular:
+            p = heavier(font, text, t=t, source=source, tight=tight)
+        else:
+            if cp not in drawn_as_is:
+                drawn_as_is[cp] = heavier(font, text, 0, source=source, tight=tight)
+            p = embolden(drawn_as_is[cp], t * bolder)
         p = p.transform(across, 0, 0, 1, 0, 0)
-        return place(p, kind, scale, shape is not None, shift)
+        return place(p, kind, scale, box, shift)
 
     return enclosed, ts, redraw
 
 
-def _near(kind, frame, cx, cy, radius, apart, place):
+def _near(kind, frame, cx, cy, radius, apart, place, grid=None):
     """Whether content (a path) of `kind` placed at a scale (`place`) comes
-    nearer its enclosure `frame` than `apart`, and whether it fits."""
+    nearer its enclosure `frame` than `apart`, and whether it fits: off it
+    centred as placed, or on a grid, as it is phased, within half a cell
+    of it (SLACK)."""
     outside = frame
     if kind in NEGATIVE:  # cut out of it: what is outside it
         big = 2 * radius
@@ -1236,11 +928,21 @@ def _near(kind, frame, cx, cy, radius, apart, place):
         placed = place(p, kind, scale, centred, shift)
         return abs(pathops.op(grown, placed, pathops.PathOp.INTERSECTION).area) > 1
 
-    def fits(p, scale):
-        """Whether `p`, centred on its box, is off it somewhere across."""
-        return any(not near(p, scale, True, d) for d in range(-80, 81, 8))
+    slack = SLACK * (grid or 0)
+
+    def fits(p, scale, centred=False, centring=True):
+        """Whether `p`, centred as placed, is off it, or, not `centring`,
+        off it anywhere across: so, ⓾ stood on its right, its weight off
+        centre."""
+        shifts = _around(slack) if centring else range(-80, 81, 8)
+        return any(not near(p, scale, centred, d) for d in shifts)
 
     return near, fits
+
+
+def _around(far, step=4):
+    """Shifts from 0 out to `far` either way, by `step`."""
+    return [0, *(d * k for d in range(step, int(far) + 1, step) for k in (-1, 1))]
 
 
 def _drawn(font, text, t, source, tight=1):
@@ -1333,16 +1035,23 @@ def _liken(apart, grid, like, away, eased):
     counters more (_lost), then most
     like the smooth font's drawing, by the cells half covered by it, at that
     spot, the most they share of all they cover (_covered). Bold's v blended
-    so far reads as ▼, Italic's e as p."""
-    ts, redraw, lightest, label = eased
+    so far reads as ▼, Italic's e as p. Bold's and Italic's, drawn as
+    they are, emboldened from there by EASE, as _ease: a stroke of Italic's
+    r, v, x thinner than a cell drops out."""
+    ts, redraw, lightest, label, far = eased
+    up = far is not lightest
     cps = {CODEPOINTS[cp]: cp for cp in ts}
     theirs = [widths(cells(g, grid)[0]) for g in like]
     theirs = [sum(w) / len(w) for w in zip(*theirs)]
     tried, smooth, counted = {}, {}, {}
     for name, (_, _, p) in apart.items():
         cp, t, light = cps[name], ts[cps[name]], lightest[cps[name]]
-        steps = [light + k * EASE for k in range(int((t - light) / EASE) + 1)]
-        for k, u in enumerate(sorted({*steps, t}) if t > light else [t]):
+        if up:
+            span = far[cp] - t
+            steps = [t + k * EASE for k in range(round(span / EASE) + 1)]
+        else:
+            steps = [light + k * EASE for k in range(int((t - light) / EASE) + 1)]
+        for k, u in enumerate(sorted({*steps, t}) if up or t > light else [t]):
             tried[name, k] = u, redraw(cp, u)
         smooth[name] = redraw(cp, light) if t > light else p
         holes = max(_counted(p)[1], _counted(smooth[name])[1])
@@ -1370,7 +1079,7 @@ def _liken(apart, grid, like, away, eased):
                 ink = {(left + c, top - r - 1) for r, c in zip(*np.nonzero(on))}
                 theirs_ = covered[name, i, j]
                 alike = len(ink & theirs_) / max(1, len(ink | theirs_))
-                score = (rank[0], *_lost(counted[name], pixels, grid), -alike)
+                score = (rank[0], *_lost(counted[name], pixels, grid, up), -alike)
                 if best is None or score < best[0]:
                     best = score, pixels, u
         out[name] = best[1]
@@ -1401,39 +1110,49 @@ def _counted(drawn):
     return len(contours) - holes, holes
 
 
-def _lost(counted, g, grid):
+def _lost(counted, g, grid, broken=False):
     """How many pieces and counters pixel glyph `g` has fewer than `counted`
-    (_counted), and how many counters more: pixels joined at a corner are
-    one, counters closed by every pixel (shapes.cells)."""
+    (_counted), or, `broken`, pieces more (a stroke thinner than a cell,
+    dropped out), and how many counters more: pixels joined at a corner
+    are one, counters closed by every pixel (shapes.cells)."""
     _, _, (pieces, counters, _) = cells(g, grid)
     lost = max(0, counted[0] - pieces) + max(0, counted[1] - len(counters[0]))
+    if broken:
+        lost += max(0, pieces - counted[0])
     return lost, max(0, len(counters[0]) - counted[1])
 
 
 def _ease(apart, contents, grid, like, away, eased):
     """_pixelated: {name: pixel content} of the content of `apart` whose
     pixels in `contents` lose a piece or a counter (_lost), blended less
-    till they lose none: a piece of it as Redaction sets it (blended,
+    (Regular's) or emboldened (Bold's and Italic's, as drawn), by EASE at a
+    time, till they lose none: a piece of it as Redaction sets it (blended,
     figures set close are one, ⑪), a counter of its drawing blended as far
     as here or as in the smooth font, and no more counters than it had.
-    Where none holds, it stays as blended: lighter, it would only be paler
-    than the rest, and no better."""
-    ts, redraw, lightest, label = eased
+    Where none holds, it stays as it was: blended lighter, it would only be
+    paler than the rest, and no better; emboldened, heavier."""
+    ts, redraw, lightest, label, far = eased
+    up = far is not lightest
     cps = {CODEPOINTS[cp]: cp for cp in ts}
     t = {name: ts[cps[name]] for name in apart}
     light = {name: lightest[cps[name]] for name in apart}
+    end = {name: far[cps[name]] for name in apart}
     counted = {}
     for name, (_, _, p) in apart.items():
         lighter = p if t[name] <= light[name] else redraw(cps[name], light[name])
         holes = max(_counted(p)[1], _counted(lighter)[1])
         counted[name] = _counted(redraw(cps[name], 0))[0], holes
-    was = {name: _lost(counted[name], contents[name], grid) for name in apart}
-    failing = [name for name in apart if t[name] > light[name] and was[name][0]]
+
+    def left(name):
+        return t[name] < end[name] if up else t[name] > end[name]
+
+    was = {name: _lost(counted[name], contents[name], grid, up) for name in apart}
+    failing = [name for name in apart if left(name) and was[name][0]]
     out = {}
     while failing:
         drawn = {}
         for name in failing:
-            t[name] = max(t[name] - EASE, light[name])
+            t[name] = min(t[name] + EASE, end[name]) if up else max(t[name] - EASE, end[name])
             drawn[name] = redraw(cps[name], t[name])
         placed = phased(
             {name: glyph(p) for name, p in drawn.items()},
@@ -1443,15 +1162,16 @@ def _ease(apart, contents, grid, like, away, eased):
             away={name: away[apart[name][0]] for name in drawn},
             heavy=True,
         )
+        how = "emboldened" if up else "eased"
         for name in failing:
             cp = cps[name]
-            lost, extra = _lost(counted[name], placed[name], grid)
+            lost, extra = _lost(counted[name], placed[name], grid, up)
             if not lost and extra <= was[name][1]:  # and no counter more
                 out[name] = placed[name]
-                log(f"{label} {chr(cp)}: t {ts[cp]:.2f} eased to {t[name]:.2f}")
-            elif t[name] <= light[name]:
-                log(f"{label} {chr(cp)}: t {ts[cp]:.2f} kept, none holds down to {t[name]:.2f}")
-        failing = [n for n in failing if n not in out and t[n] > light[n]]
+                log(f"{label} {chr(cp)}: t {ts[cp]:.2f} {how} to {t[name]:.2f}")
+            elif not left(name):
+                log(f"{label} {chr(cp)}: t {ts[cp]:.2f} kept, none holds to {t[name]:.2f}")
+        failing = [n for n in failing if n not in out and left(n)]
     return out
 
 
@@ -1491,7 +1211,9 @@ def add_glyphs(font, smooth, grid=None):
         eased = None
         if blended and grid in EASED:  # down to how far the smooth font blends
             lightest = _enclosed(smooth, *_layout(smooth, None), solved=True)
-            eased = ts, redraw, lightest, f"{grid} {style}"
+            # Bold's and Italic's, as drawn, up to the stems of n
+            far = lightest if style == "Regular" else dict.fromkeys(ts, 1)
+            eased = ts, redraw, lightest, f"{grid} {style}", far
         glyphs = _pixelated(font, enclosed, glyphs, grid, eased, emboldened)
     add(
         font, {name: (g, em) for name, g in glyphs.items()}, {cp: CODEPOINTS[cp] for cp in enclosed}
