@@ -12,8 +12,9 @@ type Font = {
 	italic: boolean
 	characters: Record<string, string>
 	changed: string[]
+	watch: string[] // in watch.txt, to look at closely
 	new: string[]
-	revisions: Record<string, string> // module, or "changed": hash of its glyphs
+	revisions: Record<string, string> // module, "changed" or "watch": hash of its glyphs
 }
 type Review = {
 	version: number
@@ -26,6 +27,7 @@ type Review = {
 		glyphs: string[]
 		width: number
 	}[]
+	watch: string // text to set the watched glyphs in
 }
 
 const PUA = 0xf0000 // review fonts map glyphs without a code point (alternates) from here
@@ -77,10 +79,13 @@ const fonts = computed(
 			(font) => !settings.hidden.includes(font.style) && !settings.hidden.includes(variant(font)),
 		) ?? [],
 )
-const changed = computed(() => fonts.value.filter((font) => font.changed.length))
-const count = (key: "changed" | "new") =>
+// Fonts with glyphs to compare, changed or watched
+type Compared = "changed" | "watch"
+const compared = (key: Compared) => fonts.value.filter((font) => font[key].length)
+const count = (key: "changed" | "new" | "watch") =>
 	review.value?.fonts.reduce((sum, font) => sum + font[key].length, 0) ?? 0
 const tabs = computed(() => [
+	...(count("watch") ? ["watch"] : []),
 	...(count("changed") ? ["changed"] : []),
 	...(review.value?.modules.map((module) => module.name) ?? []),
 ])
@@ -107,7 +112,7 @@ async function markReviewed(module: string, font: Font, event: Event) {
 	if (top < 0) window.scrollBy(0, top)
 }
 const progress = (module: string) => {
-	const of = module === "changed" ? changed.value : fonts.value
+	const of = module === "changed" || module === "watch" ? compared(module) : fonts.value
 	return `${of.filter((font) => isReviewed(module, font)).length}/${of.length}`
 }
 
@@ -205,21 +210,25 @@ const features = computed(() =>
 			</nav>
 		</template>
 
-		<template v-if="review && tab === 'changed'">
-			<p class="my-4 opacity-60">approved in red, now, then over each other</p>
-			<section v-for="font in changed" :key="font.name" class="font">
+		<template v-if="review && (tab === 'changed' || tab === 'watch')">
+			<p class="my-4 opacity-60">
+				approved in red, now, then over each other<template v-if="tab === 'watch'"
+					>: the glyphs of watch.txt, changed or not, and text to try them in</template
+				>
+			</p>
+			<section v-for="font in compared(tab as Compared)" :key="font.name" class="font">
 				<h3 class="flex items-center gap-2">
 					<GlyphToggle
-						:model-value="isReviewed('changed', font)"
-						@change="markReviewed('changed', font, $event)"
+						:model-value="isReviewed(tab, font)"
+						@change="markReviewed(tab, font, $event)"
 					>
 						reviewed
 					</GlyphToggle>
 					{{ label(font) }}
 				</h3>
-				<div v-if="!isReviewed('changed', font)" class="flex flex-wrap pr-px pb-px">
+				<div v-if="!isReviewed(tab, font)" class="flex flex-wrap pr-px pb-px">
 					<figure
-						v-for="name in font.changed"
+						v-for="name in font[tab as Compared]"
 						:key="name"
 						:title="`${name}: approved, now, over each other`"
 						class="glyph-cell changed"
@@ -241,6 +250,13 @@ const features = computed(() =>
 						<figcaption>{{ caption(font, name) }}</figcaption>
 					</figure>
 				</div>
+				<GlyphText
+					v-if="tab === 'watch' && !isReviewed(tab, font)"
+					:model-value="settings.texts.watch ?? review.watch"
+					class="mt-3"
+					:style="set(font)"
+					@update:model-value="settings.texts.watch = $event ?? ''"
+				/>
 			</section>
 		</template>
 

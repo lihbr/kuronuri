@@ -14,6 +14,9 @@ approves them. Each module of each font, and its changed glyphs, has a
 revision, a hash of its glyphs, so the page can tell which ones were
 reviewed before they changed.
 
+watch.txt lists glyphs to look at closely, by style: the page shows them
+apart, approved, now and over each other, with text to set them in.
+
 usage: review.py [--approve] [--variants base,10,...] [--styles Regular,Italic,Bold]
 """
 
@@ -37,6 +40,7 @@ from family import CACHE, GRIDS, ROOT, STYLES, family_name, log, ps_name, varian
 
 APPROVED = CACHE / "approved"
 OUT = ROOT / "temp" / "review"
+WATCH = ROOT / "watch.txt"
 PUA = 0xF0000  # review fonts map glyphs without a code point (alternates) from here
 
 
@@ -78,6 +82,21 @@ def revision(now, names):
     return hashlib.sha1(repr([now.get(n) for n in names]).encode()).hexdigest()
 
 
+def watch():
+    """{style or "*": characters} of watch.txt, and its text, if any: lines
+    "Style: characters" ("*" for every style) and "text: ...", after #
+    comments. Spaces between characters are ignored."""
+    styles, text = {}, ""
+    lines = WATCH.read_text().splitlines() if WATCH.exists() else []
+    for line in lines:
+        key, _, value = line.split("#")[0].partition(":")
+        if key.strip() == "text":
+            text = value.strip()
+        elif value.strip():
+            styles[key.strip()] = styles.get(key.strip(), "") + "".join(value.split())
+    return styles, text
+
+
 def review_font(src, dst, features=True):
     """Copy a drawn font, with the features the build adds (-> to →) and its
     alternates mapped. Approved fonts may predate the glyphs features need:
@@ -110,6 +129,7 @@ def main():
         m.__name__.split(".")[-1]: [*m.CODEPOINTS.values(), *m.ALTERNATES] for m in glyphs.MODULES
     }
     drawn = [n for names in members.values() for n in names]
+    watched, text = watch()
     fonts, widest = [], {}  # glyph name: widest advance in any font, in em
     for style in styles:
         for grid in grids:
@@ -124,6 +144,9 @@ def main():
             review_font(ref, OUT / "fonts" / "approved" / f"{ps}.ttf", features=False)
             chars = characters(font)
             changed = [n for n in chars if n in changed]  # in the order of the font
+            cmap = font.getBestCmap()
+            names = (cmap.get(ord(c)) for c in watched.get("*", "") + watched.get(style, ""))
+            watching = list(dict.fromkeys(n for n in names if n in chars))  # in its order
             for n in drawn:
                 if n in chars:
                     em = font["hmtx"][n][0] / font["head"].unitsPerEm
@@ -137,12 +160,19 @@ def main():
                     "weight": STYLES[style]["weight"],
                     "italic": STYLES[style]["italic"],
                     # of the glyphs it shows: drawn, changed or new
-                    "characters": {n: c for n, c in chars.items() if n in {*drawn, *changed, *new}},
+                    "characters": {
+                        n: c for n, c in chars.items() if n in {*drawn, *changed, *new, *watching}
+                    },
                     "changed": changed,
+                    "watch": watching,
                     "new": [n for n in chars if n in new],
                     "revisions": {
                         module: revision(now, names)
-                        for module, names in {**members, "changed": changed}.items()
+                        for module, names in {
+                            **members,
+                            "changed": changed,
+                            "watch": watching,
+                        }.items()
                     },
                 }
             )
@@ -158,7 +188,12 @@ def main():
         }
         for m, name in zip(glyphs.MODULES, members)
     ]
-    review = {"version": int(time.time() * 1000), "fonts": fonts, "modules": modules}
+    review = {
+        "version": int(time.time() * 1000),
+        "fonts": fonts,
+        "modules": modules,
+        "watch": text,
+    }
     (OUT / "review.json").write_text(json.dumps(review, ensure_ascii=False, indent="\t"))
     log(
         f"{sum(len(f['changed']) for f in fonts)} glyphs changed, "

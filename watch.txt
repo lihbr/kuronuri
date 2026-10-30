@@ -1,0 +1,13 @@
+# Glyphs to look at closely on /review (pnpm review, then pnpm dev): by style,
+# "Style: characters", or "*: characters" for every style. "text:" sets the
+# text to try them in. Spaces are ignored.
+
+# Enclosed content: Bold and Italic drawn as Redaction's own
+Regular: Ⓠ 🅠 🅀 🆀  Ⓦ 🅦 🅆 🆆  ⓾ ⓵ ⑩  🆨 🆜 🆩  🄬 🄫
+Italic: Ⓡ 🅡 🅁 🆁  Ⓦ 🅦 🅆 🆆  Ⓠ 🅠
+Italic: ⓐ ⓓ ⓔ ⓕ ⓗ ⓘ ⓚ ⓜ ⓝ ⓡ ⓢ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ
+Italic: ⓾ ⓵ ⑩  ㎏ ㎎ ㎉ ㏏ ㎙ ㎚ ㎝ ㎞ ㎧ ㏉ 🆕 🆨
+Bold: Ⓠ 🅠 🅀 🆀  Ⓦ 🅦 🅆 🆆  ⓢ ⓦ ⓾ ⓵ ⑩  🄫 🄬
+Bold: ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑪ ⑬ ⑳ ㉔ ㉕  Ⓐ Ⓑ Ⓒ  ㎏ ㎚ ㎧ 🆕
+
+text: Steps ① to ⑳, ㉔ ㉕ ⓾: Ⓐ Ⓑ Ⓠ Ⓦ ⓐ ⓘ ⓡ ⓢ ⓦ 🅠 🆆 — 手順①と②を確認 — 10 ㎎ ㎏ ㎞ ㎧ 🆕 🆨
