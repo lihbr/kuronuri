@@ -1,0 +1,7 @@
+line-length = 100
+target-version = "py312"
+extend-exclude = ["sources", "temp"]
+
+[lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["B905"]  # zip() without strict=

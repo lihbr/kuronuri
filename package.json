@@ -1,0 +1,55 @@
+{
+	"name": "kuronuri",
+	"version": "0.0.0",
+	"description": "redaction, with japanese support, and more",
+	"keywords": [
+		"lihbr",
+		"font",
+		"japanese",
+		"redaction",
+		"pixel",
+		"woff2"
+	],
+	"homepage": "https://github.com/lihbr/kuronuri",
+	"license": "OFL-1.1",
+	"author": "lihbr <hello@lihbr.com> (https://lihbr.com)",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/lihbr/kuronuri.git"
+	},
+	"files": [
+		"dist/web",
+		"OFL.txt"
+	],
+	"sideEffects": [
+		"*.css"
+	],
+	"exports": {
+		".": "./dist/web/index.css",
+		"./*.css": "./dist/web/*.css",
+		"./glyphs.json": "./dist/web/glyphs.json",
+		"./files/*": "./dist/web/files/*",
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"venv": "python3 -m venv .venv && .venv/bin/pip install -r requirements.txt",
+		"sources": "sh src/fetch_sources.sh",
+		"draw": ".venv/bin/python src/draw.py",
+		"review": ".venv/bin/python src/review.py",
+		"score": ".venv/bin/python src/score.py",
+		"build": ".venv/bin/python src/build.py",
+		"build:web": ".venv/bin/python src/build.py --web-only",
+		"dev": "pnpm -C site dev",
+		"deploy": "pnpm -C site run deploy",
+		"deploy:prod": "pnpm -C site run deploy:prod",
+		"format": ".venv/bin/ruff format && .venv/bin/ruff check --fix",
+		"lint": ".venv/bin/ruff check && .venv/bin/ruff format --check",
+		"test": ".venv/bin/python test/check.py",
+		"release": "pnpm run lint && bumpp",
+		"release:dry": "npx changelogithub --dry"
+	},
+	"devDependencies": {
+		"bumpp": "^12.3.0"
+	},
+	"packageManager": "pnpm@12.6.0"
+}

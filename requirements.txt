@@ -1,0 +1,12 @@
+# build
+fonttools[woff]==4.67.0
+freetype-py==2.5.1
+numpy==2.5.4
+skia-pathops==0.9.2
+uharfbuzz==0.56.3
+
+# test
+opentype-sanitizer==9.2.0
+
+# lint
+ruff==0.17.1

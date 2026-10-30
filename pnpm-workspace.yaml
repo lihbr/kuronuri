@@ -1,0 +1,10 @@
+packages:
+  - site
+shellEmulator: true
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  # Nuxt's toolchain needs semver 6. 6.3.1 backports a fix (CVE-2022-25883) and was published by
+  # its maintainer without provenance, after 7.5.4 with it.
+  - semver@6.3.1
+allowBuilds:
+  esbuild: true

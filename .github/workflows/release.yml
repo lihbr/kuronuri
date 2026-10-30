@@ -1,0 +1,67 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          registry-url: "https://registry.npmjs.org/"
+          cache: pnpm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+      - uses: actions/cache@v6
+        with:
+          path: sources
+          key: sources-${{ hashFiles('src/fetch_sources.sh') }}
+      - uses: actions/cache@v6
+        with:
+          path: .cache
+          key: glyphs-${{ hashFiles('src/pixel.py') }}
+          restore-keys: glyphs-
+      - run: pnpm install
+      - run: pnpm venv
+      - run: '[ -f "sources/noto-serif-jp/NotoSerifJP[wght].ttf" ] || pnpm sources'
+      - run: pnpm build
+      - run: pnpm test
+
+      - name: Publish ${{ github.ref_name }}
+        run: |
+          if [[ $GITHUB_REF_NAME == *-* ]]; then
+            TAG=${GITHUB_REF_NAME#*-}
+            TAG=${TAG%.*}
+            pnpm publish --access public --no-git-checks --tag ${TAG}
+          else
+            pnpm publish --access public --no-git-checks
+          fi
+
+      - name: Publish GitHub release
+        run: |
+          if [[ $GITHUB_REF_NAME == *-* ]]; then
+            npx changelogithub --prerelease
+          else
+            npx changelogithub
+          fi
+          cp OFL.txt dist/
+          (cd dist && zip -qr "../kuronuri-$GITHUB_REF_NAME.zip" OFL.txt ttf woff2 web)
+          gh release upload "$GITHUB_REF_NAME" "kuronuri-$GITHUB_REF_NAME.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

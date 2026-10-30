@@ -1,0 +1,16 @@
+*.log
+*.zip
+.DS_Store
+.cache
+.env*
+.idea
+.nuxt
+.output
+.ruff_cache
+.venv
+.vercel
+__pycache__
+dist
+node_modules
+sources
+temp

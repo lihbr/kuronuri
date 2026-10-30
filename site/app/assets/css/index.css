@@ -1,0 +1,68 @@
+@import "tailwindcss";
+/* Only the Latin of each family blocks the render, the hero declares its title's Japanese, and the rest loads after: see plugins/fonts.client.ts */
+@import "kuronuri/kuronuri-latin.css";
+@import "kuronuri/kuronuri-10-latin.css";
+@import "kuronuri/kuronuri-20-latin.css";
+@import "kuronuri/kuronuri-35-latin.css";
+@import "kuronuri/kuronuri-50-latin.css";
+@import "kuronuri/kuronuri-70-latin.css";
+@import "kuronuri/kuronuri-100-latin.css";
+
+@theme {
+	--font-0: "Kuronuri", serif;
+	--font-10: "Kuronuri 10", "Kuronuri", serif;
+	--font-20: "Kuronuri 20", "Kuronuri", serif;
+	--font-35: "Kuronuri 35", "Kuronuri", serif;
+	--font-50: "Kuronuri 50", "Kuronuri", serif;
+	--font-70: "Kuronuri 70", "Kuronuri", serif;
+	--font-100: "Kuronuri 100", "Kuronuri", serif;
+	--color-paper: #fffbf3;
+	--color-ink: #151515;
+	--color-flamingo: #e84311;
+	--color-navy: #54669c;
+}
+
+/* In the base layer so utilities, like dark, override them: unlayered styles win over every layer */
+@layer base {
+	html {
+		@apply bg-paper text-ink font-0 antialiased scrollbar-none;
+
+		@variant lg {
+			font-size: calc(100svw / 90);
+		}
+	}
+
+	::selection {
+		@apply bg-ink text-paper;
+	}
+
+	:focus-visible {
+		@apply bg-ink text-paper;
+	}
+
+	:focus:not(:focus-visible) {
+		@apply outline-none;
+	}
+
+	a {
+		@apply underline;
+	}
+}
+
+@utility dark {
+	@apply bg-ink text-paper;
+
+	::selection,
+	:focus-visible {
+		@apply bg-paper text-ink;
+	}
+}
+
+@utility layout {
+	@apply grid grid-cols-4 gap-x-5 px-2.5 md:grid-cols-6 lg:grid-cols-10;
+}
+
+@utility writing-vertical {
+	writing-mode: vertical-rl;
+	text-orientation: upright;
+}

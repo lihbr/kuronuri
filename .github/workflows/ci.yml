@@ -1,0 +1,54 @@
+name: ci
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: pnpm install
+      - run: pnpm venv
+      - run: pnpm lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+      - uses: actions/cache@v6
+        with:
+          path: sources
+          key: sources-${{ hashFiles('src/fetch_sources.sh') }}
+      - uses: actions/cache@v6
+        with:
+          path: .cache
+          key: glyphs-${{ hashFiles('src/pixel.py') }}
+          restore-keys: glyphs-
+      - run: pnpm install
+      - run: pnpm venv
+      - run: '[ -f "sources/noto-serif-jp/NotoSerifJP[wght].ttf" ] || pnpm sources'
+      # a quick subset: one plain and one pixelated family
+      - run: pnpm build --variants base,100 --styles Regular
+      - run: pnpm test

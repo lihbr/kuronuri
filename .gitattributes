@@ -1,0 +1,17 @@
+# asserts everything is text
+* text eol=lf
+
+# treats assets as binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
+# treats lock files as binaries to prevent merge headache
+pnpm-lock.yaml -diff
