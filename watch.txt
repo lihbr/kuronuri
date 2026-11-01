@@ -2,19 +2,18 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Enclosed content: Redaction's own in every style, thickened a little to the
-# same weight against its n (Bold as much heavier than Regular as Redaction's)
-*: ① ② ③ ⑤ ⑧ ⑳ ㉔ ⓾  Ⓐ Ⓡ Ⓦ Ⓠ 🄰 🅰  ⓐ ⓘ ⓚ ⓢ ⓦ  ㎏ ㎚ ㎧  🆒 🆕 🆨 🅪  🄫 🄬
+# Enclosed content 15% heavier, alike in every style: blended between
+# Redaction's masters where outlines match (Regular towards Bold, Bold past it
+# and shrunk back, Italic the upright way slanted), so figures keep MCKL's
+# carving; the rest (Italic's lowercase, Q W w y, Bold's g s, 🄬) thickened as
+# before, no further than its carving stays half open
+*: ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑬ ⑳ ㉔  Ⓐ Ⓡ Ⓦ Ⓠ  ⓐ ⓓ ⓗ ⓚ ⓝ ⓢ ⓦ  🄰 🅰 ❶ ⓵  ㎏ ㎚ 🆕 🆒  🄫 🄬
 
-# Thickened less than the rest, their carving would close: Italic's two-ring
-# and disc digits and K; Bold's small lowercase (🄫 🄬, Italic's C R, above)
-Italic: ⓸ ⓺ ⓼ ⓽ ❻ ➑ ⓲ Ⓚ 🅚
-Bold: ㎡ ㎨
+# Pixel fallbacks (70): Regular's ③ ➂ now read without theirs; Bold's Ⓘ Ⓡ
+# and Italic's ⓒ ⓩ drawn as before. Where emboldening never held, thinned
+# back, no lighter than before (Bold's ⑩ ➉ on 70, ⓾ on 50)
+Regular: ➂
+Italic: ⓒ ⓩ
+Bold: Ⓘ ⑩ ➉ ⓾
 
-# Pixel fallbacks changed (50, 70): Regular's ㉈–㉌ 🅦 now read without, its
-# 🆋–🆏 (50, 70), ③ ⑧ ➂ ➇ 🆒 (70) drawn as before; Italic's ㉊ reads without,
-# its ④ drawn as before (50)
-Regular: ㉈ ㉉ ㉊ ㉋ ㉌ 🅦 🆋 🆌 🆍 🆎 🆏 ➂ ➇
-Italic: ㉊ ④
-
-text: Steps ①②③: weigh 5 ㎏, walk 2 ㎞, then Ⓐ or ⓐ, 🅰 type 🆕 — 手順①②③で5㎏を量り、2㎞歩き、Ⓐとⓐ、🅰型の🆕を確認する。
+text: Steps ①②③: weigh 5 ㎏, ⑳ nm ㎚, Ⓐ or ⓐ, 🅰 type 🆕 — 手順①②③で5㎏を量り、Ⓡとⓗ、🆒を確認する。
