@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>familyName</key>
+    <string>Kuronuri drawn</string>
+    <key>note</key>
+    <string>Enclosed content drawn by hand from Redaction's own (glyphs/enclosed.py), in its units, made heavier, carving open</string>
+    <key>styleName</key>
+    <string>Bold</string>
+    <key>unitsPerEm</key>
+    <integer>1000</integer>
+  </dict>
+</plist>

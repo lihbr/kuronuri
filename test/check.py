@@ -15,6 +15,9 @@
   Redaction's glyph centred in the em; Roman numerals, ‼ and ⑴ are as wide
   as what they are made of, set with kerning; enclosed numbers and letters
   are centred on the em box.
+- Every outline drawn by hand for enclosed content (glyphs/drawn) loads,
+  is used, has the pieces and counters of Redaction's glyph, and no
+  self-intersections.
 - No two superscript letters (ª º, those `ordn` raises, the c of ℅) are
   drawn alike, but on 100, where they are three cells high: there c and e
   have the same placements, and come out alike.
@@ -32,16 +35,20 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
+import numpy as np
 import ots
 import uharfbuzz as hb
+from fontTools.pens.basePen import BasePen
 from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
+from fontTools.ufoLib import UFOReader
 from fontTools.unicodedata import script
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
-from family import redaction  # noqa: E402
+from family import STYLES, redaction  # noqa: E402
 from glyphs import enclosed, fullwidth, numerals, punctuation  # noqa: E402
+from glyphs.shapes import _pieces, path  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
@@ -232,6 +239,80 @@ def check_drawn(path, font):
     return problems
 
 
+class _Flat(BasePen):
+    """The edges of an outline, its curves cut in STEPS lines, per contour."""
+
+    STEPS = 8
+
+    def __init__(self):
+        super().__init__(None)
+        self.contours = []
+
+    def _moveTo(self, pt):
+        self.contours.append([pt])
+
+    def _lineTo(self, pt):
+        self.contours[-1].append(pt)
+
+    def _qCurveToOne(self, a, b):
+        p0 = self._getCurrentPoint()
+        for i in range(1, self.STEPS + 1):
+            t = i / self.STEPS
+            self.contours[-1].append(
+                tuple((1 - t) ** 2 * p0[k] + 2 * (1 - t) * t * a[k] + t * t * b[k] for k in (0, 1))
+            )
+
+    def _curveToOne(self, a, b, c):
+        p0 = self._getCurrentPoint()
+        for i in range(1, self.STEPS + 1):
+            t, u = i / self.STEPS, 1 - i / self.STEPS
+            w = (u**3, 3 * u * u * t, 3 * u * t * t, t**3)
+            pts = (p0, a, b, c)
+            self.contours[-1].append(tuple(sum(wi * q[k] for wi, q in zip(w, pts)) for k in (0, 1)))
+
+
+def crossings(p):
+    """How many pairs of edges of path `p` cross, but those that meet."""
+    flat = _Flat()
+    p.draw(flat)
+    edges = np.array(
+        [(*a, *b) for c in flat.contours for a, b in zip(c, c[1:] + c[:1]) if a != b], float
+    )
+    x0, y0, x1, y1 = edges.T
+
+    def side(px, py, ax, ay, bx, by):
+        return (bx - ax) * (py[:, None] - ay) - (by - ay) * (px[:, None] - ax)
+
+    d1 = side(x0, y0, x0[None], y0[None], x1[None], y1[None]).T
+    d2 = side(x1, y1, x0[None], y0[None], x1[None], y1[None]).T
+    d3, d4 = d1.T, d2.T
+    crossed = (d1 * d2 < 0) & (d3 * d4 < 0)
+    return int(np.triu(crossed, 1).sum())
+
+
+def check_hand():
+    """Every outline drawn by hand (enclosed.by_hand) loads, is used (it is
+    content of an enclosure, and made heavier so), has the pieces and
+    counters of Redaction's glyph, and no self-intersections."""
+    problems = []
+    used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
+    for style in STYLES:
+        ufo = enclosed.DRAWN / f"{style}.ufo"
+        hand = enclosed.by_hand(style)
+        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(hand):
+            problems.append(f"{ufo.name}: not every glyph loads, with a code point")
+        font = redaction(None, style)
+        for c, (p, amount) in hand.items():
+            plan = (0, enclosed._limit(style, c), 0)
+            if c not in used or enclosed._heavy(font, c, plan, enclosed._of(c))[1] != "drawn":
+                problems.append(f"{ufo.name}: {c} is not used")
+            if not amount > 0 or _pieces(p) != _pieces(path(font, c)):
+                problems.append(f"{ufo.name}: {c} is not Redaction's made heavier")
+            if crossed := crossings(p):
+                problems.append(f"{ufo.name}: {c} crosses itself ({crossed})")
+    return problems
+
+
 def check_slice(task):
     path, declared = task
     problems = sanitize(path)
@@ -300,6 +381,7 @@ def main():
     with ProcessPoolExecutor() as ex:
         problems = [p for font in ex.map(check_font, fonts) for p in font]
     problems += check_web()
+    problems += check_hand()
     for p in problems:
         print("FAIL", p)
     slices = len(list((DIST / "web" / "files").iterdir()))

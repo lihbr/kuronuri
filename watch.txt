@@ -2,18 +2,20 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Enclosed content 15% heavier, alike in every style: blended between
-# Redaction's masters where outlines match (Regular towards Bold, Bold past it
-# and shrunk back, Italic the upright way slanted), so figures keep MCKL's
-# carving; the rest (Italic's lowercase, Q W w y, Bold's g s, 🄬) thickened as
-# before, no further than its carving stays half open
-*: ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑬ ⑳ ㉔  Ⓐ Ⓡ Ⓦ Ⓠ  ⓐ ⓓ ⓗ ⓚ ⓝ ⓢ ⓦ  🄰 🅰 ❶ ⓵  ㎏ ㎚ 🆕 🆒  🄫 🄬
+# Enclosed content drawn by hand (src/glyphs/drawn): as heavy as thickened,
+# its slits and Q's tail gap cut open again as wide as MCKL's. Each drawn
+# letter in its ring and one other enclosure, then blended neighbours.
+# 🄬 is Italic's R in every style.
+Regular: Ⓦ 🅦 ⓦ ㎽ Ⓠ 🅠 🄬   Ⓥ Ⓧ Ⓞ ⓥ ⓧ ⓞ
+Bold: Ⓦ 🅦 Ⓠ 🅠 🄬   Ⓥ Ⓧ Ⓞ ⓦ
+Italic: Ⓡ 🅡 Ⓦ 🅦 Ⓠ 🅠 🄬
+Italic: ⓐ ㎪ ⓓ ㍲ ⓔ ㋍ ⓕ ㎙ ⓗ ㏊ ⓚ ㎏ ⓜ ㎡ ⓝ ㎚ ⓡ ㎭ ⓤ ⓥ ㏜ ⓦ ⓧ ㏓ ⓨ ㏉ ⓩ ㎐
+Italic: ⓑ ⓒ ⓞ ⓟ ⓣ Ⓟ Ⓥ
 
-# Pixel fallbacks (70): Regular's ③ ➂ now read without theirs; Bold's Ⓘ Ⓡ
-# and Italic's ⓒ ⓩ drawn as before. Where emboldening never held, thinned
-# back, no lighter than before (Bold's ⑩ ➉ on 70, ⓾ on 50)
-Regular: ➂
-Italic: ⓒ ⓩ
-Bold: Ⓘ ⑩ ➉ ⓾
+# Pixel fallbacks (70), drawn as before group 4: drawn by hand, Italic's ⓧ
+# read as И, Regular's 🅆 as ?V; Italic's ⓔ ⓗ ⓕ ⓩ keep theirs. Not taken,
+# as before they ran into their enclosure: Bold's 🅆 (reads P), 🄬 (Л)
+Regular: 🅆
+Bold: 🅆
 
-text: Steps ①②③: weigh 5 ㎏, ⑳ nm ㎚, Ⓐ or ⓐ, 🅰 type 🆕 — 手順①②③で5㎏を量り、Ⓡとⓗ、🆒を確認する。
+text: Week ⓦ: Ⓦ, Ⓠ and Ⓡ, 5 ㎏ at 10 ㎞ — ⓐⓓⓗⓚ ⓜⓝⓡⓤ ⓥⓦⓧⓨⓩ 🄬 🅆 — 第ⓦ週、Ⓠとⓡを確認し、5㎏を量る。

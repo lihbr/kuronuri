@@ -27,9 +27,12 @@ carving is MCKL's own. A glyph that does not blend so far (Italic's
 lowercase, Q W w y, Bold's g s) is thickened all round (_thick: offset as
 shapes.embolden does, dots scaled), no further than its carving stays
 half open and its counters and pieces stay (_cap), lowercase no further
-than its style's carved lowercase goes (_limit). Bold's 🄫 🄬 are Italic's C R,
-as heavy as Bold's content where they blend (C). Each glyph is shrunk
-back as tall as its own. Glyphs are spaced as near as
+than its style's carved lowercase goes (_limit). Where that narrows
+MCKL's carving (Q W in every style, Italic's R and lowercase, Regular's
+w), it is drawn by hand instead, saved in DRAWN (by_hand): as heavy, its
+slits and the gap of Q's tail cut open again, as wide as MCKL's. Bold's
+🄫 🄬 are Italic's C R, as heavy as Bold's content where they blend (C).
+Each glyph is shrunk back as tall as its own. Glyphs are spaced as near as
 typed where their ink comes nearest, any way (_nearest); figures as far
 apart as they look on average, all alike (_optically). Content is as big
 as it fits typed in Redaction's Bold, upright, in every style, or smaller
@@ -57,11 +60,14 @@ the numbered variants they keep MCKL's pixels.
 import functools
 import math
 import unicodedata
+from pathlib import Path
 
 import numpy as np
 import pathops
+from fontTools.pens.pointPen import PointToSegmentPen
 from fontTools.pens.statisticsPen import StatisticsPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
+from fontTools.ufoLib import UFOReader
 
 import pixel
 from family import STYLES, log, redaction
@@ -95,6 +101,13 @@ from .shapes import (
     widths,
 )
 
+# Content drawn by hand (by_hand): a UFO a style, <Style>.ufo, each glyph
+# Redaction's own made heavier, in its units, at the points its glyf stores
+DRAWN = Path(__file__).resolve().parent / "drawn"
+AMOUNT = "com.lihbr.kuronuri.amount"  # how far out a drawn glyph's outline was moved
+# Least a drawn glyph is thinned by in a word (_heavy): _plan rounds its amount,
+# and thinned by a hair, skia-pathops lost the curve under Italic's k's serif
+HAIR = 0.1
 RADIUS = 462  # of the ring, as in Noto Serif JP
 CENTRE = 380  # of the ideographic em box (-120..880)
 SQUARE = 0.86  # half the side of squares, over the radius of rings: they look as big
@@ -160,13 +173,16 @@ LIKENED = (70,)
 # and 50; on 50, ㎨ broken, ⓛ ⓣ as / and !, ④ as ≠ (its ㉊ reads without);
 # on 70, its e as ρ, h as λ, f without its bar, 🄼 and the letters of ㎁ ㎃
 # ㎄ ㎫ broken; Bold's Ⓜ as Ж, ⓗ a wedge on 70; the words of 🆋–🆏 gone on
-# 50 (Italic's) and 70.
+# 50 (Italic's) and 70. Re-checked drawn by hand (by_hand), on 70: Italic's
+# x as И, Regular's 🅆 as ?V; Italic's e h f z still read as said. Bold's 🅆
+# reads as P, and the R of Regular's and Italic's 🄬 as Л, but as before
+# they ran into their enclosure, as Bold's Ⓦ, Regular's 🅦, Italic's 🅆 blot.
 EMBOLDENED = {
     35: {"Regular": "㎢㏇", "Italic": "㏞㎮㎧㎨"},
     50: {"Regular": "🅊🆋🆌🆍🆎🆏", "Italic": "㎮㎨ⓛⓣ④🆋🆌🆍🆎🆏"},
     70: {
-        "Regular": "🅸ⒽⓂ⑧➇🆋🆌🆍🆎🆏🆒",
-        "Italic": "ⓔⓗⓕⓒⓩ🄼㎁㎃㎄㎫🆋🆌🆍🆎🆏",
+        "Regular": "🅸ⒽⓂ⑧➇🆋🆌🆍🆎🆏🆒🅆",
+        "Italic": "ⓔⓗⓕⓒⓩⓧ🄼㎁㎃㎄㎫🆋🆌🆍🆎🆏",
         "Bold": "ⓂⓗⒾⓇ🆋🆌🆍🆎🆏",
     },
 }
@@ -528,12 +544,49 @@ def _blended(font, char, t):
     return None
 
 
+@functools.cache
+def by_hand(style):
+    """{character: (outline, amount)} of the glyphs of `style` drawn by hand
+    (DRAWN): Redaction's own made heavier, its outline moved out by
+    `amount`, as thickened, but its carving cut open again as MCKL cut it,
+    which thickening narrows (Italic's lowercase, Q W w)."""
+    ufo = DRAWN / f"{style}.ufo"
+    if not ufo.exists():
+        return {}
+    out = {}
+    glyphs = UFOReader(ufo).getGlyphSet()
+    for name in glyphs.keys():
+        g = glyphs[name]
+        p = pathops.Path()
+        g.drawPoints(PointToSegmentPen(pathops.PathPen(p)))
+        for cp in g.unicodes:
+            out[chr(cp)] = p, g.lib[AMOUNT]
+    return out
+
+
+def _by_hand(font, char):
+    """`char` of `font` drawn by hand (by_hand), or None."""
+    return by_hand(font["name"].getDebugName(2)).get(char)
+
+
 def _heavy(font, char, plan, of):
     """`char` of `font` made heavier as `plan` says (_plan), as tall as its
-    own (`of` of `font` as tall as drawn), and how: blended (_blended), or
-    where it does not blend, thickened (_thick)."""
+    own (`of` of `font` as tall as drawn), and how: drawn by hand (by_hand),
+    blended (_blended), or where it does not blend, thickened (_thick).
+
+    A glyph drawn by hand is as heavy as `char` thickened as far as it goes
+    (_limit), which every enclosure of it alone draws it; in a word thickened
+    less, as the letters with it go (㎦ km³: as far as ³), it is thinned by
+    as much, which opens its carving more."""
     t, amount, _ = plan
     h = _height(font, of)
+    hand = _by_hand(font, char)
+    if hand is not None:
+        p, moved = hand
+        less = amount - _limit(font["name"].getDebugName(2), char)
+        less = less if less < -HAIR else 0
+        k = h / (h + 2 * (moved + less))
+        return embolden(p, less).transform(k, 0, 0, k, 0, 0), "drawn"
     p = _blended(font, char, t) if t else None
     if p is not None:
         regular, bold = masters()
@@ -868,9 +921,13 @@ def _heavier(font, floor, n, slanted, text, scale, shared, cp, notes, grid, tigh
     plan, want = _plan(font, text, scale, shared, floor, n, slanted)
     if notes and not grid:
         chars = [c for c in text if c != "\n" and path(font, c).bounds[2]]
-        thick = "".join(c for c in chars if _heavy(font, c, plan, _of(text))[1] == "thickened")
+        routes = {c: _heavy(font, c, plan, _of(text))[1] for c in chars}
+        thick = "".join(c for c in chars if routes[c] == "thickened")
         if thick and plan[1] < want:
             log(f"{notes} {chr(cp)} {thick}: thickened {plan[1]:.1f}, capped from {want:.1f}")
+        hand = "".join(c for c in chars if routes[c] == "drawn")
+        if hand:
+            log(f"{notes} {chr(cp)} {hand}: drawn")
     return plan, heavier(font, text, plan, tight)
 
 
