@@ -29,8 +29,10 @@ shapes.embolden does, dots scaled), no further than its carving stays
 half open and its counters and pieces stay (_cap), lowercase no further
 than its style's carved lowercase goes (_limit). Where that narrows
 MCKL's carving (Q W in every style, Italic's R and lowercase, Regular's
-w), it is drawn by hand instead, saved in DRAWN (by_hand): as heavy, its
-slits and the gap of Q's tail cut open again, as wide as MCKL's. Italic's
+w y, Bold's g s w y), it is drawn by hand instead, saved in DRAWN
+(by_hand): as heavy, its slits and the gap of Q's tail cut open again,
+as wide as MCKL's, and so the notches shapes.grooves does not take for
+carving (Bold's s's top slot, its g's ear, cut as its y's tail). Italic's
 R and W, lighter so than its capitals that blend, are then moved further,
 as Redaction's upright R and W are from Regular to Bold, slanted, as far
 as makes them as heavy as those: their slits move with them as Bold's
@@ -550,7 +552,8 @@ def by_hand(style):
     """{character: (outline, amount)} of the glyphs of `style` drawn by hand
     (DRAWN): Redaction's own made heavier, its outline moved out by
     `amount`, as thickened, but its carving cut open again as MCKL cut it,
-    which thickening narrows (Italic's lowercase, Q W w), and Italic's R W
+    which thickening narrows (Italic's lowercase, Q W w y, Bold's g s),
+    and Italic's R W
     moved further as blending moves the upright glyph, as tall."""
     return {c: (p, lib[AMOUNT]) for c, (p, lib) in drawn(style).items() if AMOUNT in lib}
 
