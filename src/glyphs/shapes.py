@@ -76,12 +76,20 @@ def path(font, char, transform=(1, 0, 0, 1, 0, 0)):
     return p
 
 
+class Cells(list):
+    """Rows of cells drawn by hand (drawn_cells), and where its bottom left
+    cell is, in cells, `at`, if it says."""
+
+    at = None
+
+
 @functools.cache
 def drawn_cells(name):
-    """{(grid, style, character): rows} of the glyphs drawn by hand on a grid,
-    in DRAWN/`name`: a line "grid styles character" (styles separated by
-    commas), then its cells, top row first, "#" ink and "." air. Lines
-    starting with // are notes."""
+    """{(grid, style, character): Cells} of the glyphs drawn by hand on a
+    grid, in DRAWN/`name`: a line "grid styles character" (styles separated
+    by commas), and "x,y", the cell its bottom left cell is, if it says,
+    then its cells, top row first, "#" ink and "." air. Lines starting with
+    // are notes."""
     out, rows = {}, None
     for line in (DRAWN / name).read_text().splitlines():
         line = line.strip()
@@ -92,8 +100,10 @@ def drawn_cells(name):
                 raise ValueError(f"{name}: rows of a glyph are not as long")
             rows.append(line)
             continue
-        grid, styles, char = line.split()
-        rows = []
+        grid, styles, char, *at = line.split()
+        rows = Cells()
+        if at:
+            rows.at = tuple(int(v) for v in at[0].split(","))
         for style in styles.split(","):
             out[int(grid), style, char] = rows
     return out

@@ -25,10 +25,11 @@ keep their reach (blunter where pixels come apart); every direction is its
 arrow's pixels mirrored or turned (← is →), italic's are upright ones
 slanted by rows of cells, bridged where that pulls them apart, and
 pinholes and notches pixelating leaves are filled (_pixels). On 70 and 100
-(HEAVY), Bold's heads are swept a cell further back, as its n is a cell
-heavier there, but its shafts stay its minus, Regular's there. On 100,
-pairs are drawn by hand, cell by cell (CELLS): pixelated, their heads came
-out a cell over and under the shaft, crosses.
+Bold's n is a cell heavier than Regular's, but its minus is Regular's, so
+its shafts stay so: on 70 (HEAVY), its heads are swept a cell further back,
+but 45° ones. On 100, pairs are drawn by hand, cell by cell (CELLS):
+pixelated, their heads came out a cell over and under the shaft, crosses;
+and so are Bold's →, and its pairs on 70, whose heads met swept.
 
 `calt` turns -> <- <-> -^ ^- => <=> =^ into arrows, but leaves the ^-^ ^=^
 =^.^= emoticons alone. `ss01` swaps in the alt arrows.
@@ -81,8 +82,11 @@ REACH = 0.25
 BLUNT = 5
 # Grids Bold's heads are swept a cell further back on, its arms a cell
 # heavier: there its n's stems are a cell heavier than Regular's, but its
-# minus, plus and < > are Regular's, cell for cell, and so were its arrows
-HEAVY = (70, 100)
+# minus, plus and < > are Regular's, cell for cell, and so were its arrows.
+# Not 45° heads, which fill in, nor on 100, where heads fill in or swallow
+# their shaft (⇨ came out as ⮕, ￫ as ▶): there, Bold's → and pairs are
+# drawn by hand (CELLS)
+HEAVY = (70,)
 # Arrows drawn by hand on a grid, cell by cell, in shapes.DRAWN (_pixels)
 CELLS = "arrows.txt"
 # code point: (glyph name, direction in degrees, double headed)
@@ -170,6 +174,9 @@ TURNED = {n + s: (of + s, steps) for n, (of, steps) in _TURNED.items() for s in 
 # pixelating does not always keep (pixel.py puts thin strokes back one side)
 SYMMETRIC = {"arrowright", "arrowboth", "arrowdblright", "arrowdblboth", "uniFFEB"}
 SYMMETRIC |= {"uni21E8", "uni2B95"}
+# Double headed arrows (↔ ⇔), whose left head is their right one mirrored
+# where heads are swept: pixelated, the left one came out a cell shorter
+BOTH = {"arrowboth", "arrowdblboth"}
 # Arrows on the axis of the equals sign: double and block arrows
 EQUALS = {n for n, _, _ in DOUBLES.values()} | {f"uni{cp:04X}" for cp in BLOCK}
 HOLLOW = {f"uni{cp:04X}" for cp, (_, filled) in BLOCK.items() if not filled}
@@ -302,7 +309,7 @@ class Arrows:
         than drawn (a quarter of a cell's leeway), as sharp as drawn but
         blunt enough to keep their reach (REACH); `diagonal`, those cells
         are a cell's diagonal (its half), as 45° heads cross them. In Bold
-        on HEAVY, swept a cell back, as it is heavier."""
+        on HEAVY, but 45°, swept a cell back, as it is heavier."""
         points = source()
         scale = max(scale, half / Head(points).half)
         weight = self.pen.weight
@@ -326,7 +333,7 @@ class Arrows:
         beta = max(beta, math.asin(min(1, g / 2 / (REACH * half)))) + self.blunt
         alpha = math.atan2(half, length)
         notch = max(0, length - half / math.tan(min(alpha + beta, math.radians(89))))
-        swept = g if g in HEAVY and weight > 1 else 0
+        swept = g if g in HEAVY and weight > 1 and not diagonal else 0
         return Head([(0, 0), (-length, half), (-notch, 0), (-length, -half)], swept)
 
     def tip(self, length, head, both=False):
@@ -673,6 +680,11 @@ def _pixels(a, paths):
         ink[name] = _filled(_ink(on, x0, top), near)
         if name.split(".")[0] in SYMMETRIC:  # as many cells either side of its axis
             ink[name] |= {(x, round(2 * axis(name)) - 1 - y) for x, y in ink[name]}
+        if name.split(".")[0] in BOTH and g in HEAVY and a.pen.weight > 1:
+            # its heads swept alike, the left one the right one mirrored
+            x0, x1 = min(x for x, _ in ink[name]), max(x for x, _ in ink[name])
+            right = {(x, y) for x, y in ink[name] if 2 * x > x0 + x1}
+            ink[name] = right | {(x0 + x1 - x, y) for x, y in right}
         # Or drawn by hand (CELLS), the arrow and its alt alike, centred where
         # it pixelates, upright: turned as it is (Italic's after, as they stand)
         if (rows := _by_hand(a, name)) and not a.pen.slant:

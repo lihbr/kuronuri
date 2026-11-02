@@ -1,15 +1,26 @@
 // Arrows drawn by hand on a grid, cell by cell (glyphs/arrows.py, _pixels):
 // pixelated, the heads of pairs on 100 came out a cell over and under the
-// shaft, so ⇄ read as two crosses and ↹ as daggers.
+// shaft, so ⇄ read as two crosses and ↹ as daggers; Bold's heads, heavier,
+// filled in on 100, and met between the shafts of pairs on 70.
 //
 // A glyph is a line "grid styles character", styles separated by commas,
 // then its cells, top row first: "#" ink, "." air. It stands where the
 // arrow pixelates, centred on it, so its shafts stay on the rows of the
-// minus. The arrow's alt (ss01) is the same: on 100 their heads come out
-// alike. Upright, arrows that are it turned or mirrored (⇆ ⇅ ⇵ of ⇄, ⇋ of
-// ⇌) are its cells so. Italic's are drawn as they stand, each: slanted by
-// rows of cells, the swept barbs stood upright, and pixelating left blots
-// where they bridged. Lines starting with // are notes.
+// minus. The arrow's alt (ss01) is the same: these come out alike as
+// pixelated. Upright, arrows that are it turned or mirrored (⇆ ⇅ ⇵ of ⇄,
+// ⇋ of ⇌, ← ↑ ↓ of →) are its cells so. Italic's are drawn as they stand,
+// each: slanted by rows of cells, the swept barbs stood upright, and
+// pixelating left blots where they bridged. Lines starting with // are
+// notes.
+
+// Bold's →, as its pairs' heads: swept, its heads filled in and read as a
+// cross (← ↑ ↓ are it turned)
+100 Bold →
+..##..
+...##.
+######
+...##.
+..##..
 
 // Heads three cells out over two shafts: each barb swept back a cell, the
 // outer two cells out, the inner one, so the heads miss each other
@@ -91,15 +102,16 @@
 100 Bold ↸
 #####
 .....
+####.
 ###..
-###..
-##.#.
-...#.
+#.#..
+#..#.
 ....#
 
 // Italic: each arrow shifted as its shaft slants, a cell either way, so the
 // top one stands two cells right of the bottom one, as the rest of Italic's
-// pairs; shafts that stand lean, and the bars of ↹ with them
+// pairs; shafts that stand lean, and the bars of ↹ with them (its bottom
+// half its top turned over)
 100 Italic ⇄
 .....#..
 ......#.
@@ -131,12 +143,12 @@
 ..#....#..
 
 100 Italic ⇵
-...#....#..
-...#...###.
-...#....#.#
-#.#.....#..
-.###...#...
-..#....#...
+...#...#..
+...#..###.
+...#...#.#
+#.#....#..
+.###..#...
+..#...#...
 
 // Its harpoons' shafts are two rows apart, on rows slanting does not move
 100 Italic ⇌
@@ -163,10 +175,10 @@
 .#######.
 #..#.....
 .........
-......#.#
-.#######.
-......#.#
 .....#..#
+.#######.
+.....#.#.
+....#..#.
 
 100 Italic ↸
 ...#####
@@ -176,3 +188,27 @@
 .#.#....
 ....#...
 ....#...
+
+// Bold's pairs on 70: swept, their heads met between the shafts; so only
+// their outer barbs are, the inner ones are Regular's (⇆ ⇅ ⇵ turned)
+70 Bold ⇄
+....##..
+....###.
+########
+.....##.
+..#..#..
+.##.....
+########
+.###....
+..##....
+
+70 Bold ↹
+#..##.....
+#.###.....
+#########.
+#.##......
+#..#..#..#
+......##.#
+.#########
+.....###.#
+.....##..#

@@ -1,13 +1,15 @@
 // Enclosed glyphs drawn by hand on a grid, cell by cell (glyphs/enclosed.py,
 // by_cells): pixelated, they read as other glyphs, and every fallback ran
-// into their enclosure.
+// into their enclosure; or, drawn anew, they pixelate worse than before, and
+// keep the cells approved before.
 //
 // A glyph is a line "grid styles character" (styles separated by commas),
 // then its cells, top row first: "#" ink, "." air. Its enclosure is as the
 // build pixelates it, cell for cell, and spans the whole block, so the
 // block sits where it does; the cells inside it are the content. The build
-// checks the enclosure, and draws the glyph so on that grid alone. Lines
-// starting with // are notes.
+// checks the enclosure, and draws the glyph so on that grid alone. A word
+// without an enclosure (㎏) says where its bottom left cell is: "x,y" after
+// its character, in cells. Lines starting with // are notes.
 
 // Bold's 🅆 read as P: a W, its strokes down thick, up thin, as Redaction's
 70 Bold 🅆
@@ -50,3 +52,62 @@
 #........#
 #........#
 ##########
+
+// Bold's ⓖ drawn anew (its carving open) lost the right of its lower loop
+// on 70 and read as E: its cells as before
+70 Bold ⓖ
+....####....
+..##....##..
+.#........#.
+.#...###..#.
+#...#..#...#
+#....##....#
+#...###....#
+#...#.##...#
+.#..##.#..#.
+.#........#.
+..##....##..
+....####....
+
+// Regular's ⓨ drawn anew fell a row on 50, its serifs gone but a cell
+// left alone above: its cells as before
+50 Regular ⓨ
+......######......
+....##......##....
+...#..........#...
+..#............#..
+.#....###..##...#.
+.#.....##..#....#.
+#.......#..#.....#
+#.......###......#
+#........##......#
+#........#.......#
+#........#.......#
+#.....#.#........#
+.#.....#........#.
+.#..............#.
+..#............#..
+...#..........#...
+....##......##....
+......######......
+
+// Words of Bold drawn anew moved a little, as their letters are spaced by
+// their ink: ㎏'s g lost its ear and its k a serif on 50, ㎳'s m its top on
+// 70. Their cells as before
+50 Bold ㎏ 4,3
+##...........
+##...........
+##..##..#####
+##..#..#..#..
+##.#...#..##.
+#####..####..
+##.###.#.....
+.##..#.#####.
+......##...#.
+.......####..
+
+70 Bold ㎳ 3,3
+.###...#
+#.#.#.#.
+#.#.#..#
+.#.####.

@@ -59,7 +59,9 @@ or a stroke thinner than a cell drops out, it is emboldened a little
 drawing as its pixels come (_liken); on 35 to 70, a few that read as
 other glyphs are drawn as before group 4 (EMBOLDENED), pixelated with
 their enclosure, and where that ran into it too (Bold's 🅆 Ⓦ, Italic's 🅆
-on 70), they are drawn by hand, cell by cell (CELLS, by_cells). On 100
+on 70), they are drawn by hand, cell by cell (CELLS, by_cells), as are a
+few drawn anew by hand that pixelate worse than before (Bold's ⓖ on 70,
+Regular's ⓨ on 50), as before. On 100
 (COARSEST), all content is emboldened: from Bold thinned in an upright
 Regular, which keeps its carving.
 
@@ -1220,21 +1222,36 @@ def by_cells():
 def _cells(kind, frame, rows, grid):
     """A glyph of `rows` (by_cells), placed on its enclosure `frame` (a path)
     pixelated on the grid: the block spans it, whose cells it keeps (or
-    those it is cut out of, a disc or a block)."""
+    those it is cut out of, a disc or a block). Put in it as _pixelated
+    puts content, so cells as before make the glyph as before. A word
+    without an enclosure (㎏) stands where its rows say (`at`), traced as
+    pixelating traces it."""
+    if rows.at is not None:
+        left, bottom = rows.at
+        on = np.array([[v == "#" for v in line] for line in rows])
+        pen = TTGlyphPen(None)
+        for contour in pixel._trace(on):
+            pen.moveTo(((left + contour[0][0]) * grid, (bottom + len(rows) + contour[0][1]) * grid))
+            for x, y in contour[1:]:
+                pen.lineTo(((left + x) * grid, (bottom + len(rows) + y) * grid))
+            pen.closePath()
+        return pen.glyph()
     g = pixelate_glyphs({kind: glyph(frame)}, grid)[kind]
     on, (left, top), _ = cells(g, grid)
     if on.shape != (len(rows), len(rows[0])) or any(len(r) != len(rows[0]) for r in rows):
         raise ValueError(f"{kind} drawn by hand on {grid} is not as big as its enclosure")
-    ink = {(c, r) for r, line in enumerate(rows) for c, v in enumerate(line) if v == "#"}
-    ring = {(c, r) for r, c in zip(*np.nonzero(on))}
-    if not (ink <= ring if kind in NEGATIVE else ring <= ink):
+    ink = np.array([[v == "#" for v in line] for line in rows])
+    if not ((ink <= on) if kind in NEGATIVE else (on <= ink)).all():
         raise ValueError(f"{kind} drawn by hand on {grid} is not its enclosure as built")
-    return glyph(
-        union_paths(
-            rect((left + c) * grid, (top - r - 1) * grid, (left + c + 1) * grid, (top - r) * grid)
-            for c, r in ink
-        )
-    )
+    content, ring = pathops.Path(), pathops.Path()
+    g.draw(pathops.PathPen(ring), None)
+    pen = pathops.PathPen(content)
+    for contour in pixel._trace(on ^ ink):
+        pen.moveTo(((left + contour[0][0]) * grid, (top + contour[0][1]) * grid))
+        for x, y in contour[1:]:
+            pen.lineTo(((left + x) * grid, (top + y) * grid))
+        pen.closePath()
+    return glyph(_put(kind, ring, content))
 
 
 def add_glyphs(font, smooth, grid=None):
