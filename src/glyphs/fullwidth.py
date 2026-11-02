@@ -12,11 +12,16 @@ JP's: ， and ． moved to the top right, ： and ＝ turned a quarter, which
 `vert` and `vrt2` swap in. The other punctuation that turns in vertical text
 stays Noto Serif JP's (（ becomes ︵), as do ～ and ＿.
 
-〒 is T with a bar as long and thick as its own above it, the stem
-shortened to stand on the baseline still: Redaction's own pieces, so in the
-numbered variants it keeps MCKL's pixels.
+〒 is drawn by hand from T (shapes.drawn): its top again above it, the
+bars as far apart as Noto Serif JP's, their beaks cut short of the gap so
+they read as a pair. It stands upright in Italic too, as Japanese does:
+Italic's T unslanted, its stem as thick as its slanted one. On 10 to 70 it
+is pixelated where in a cell it falls best, its bars whole cells apart so
+they come out alike; on 100 it is cut from MCKL's pixel T, whose bar row is
+carved there, its lower bar laid straight as the top one.
 """
 
+import numpy as np
 import pathops
 from fontTools.otlLib import builder as otl
 from fontTools.pens.ttGlyphPen import TTGlyphPen
@@ -24,7 +29,21 @@ from fontTools.pens.ttGlyphPen import TTGlyphPen
 import layout
 import pixel
 
-from .shapes import add, composite, glyph, path, rect, runs, slope, union_paths
+from .shapes import (
+    _placed,
+    _regions,
+    add,
+    cells,
+    composite,
+    drawn,
+    glyph,
+    path,
+    rect,
+    runs,
+    slope,
+    union_paths,
+    widths,
+)
 
 ASCII = "!\"#$%&'*+/0123456789;<>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^`abcdefghijklmnopqrstuvwxyz"
 # fullwidth code point: the character it is the fullwidth form of
@@ -48,7 +67,9 @@ PUNCTUATION = {
 VERTICAL = {f"uni{cp:04X}": f"uni{cp:04X}.vert" for cp, (*_, v) in PUNCTUATION.items() if v}
 TURN_AROUND = (500, 380)  # middle of the ideographic em box, which turned forms turn about
 POSTAL = 0x3012
-GAP = 0.18  # between the bars of 〒, over its height
+GAP = 0.18  # between the bars of 〒 cut from T, over its height
+STEM = 0.3  # of the height of 〒 and T, where their stems are measured on a grid
+CUT = (100,)  # grids 〒 is cut from MCKL's pixel T on, not pixelated from its drawing
 CODEPOINTS = {cp: f"uni{cp:04X}" for cp in [*SOURCES, *HALFWIDTH, *PUNCTUATION, POSTAL]}
 ALTERNATES = []
 SAMPLES = [
@@ -110,6 +131,65 @@ def add_features(font):
 
 
 def _postal(font, smooth, grid, em):
+    """〒 of `font`, centred in `em`: drawn by hand from its T (shapes.drawn),
+    on a grid pixelated where in a cell it falls best, of the spots where
+    its stem is as many cells across as MCKL's T (across its slant), its
+    pixels join along edges (_square) and its beaks come out even (_even);
+    on CUT, or without a drawing, cut from T (_cut)."""
+    hand = drawn(smooth["name"].getDebugName(2)).get(chr(POSTAL))
+    if hand is None or grid in CUT:
+        return _cut(font, smooth, grid, em)
+    g = grid or 1
+    p = hand[0]
+    if grid:
+        # The bars as far apart as whole cells, so they fall in them alike
+        top, lower = sorted(p.contours, key=lambda c: -c.bounds[1])
+        drop = top.bounds[3] - lower.bounds[3]
+        p = union_paths([top.transform(1, 0, 0, 1, 0, pixel.snap(drop, g) - drop), lower])
+    left, _, right, _ = p.bounds
+    out = glyph(p.transform(1, 0, 0, 1, pixel.snap((em - right - left) / 2, g), 0))
+    if grid:
+        t = font["glyf"][font.getBestCmap()[ord("T")]]
+        t.recalcBounds(font["glyf"])
+        rows, theirs = (t.yMin, t.yMax), widths(cells(t, grid)[0])
+        placed = [o[2] for o in _placed({"〒": out}, grid, rows, theirs, False, None, True)["〒"]]
+        y = (t.yMax - t.yMin) * STEM
+        # as thick as T's measured across its slant, as 〒 stands upright
+        stem = [pixel.snap(w / (1 + slope(smooth) ** 2) ** 0.5, g) for w in _across(t, y)]
+        out = min(
+            placed,
+            key=lambda o: (_across(o, y) != stem, not _square(o, grid), not _even(o, grid)),
+        )
+        out.recalcBounds(None)
+        out.coordinates.translate((pixel.snap((em - out.xMax - out.xMin) / 2, g), 0))
+    return out
+
+
+def _across(g, y):
+    """How wide the stroke of pixel glyph `g` is at height `y`: its stem."""
+    p = pathops.Path()
+    g.draw(pathops.PathPen(p), None)
+    return [b - a for a, b in runs(p, y=y)]
+
+
+def _even(g, grid):
+    """Whether the top bar of pixel glyph `g`, its rows down to the gap,
+    comes out as even as drawn: its beaks as wide as each other, under it."""
+    on = cells(g, grid)[0]
+    bar = on[: np.argmin(on.any(axis=1))]
+    (cols,) = np.nonzero(bar[0])
+    inside = bar[:, cols[0] : cols[-1] + 1]
+    return inside.sum() == bar.sum() and (inside == inside[:, ::-1]).all()
+
+
+def _square(g, grid):
+    """Whether the pixels of `g` that touch join along an edge, not only at a
+    corner: a beak cell beside its bar, not off its end."""
+    on, _, (pieces, _, _) = cells(g, grid)
+    return len(_regions(np.pad(on, 1), True, ((0, 1), (1, 0), (0, -1), (-1, 0)))) == pieces
+
+
+def _cut(font, smooth, grid, em):
     """〒 from the T of `font`: its bar again above it, as far apart as in
     Noto Serif JP's (a little less than a fifth of its height), the stem cut
     as much shorter, along the slant, centred in `em`."""
@@ -126,14 +206,16 @@ def _postal(font, smooth, grid, em):
     def clip(bottom, top):
         return pathops.op(t, rect(x0 - 1, bottom, x1 + 1, top), pathops.PathOp.INTERSECTION)
 
-    # The bar again: straight, as long as T's, as thick (cut out of T, its
-    # ends would bring a little of the beaks along)
+    # Both bars straight, as long as T's, as thick: cut out of T, the top's
+    # ends would bring a little of the beaks along, and on 100, where MCKL
+    # carves T's bar row by the stem, the lower one would come in pieces
     a, b = runs(t, y=y1 - thick / 2)[0][0], runs(t, y=y1 - thick / 2)[-1][1]
     p = union_paths(
         [
             rect(a, y1 - thick, b, y1),
             clip(cut, y1).transform(1, 0, 0, 1, shift, -drop),
             clip(y0 - 1, cut - drop),
+            rect(a + shift, y1 - thick - drop, b + shift, y1 - drop),
         ]
     )
     left, _, right, _ = p.bounds

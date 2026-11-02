@@ -2,14 +2,11 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Italic's enclosed R and W (src/glyphs/drawn), drawn heavier: thickened by
-# hand as before, then moved further as Redaction's upright R and W are from
-# Regular to Bold, slanted, as heavy as the capitals that blend. Each in its
-# ring, disc and square, then those neighbours.
-Italic: Ⓡ 🅡 🅁 Ⓦ 🅦 🅆 🄬
-Italic: Ⓟ Ⓑ Ⓓ Ⓥ Ⓧ
+# 〒 drawn by hand from T (src/glyphs/drawn): T's top again above it, as far
+# apart as Noto's bars, both beaks cut short so the bars read as a pair, the
+# stem and foot T's. Upright in Italic, as the Japanese around it is. On 10
+# to 70 pixelated, its bars whole cells apart; on 100 cut from MCKL's T, its
+# lower bar now whole in Regular and Bold. Then its neighbours: T, Ｔ, 丁.
+*: 〒 T Ｔ 丁
 
-# 🄬 is Italic's R in every style.
-*: 🄬
-
-text: Week Ⓦ: Ⓡ by Ⓟ Ⓑ Ⓓ, Ⓦ by Ⓥ Ⓧ — 🅡 🅦 🅁 🅆 🄬 — 第Ⓦ週、ⓇをⓅⒷⒹの隣で、ⓌをⓋⓍの隣で確かめる。🄬
+text: 〒100-0001 東京都千代田区千代田1-1、〒530-0001 大阪府大阪市北区梅田3-1-1、〒060-0001 北海道札幌市中央区。TOKYO 〒 丁目 Ｔ

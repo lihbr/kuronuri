@@ -15,9 +15,10 @@
   Redaction's glyph centred in the em; Roman numerals, ‼ and ⑴ are as wide
   as what they are made of, set with kerning; enclosed numbers and letters
   are centred on the em box.
-- Every outline drawn by hand for enclosed content (glyphs/drawn) loads,
-  is used, has the pieces and counters of Redaction's glyph, and no
-  self-intersections.
+- Every outline drawn by hand (glyphs/drawn) loads, is used, and has no
+  self-intersections: enclosed content has the pieces and counters of
+  Redaction's glyph; 〒 stands upright, as tall as T, its two bars and stem
+  as thick as T's (Italic's measured across its slant), in two pieces.
 - No two superscript letters (ª º, those `ordn` raises, the c of ℅) are
   drawn alike, but on 100, where they are three cells high: there c and e
   have the same placements, and come out alike.
@@ -37,6 +38,7 @@ from pathlib import Path
 
 import numpy as np
 import ots
+import pathops
 import uharfbuzz as hb
 from fontTools.pens.basePen import BasePen
 from fontTools.pens.boundsPen import BoundsPen
@@ -48,7 +50,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
 from family import STYLES, redaction  # noqa: E402
 from glyphs import enclosed, fullwidth, numerals, punctuation  # noqa: E402
-from glyphs.shapes import DRAWN, _pieces, path  # noqa: E402
+from glyphs.shapes import DRAWN, _pieces, drawn, path, runs, slope  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
@@ -291,26 +293,70 @@ def crossings(p):
 
 
 def check_hand():
-    """Every outline drawn by hand (enclosed.by_hand) loads, is used (it is
-    content of an enclosure, and made heavier so), has the pieces and
-    counters of Redaction's glyph, and no self-intersections."""
+    """Every outline drawn by hand (shapes.drawn) loads, is used, and does not
+    cross itself: enclosed content (enclosed.by_hand) is content of an
+    enclosure, made heavier so, with the pieces and counters of Redaction's
+    glyph; 〒 is fullwidth's (check_postal)."""
     problems = []
     used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
+    postal = chr(fullwidth.POSTAL)
     for style in STYLES:
         ufo = DRAWN / f"{style}.ufo"
-        hand = enclosed.by_hand(style)
-        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(hand):
+        every, hand = drawn(style), enclosed.by_hand(style)
+        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(every):
             problems.append(f"{ufo.name}: not every glyph loads, with a code point")
         font = redaction(None, style)
+        for c in sorted(set(every) - set(hand) - {postal}):
+            problems.append(f"{ufo.name}: {c} is not used")
         for c, (p, amount) in hand.items():
             plan = (0, enclosed._limit(style, c), 0)
             if c not in used or enclosed._heavy(font, c, plan, enclosed._of(c))[1] != "drawn":
                 problems.append(f"{ufo.name}: {c} is not used")
             if not amount > 0 or _pieces(p) != _pieces(path(font, c)):
                 problems.append(f"{ufo.name}: {c} is not Redaction's made heavier")
+        for c, (p, _) in every.items():
             if crossed := crossings(p):
                 problems.append(f"{ufo.name}: {c} crosses itself ({crossed})")
+        if postal in every:
+            problems += [f"{ufo.name}: 〒 {p}" for p in check_postal(font, every[postal][0])]
     return problems
+
+
+def check_postal(font, p):
+    """〒 drawn by hand, `p`, of `font`, a Redaction style, is fullwidth's:
+    as drawn in its smooth font, centred; upright, as tall as T, in two
+    pieces without counters, its two bars as thick as T's, its stem as T's
+    measured across (Italic's slanted)."""
+    problems = []
+    built = pathops.Path()
+    fullwidth._postal(font, font, None, 1000).draw(pathops.PathPen(built), None)
+    if round(abs(built.area)) != round(abs(p.area)) or built.bounds[1::2] != p.bounds[1::2]:
+        problems.append("is not used")
+    t = path(font, "T")
+    if p.bounds[1::2] != t.bounds[1::2]:
+        problems.append("is not as tall as T")
+    if _pieces(p) != (2, 0):
+        problems.append("is not two pieces")
+    top = t.bounds[3]
+    bar = top - max(y for _, y in path_points(t) if y < top)
+    x0, _, x1, _ = p.bounds
+    bars = [r for r in runs(p, x=x0 + (x1 - x0) / 4) if r[0] > p.bounds[1]]  # not the foot
+    if len(bars) != 2 or any(abs(b - a - bar) > 1 for a, b in bars):
+        return [*problems, f"bars are not as thick as T's ({bar:.0f})"]
+    below = bars[0][0]
+    a, b = runs(t, y=below / 2)[0]
+    across = (b - a) / (1 + slope(font) ** 2) ** 0.5
+    stems = [runs(p, y=below * k) for k in (0.3, 0.7)]
+    if any(len(r) != 1 for r in stems) or stems[0] != stems[1]:
+        problems.append("does not stand upright")
+    elif abs(stems[0][0][1] - stems[0][0][0] - across) > 2:
+        problems.append(f"stem is not as thick as T's ({across:.0f})")
+    return problems
+
+
+def path_points(p):
+    """The points of path `p`, on and off its curves."""
+    return [pt for _, pts in p.segments for pt in pts]
 
 
 def check_slice(task):

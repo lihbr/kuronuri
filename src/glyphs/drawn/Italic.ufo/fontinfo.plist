@@ -5,7 +5,7 @@
     <key>familyName</key>
     <string>Kuronuri drawn</string>
     <key>note</key>
-    <string>Enclosed content drawn by hand from Redaction's own (glyphs/enclosed.py), in its units, made heavier, carving open</string>
+    <string>Glyphs drawn by hand from Redaction's own, in its units: enclosed content made heavier, carving open (glyphs/enclosed.py), and 〒 from its T (glyphs/fullwidth.py)</string>
     <key>styleName</key>
     <string>Italic</string>
     <key>unitsPerEm</key>

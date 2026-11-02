@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni3012" format="2">
+  <advance width="1000"/>
+  <unicode hex="3012"/>
+  <outline>
+    <contour>
+      <point x="10" y="700" type="line"/>
+      <point x="649" y="700" type="line"/>
+      <point x="655" y="594" type="line"/>
+      <point x="622" y="594" type="line"/>
+      <point x="614" y="614" type="line"/>
+      <point x="604" y="638"/>
+      <point x="566" y="659"/>
+      <point x="533" y="659" type="qcurve"/>
+      <point x="126" y="659" type="line"/>
+      <point x="93" y="659"/>
+      <point x="55" y="638"/>
+      <point x="45" y="614" type="qcurve"/>
+      <point x="37" y="594" type="line"/>
+      <point x="4" y="594" type="line"/>
+    </contour>
+    <contour>
+      <point x="10" y="504" type="line"/>
+      <point x="649" y="504" type="line"/>
+      <point x="655" y="398" type="line"/>
+      <point x="622" y="398" type="line"/>
+      <point x="614" y="418" type="line"/>
+      <point x="604" y="442"/>
+      <point x="566" y="463"/>
+      <point x="533" y="463" type="qcurve"/>
+      <point x="347" y="463" type="line"/>
+      <point x="347" y="443" type="line"/>
+      <point x="383" y="443" type="line"/>
+      <point x="383" y="105" type="line"/>
+      <point x="383" y="71"/>
+      <point x="419" y="34"/>
+      <point x="454" y="31" type="qcurve"/>
+      <point x="477" y="29" type="line"/>
+      <point x="477" y="0" type="line"/>
+      <point x="183" y="0" type="line"/>
+      <point x="183" y="29" type="line"/>
+      <point x="206" y="31" type="line"/>
+      <point x="241" y="34"/>
+      <point x="277" y="71"/>
+      <point x="277" y="105" type="qcurve"/>
+      <point x="277" y="463" type="line"/>
+      <point x="126" y="463" type="line"/>
+      <point x="93" y="463"/>
+      <point x="55" y="442"/>
+      <point x="45" y="418" type="qcurve"/>
+      <point x="37" y="398" type="line"/>
+      <point x="4" y="398" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction T</string>
+    </dict>
+  </lib>
+</glyph>
