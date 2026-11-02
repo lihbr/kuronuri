@@ -297,17 +297,37 @@ def check_hand():
     """Every outline drawn by hand (shapes.drawn) loads, is used, and does not
     cross itself: enclosed content (enclosed.by_hand) is content of an
     enclosure, made heavier so, with the pieces and counters of Redaction's
-    glyph; 〒 is fullwidth's (check_postal); the owner's arrow head is
-    arrows' (check_arrows)."""
+    glyph, and slanted content drawn for another style than Italic's (Bold's
+    🄬) is used there, of Italic's glyph; 〒 is fullwidth's (check_postal);
+    the owner's arrow head is arrows' (check_arrows)."""
     problems = []
     used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
+    slanted = {
+        c for _, contents, _, s in enclosed.ENCLOSURES if s for t in contents.values() for c in t
+    }
     postal = chr(fullwidth.POSTAL)
+    italic = redaction(None, "Italic")
     for style in STYLES:
         ufo = DRAWN / f"{style}.ufo"
         every, hand = drawn(style), enclosed.by_hand(style)
-        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(every):
+        theirs = enclosed.by_hand(style, True)
+        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(every) + len(
+            drawn(style, True)
+        ):
             problems.append(f"{ufo.name}: not every glyph loads, with a code point")
         font = redaction(None, style)
+        for c, (p, amount) in theirs.items():
+            plan = (0, enclosed._limit("Italic", c), 0)
+            q, route = enclosed._heavy(italic, c, plan, enclosed._of(c), style)
+            k = (q.bounds[3] - q.bounds[1]) / (p.bounds[3] - p.bounds[1])
+            if style == "Italic" or c not in slanted or route != "drawn":
+                problems.append(f"{ufo.name}: slanted {c} is not used")
+            elif abs(abs(q.area) - abs(p.area) * k * k) > 1:
+                problems.append(f"{ufo.name}: slanted {c} is not the one drawn for it")
+            if not amount > 0 or _pieces(p) != _pieces(path(italic, c)):
+                problems.append(f"{ufo.name}: slanted {c} is not Redaction's made heavier")
+            if crossed := crossings(p):
+                problems.append(f"{ufo.name}: slanted {c} crosses itself ({crossed})")
         for c in sorted(set(every) - set(hand) - {postal} - set(arrows.SOURCES)):
             problems.append(f"{ufo.name}: {c} is not used")
         for c, (p, amount) in hand.items():

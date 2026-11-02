@@ -37,7 +37,10 @@ R and W, lighter so than its capitals that blend, are then moved further,
 as Redaction's upright R and W are from Regular to Bold, slanted, as far
 as makes them as heavy as those: their slits move with them as Bold's
 do, their tips (W's, R's tail) as pointed as Redaction's. Bold's 🄫 🄬
-are Italic's C R, as heavy as Bold's content where they blend (C).
+are Italic's C R, as heavy as Bold's content where they blend (C); its R,
+Italic's drawn, is moved further still for Bold alone (by_hand, slanted),
+as heavy as its Ⓡ, its slits as much wider than Redaction's as Bold's
+are of Regular's: so _heavy knows the style of the enclosure.
 Each glyph is shrunk back as tall as its own. Glyphs are spaced as near as
 typed where their ink comes nearest, any way (_nearest); figures as far
 apart as they look on average, all alike (_optically). Content is as big
@@ -297,21 +300,21 @@ def blends(text):
     return any(c.isalnum() for c in text)
 
 
-def heavier(font, text, plan, tight=1):
+def heavier(font, text, plan, tight=1, style=None):
     """`text` in `font` (smooth), Redaction's own, each glyph made heavier
-    as `plan` says (_heavy), spaced as typed around their own ink
+    as `plan` says (_heavy), for an enclosure of `style`, spaced as typed around their own ink
     (_spaced), its lines (Hi-/Res) one under the other, as content() sets
     them, each centred on x = 0, each glyph as tall as `font`'s: its n, I
     or 1 (_of) as tall as drawn, its letters all one height."""
     out = pathops.Path()
     for i, line in enumerate(text.split("\n")):
-        p = _spaced(font, line, plan, _of(text), tight)
+        p = _spaced(font, line, plan, _of(text), tight, style)
         down = i * font["OS/2"].sCapHeight * LINES
         out.addPath(p.transform(1, 0, 0, 1, -(p.bounds[0] + p.bounds[2]) / 2, -down))
     return pathops.op(out, pathops.Path(), pathops.PathOp.UNION)
 
 
-def _spaced(font, line, plan, of, tight=1):
+def _spaced(font, line, plan, of, tight=1, style=None):
     """`line` of `font`, each glyph made heavier (_heavy), its ink as near
     the last's as typed (_nearest): heavier, glyphs grow wider than their
     advances, and toward each other where they come nearest, not where
@@ -323,7 +326,7 @@ def _spaced(font, line, plan, of, tight=1):
     ):
         if path(font, char).bounds == (0, 0, 0, 0):  # a space
             continue
-        p = _heavy(font, char, plan, of)[0].transform(1, 0, 0, 1, x, y)
+        p = _heavy(font, char, plan, of, style)[0].transform(1, 0, 0, 1, x, y)
         if last is not None and line.isdigit():
             # Figures, as far apart as they look on average, all alike, but
             # no nearer than NEAREST of their nearest ink typed: ㉔'s 4 ran
@@ -548,25 +551,32 @@ def _blended(font, char, t):
 
 
 @functools.cache
-def by_hand(style):
+def by_hand(style, slanted=False):
     """{character: (outline, amount)} of the glyphs of `style` drawn by hand
     (DRAWN): Redaction's own made heavier, its outline moved out by
     `amount`, as thickened, but its carving cut open again as MCKL cut it,
     which thickening narrows (Italic's lowercase, Q W w y, Bold's g s),
-    and Italic's R W
-    moved further as blending moves the upright glyph, as tall."""
-    return {c: (p, lib[AMOUNT]) for c, (p, lib) in drawn(style).items() if AMOUNT in lib}
+    and Italic's R W moved further as blending moves the upright glyph, as
+    tall. Or, `slanted`, those of its Italic drawn for `style` (Bold's 🄬):
+    Italic's R moved further still, as heavy as `style`'s capitals."""
+    return {c: (p, lib[AMOUNT]) for c, (p, lib) in drawn(style, slanted).items() if AMOUNT in lib}
 
 
-def _by_hand(font, char):
-    """`char` of `font` drawn by hand (by_hand), or None."""
-    return by_hand(font["name"].getDebugName(2)).get(char)
+def _by_hand(font, char, style=None):
+    """`char` of `font` drawn by hand (by_hand), or None: for an enclosure
+    of `style`, another than `font`'s (Bold's 🄬, of Italic's R), as drawn
+    for it, if it is."""
+    own = font["name"].getDebugName(2)
+    if style not in (None, own) and char in by_hand(style, True):
+        return by_hand(style, True)[char]
+    return by_hand(own).get(char)
 
 
-def _heavy(font, char, plan, of):
+def _heavy(font, char, plan, of, style=None):
     """`char` of `font` made heavier as `plan` says (_plan), as tall as its
-    own (`of` of `font` as tall as drawn), and how: drawn by hand (by_hand),
-    blended (_blended), or where it does not blend, thickened (_thick).
+    own (`of` of `font` as tall as drawn), in an enclosure of `style`, and
+    how: drawn by hand (by_hand, for `style`), blended (_blended), or where
+    it does not blend, thickened (_thick).
 
     A glyph drawn by hand is as heavy as `char` thickened as far as it goes
     (_limit), Italic's R W as heavy as its capitals blended (by_hand),
@@ -575,7 +585,7 @@ def _heavy(font, char, plan, of):
     as much, which opens its carving more."""
     t, amount, _ = plan
     h = _height(font, of)
-    hand = _by_hand(font, char)
+    hand = _by_hand(font, char, style)
     if hand is not None:
         p, moved = hand
         less = amount - _limit(font["name"].getDebugName(2), char)
@@ -797,7 +807,9 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
         for cp in heavy:
             ts[cp] = 0
             text, scale = contents[cp], scales[cp]
-            plans[cp], drawn[cp] = _heavier(*args, text, scale, shared[cp], cp, label, grid)
+            plans[cp], drawn[cp] = _heavier(
+                *args, text, scale, shared[cp], cp, label, grid, style=style
+            )
         # Heavier, wider than typed, past ROOM: shrunk, made heavier again
         # there, a set all together. Nearer its enclosure than CLEAR of its
         # stroke (⓾ ran into its inner ring, Italic's ⑳ touched its own), it
@@ -825,7 +837,11 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
                 box = "\n" in contents[cp] if centring else True
                 found = None
                 for tight in TIGHT if pair else (1,):
-                    q = drawn[cp] if tight == 1 else heavier(font, contents[cp], plans[cp], tight)
+                    q = (
+                        drawn[cp]
+                        if tight == 1
+                        else heavier(font, contents[cp], plans[cp], tight, style)
+                    )
                     for across in ACROSS:
                         if fits(q.transform(across, 0, 0, 1, 0, 0), at, box, centring):
                             found = tight, across
@@ -835,7 +851,7 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
                 shaped[cp] = found or (TIGHT[-1] if pair else 1, ACROSS[-1])
                 tight, across = shaped[cp]
                 if tight != 1:
-                    drawn[cp] = heavier(font, contents[cp], plans[cp], tight)
+                    drawn[cp] = heavier(font, contents[cp], plans[cp], tight, style)
                 q = drawn[cp].transform(across, 0, 0, 1, 0, 0)
                 if found is None:  # then shrunk
                     lo, hi = at * 0.7, at
@@ -862,7 +878,7 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
                 if cp in drawn:
                     tight = shaped.get(cp, (1,))[0]
                     plans[cp], drawn[cp] = _heavier(
-                        *args, contents[cp], less, shared[cp], cp, label, grid, tight
+                        *args, contents[cp], less, shared[cp], cp, label, grid, tight, style
                     )
                 if notes:
                     log(f"{notes} {style} {chr(cp)}: shrunk to {less:.3f}, heavier wider")
@@ -901,7 +917,7 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
         font, text, kind, scale, shape, plan, bolder, lighter = again[cp]
         tight, across, shift, box = shape or (1, 1, 0, "\n" in text)
         if cp not in redrawn:
-            redrawn[cp] = heavier(font, text, plan, tight)
+            redrawn[cp] = heavier(font, text, plan, tight, style)
         p = embolden(redrawn[cp], t * (bolder if t > 0 else lighter))
         p = p.transform(across, 0, 0, 1, 0, 0)
         return place(p, kind, scale, box, shift)
@@ -909,21 +925,21 @@ def _enclosed(smooth, em, radius, stroke, cy, blended=True, notes=None, embolden
     return enclosed, ts, redraw
 
 
-def _heavier(font, floor, n, slanted, text, scale, shared, cp, notes, grid, tight=1):
+def _heavier(font, floor, n, slanted, text, scale, shared, cp, notes, grid, tight=1, style=None):
     """How `text` of `font` is made heavier at `scale` (_plan), and it so
-    (heavier), logged where its carving caps its thickening, in the smooth
-    font."""
+    (heavier) in an enclosure of `style`, logged where its carving caps its
+    thickening, in the smooth font."""
     plan, want = _plan(font, text, scale, shared, floor, n, slanted)
     if notes and not grid:
         chars = [c for c in text if c != "\n" and path(font, c).bounds[2]]
-        routes = {c: _heavy(font, c, plan, _of(text))[1] for c in chars}
+        routes = {c: _heavy(font, c, plan, _of(text), style)[1] for c in chars}
         thick = "".join(c for c in chars if routes[c] == "thickened")
         if thick and plan[1] < want:
             log(f"{notes} {chr(cp)} {thick}: thickened {plan[1]:.1f}, capped from {want:.1f}")
         hand = "".join(c for c in chars if routes[c] == "drawn")
         if hand:
             log(f"{notes} {chr(cp)} {hand}: drawn")
-    return plan, heavier(font, text, plan, tight)
+    return plan, heavier(font, text, plan, tight, style)
 
 
 def _near(kind, frame, cx, cy, radius, apart, place, grid=None):

@@ -30,6 +30,9 @@ from family import redaction
 # Glyphs drawn by hand from Redaction's own (drawn): a UFO a style,
 # <Style>.ufo, in its units, at the points its glyf stores
 DRAWN = Path(__file__).resolve().parent / "drawn"
+# In a style's UFO, a glyph of its Italic drawn for it (Bold's 🄬, of Italic's
+# R), its lib so marked: not the style's own glyph of that code point
+SLANTED = "com.lihbr.kuronuri.slanted"
 CUT = 14  # half the width of Redaction's carving (20 to 27 across), and some
 SLIVER = 3  # half the width of the thinnest of it: thinner, it is a sliver along a concave edge
 SIDE = 0.8  # of ink along a gap, for it to run along a stroke
@@ -74,9 +77,10 @@ def path(font, char, transform=(1, 0, 0, 1, 0, 0)):
 
 
 @functools.cache
-def drawn(style):
+def drawn(style, slanted=False):
     """{character: (outline, lib)} of the glyphs drawn by hand for `style`, a
-    Redaction style (DRAWN), each by its code points: {} without a UFO."""
+    Redaction style (DRAWN), each by its code points: {} without a UFO. Or,
+    `slanted`, those of its Italic drawn for it (SLANTED)."""
     ufo = DRAWN / f"{style}.ufo"
     if not ufo.exists():
         return {}
@@ -85,7 +89,9 @@ def drawn(style):
     for name in glyphs.keys():
         g = glyphs[name]
         p = pathops.Path()
-        g.drawPoints(PointToSegmentPen(pathops.PathPen(p)))
+        g.drawPoints(PointToSegmentPen(pathops.PathPen(p)))  # and reads its lib
+        if bool(g.lib.get(SLANTED)) != slanted:
+            continue
         for cp in g.unicodes:
             out[chr(cp)] = p, g.lib
     return out
