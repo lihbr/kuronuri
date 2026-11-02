@@ -1,0 +1,51 @@
+// Enclosed glyphs drawn by hand on a grid, cell by cell (glyphs/enclosed.py,
+// by_cells): pixelated, they read as other glyphs, and every fallback ran
+// into their enclosure.
+//
+// A glyph is a line "grid style character", then its cells, top row first:
+// "#" ink, "." air. Its enclosure is as the build pixelates it, cell for
+// cell, and spans the whole block, so the block sits where it does; the
+// cells inside it are the content. The build checks the enclosure, and
+// draws the glyph so on that grid alone. Lines starting with // are notes.
+
+// Bold's 🅆 read as P: a W, its strokes down thick, up thin, as Redaction's
+70 Bold 🅆
+##########
+#........#
+#........#
+#.##.#.#.#
+#.##.#.#.#
+#..##.##.#
+#..#..#..#
+#........#
+#........#
+##########
+
+// Bold's Ⓦ read as "TV": the same W, centred in the ring
+70 Bold Ⓦ
+....####....
+..##....##..
+.#........#.
+.#........#.
+#..##.#.#..#
+#..##.#.#..#
+#...##.##..#
+#...#..#...#
+.#........#.
+.#........#.
+..##....##..
+....####....
+
+// Italic's 🅆 read as a T over a v: a W of single strokes, its top a cell
+// to the right of its foot, as its 🅅 slants
+70 Italic 🅆
+##########
+#........#
+#........#
+#..#.#.#.#
+#..#.#.#.#
+#.#.#.#..#
+#..#.#...#
+#........#
+#........#
+##########

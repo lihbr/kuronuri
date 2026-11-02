@@ -15,6 +15,8 @@
   Redaction's glyph centred in the em; Roman numerals, ‼ and ⑴ are as wide
   as what they are made of, set with kerning; enclosed numbers and letters
   are centred on the em box.
+- Enclosed glyphs drawn by hand on a grid (glyphs/drawn/cells.txt) are so,
+  cell for cell, in the fonts of their grid and style.
 - Every outline drawn by hand (glyphs/drawn) loads, is used, and has no
   self-intersections: enclosed content has the pieces and counters of
   Redaction's glyph; 〒 stands upright, as tall as T, its two bars and stem
@@ -179,6 +181,7 @@ def check_font(path):
                 off += any(x % grid or y % grid for x, y in g.coordinates)
         if off:
             problems.append(f"{path.name}: {off} glyphs off the {grid}-unit grid")
+        problems += check_cells(path, font, grid)
     if missing := [chr(c) for c in KANA if c not in cmap]:
         problems.append(f"{path.name}: missing kana {''.join(missing)}")
     if missing := [chr(c) for c in glyphs.CODEPOINTS if c not in cmap]:
@@ -188,6 +191,29 @@ def check_font(path):
     if trimmed := [chr(c) for c in cmap if script(c) in ("Hang", "Bopo") or c in ligatures]:
         problems.append(f"{path.name}: {len(trimmed)} Hangul, Bopomofo or ligatures")
     problems += check_drawn(path, font)
+    return problems
+
+
+def check_cells(path, font, grid):
+    """Enclosed glyphs drawn by hand on `grid`, cell by cell
+    (enclosed.by_cells), are so in the font, of its style."""
+    style = path.stem.split("-")[1]
+    gs, cmap, problems = font.getGlyphSet(), font.getBestCmap(), []
+    for (g, s, char), rows in enclosed.by_cells().items():
+        if (g, s) != (grid, style):
+            continue
+        p = pathops.Path()
+        gs[cmap[ord(char)]].draw(pathops.PathPen(p, glyphSet=gs))
+        x0, _, _, y1 = p.bounds
+        cells = [
+            "".join(
+                "#" if p.contains((x0 + (c + 0.5) * grid, y1 - (r + 0.5) * grid)) else "."
+                for c in range(len(rows[0]))
+            )
+            for r in range(len(rows))
+        ]
+        if cells != rows or p.bounds[2] - x0 != len(rows[0]) * grid:
+            problems.append(f"{path.name}: {char} is not as drawn cell by cell")
     return problems
 
 

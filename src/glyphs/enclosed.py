@@ -58,8 +58,10 @@ or a stroke thinner than a cell drops out, it is emboldened a little
 (_ease). On 70, lowercase is placed, and emboldened, as like its smooth
 drawing as its pixels come (_liken); on 35 to 70, a few that read as
 other glyphs are drawn as before group 4 (EMBOLDENED), pixelated with
-their enclosure. On 100 (COARSEST), all content is emboldened: from Bold
-thinned in an upright Regular, which keeps its carving.
+their enclosure, and where that ran into it too (Bold's 🅆 Ⓦ, Italic's 🅆
+on 70), they are drawn by hand, cell by cell (CELLS, by_cells). On 100
+(COARSEST), all content is emboldened: from Bold thinned in an upright
+Regular, which keeps its carving.
 
 Parenthesized and full stop forms (⑴ ⒈ 🄁) are Redaction's glyphs as typed
 (components), as the Roman numerals are, and 🄯 is its © turned over, so in
@@ -79,6 +81,7 @@ import pixel
 from family import STYLES, log, redaction
 
 from .shapes import (
+    DRAWN,
     SHIFTS,
     THIN,
     _pieces,
@@ -111,6 +114,8 @@ from .shapes import (
 # Content drawn by hand (by_hand), in DRAWN: each glyph Redaction's own made
 # heavier, its lib saying how far
 AMOUNT = "com.lihbr.kuronuri.amount"  # how far out a drawn glyph's outline was moved
+# Enclosed glyphs drawn by hand on a grid, cell by cell (by_cells)
+CELLS = DRAWN / "cells.txt"
 # Least a drawn glyph is thinned by in a word (_heavy): _plan rounds its amount,
 # and thinned by a hair, skia-pathops lost the curve under Italic's k's serif
 HAIR = 0.1
@@ -180,9 +185,11 @@ LIKENED = (70,)
 # on 70, its e as ρ, h as λ, f without its bar, 🄼 and the letters of ㎁ ㎃
 # ㎄ ㎫ broken; Bold's Ⓜ as Ж, ⓗ a wedge on 70; the words of 🆋–🆏 gone on
 # 50 (Italic's) and 70. Re-checked drawn by hand (by_hand), on 70: Italic's
-# x as И, Regular's 🅆 as ?V; Italic's e h f z still read as said. Bold's 🅆
-# reads as P, and the R of Regular's and Italic's 🄬 as Л, but as before
-# they ran into their enclosure, as Bold's Ⓦ, Regular's 🅦, Italic's 🅆 blot.
+# x as И, Regular's 🅆 as ?V; Italic's e h f z still read as said. The R
+# of Regular's and Italic's 🄬 reads as Л, but as before it ran into its
+# enclosure, as Regular's 🅦 blots. Bold's 🅆 read as P, its Ⓦ as TV,
+# Italic's 🅆 as T over v, and ran into theirs as before: they are drawn
+# by hand, cell by cell (by_cells).
 EMBOLDENED = {
     35: {"Regular": "㎢㏇", "Italic": "㏞㎮㎧㎨"},
     50: {"Regular": "🅊🆋🆌🆍🆎🆏", "Italic": "㎮㎨ⓛⓣ④🆋🆌🆍🆎🆏"},
@@ -1202,6 +1209,43 @@ def enclosure(smooth, grid, kind):
     return _enclosure(kind, em / 2, cy, radius, stroke)[0]
 
 
+@functools.cache
+def by_cells():
+    """{(grid, style, character): rows} of the enclosed glyphs drawn by hand
+    on a grid (CELLS), each its cells, top row first, "#" ink, "." air."""
+    out, rows = {}, None
+    for line in CELLS.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("//"):
+            continue
+        if set(line) <= {"#", "."}:
+            rows.append(line)
+            continue
+        grid, style, char = line.split()
+        out[int(grid), style, char] = rows = []
+    return out
+
+
+def _cells(kind, frame, rows, grid):
+    """A glyph of `rows` (by_cells), placed on its enclosure `frame` (a path)
+    pixelated on the grid: the block spans it, whose cells it keeps (or
+    those it is cut out of, a disc or a block)."""
+    g = pixelate_glyphs({kind: glyph(frame)}, grid)[kind]
+    on, (left, top), _ = cells(g, grid)
+    if on.shape != (len(rows), len(rows[0])) or any(len(r) != len(rows[0]) for r in rows):
+        raise ValueError(f"{kind} drawn by hand on {grid} is not as big as its enclosure")
+    ink = {(c, r) for r, line in enumerate(rows) for c, v in enumerate(line) if v == "#"}
+    ring = {(c, r) for r, c in zip(*np.nonzero(on))}
+    if not (ink <= ring if kind in NEGATIVE else ring <= ink):
+        raise ValueError(f"{kind} drawn by hand on {grid} is not its enclosure as built")
+    return glyph(
+        union_paths(
+            rect((left + c) * grid, (top - r - 1) * grid, (left + c + 1) * grid, (top - r) * grid)
+            for c, r in ink
+        )
+    )
+
+
 def add_glyphs(font, smooth, grid=None):
     em, radius, stroke, cy = _layout(smooth, grid)
     blended = not grid or grid <= COARSEST
@@ -1216,6 +1260,11 @@ def add_glyphs(font, smooth, grid=None):
         emboldened |= {cp for cp in enclosed if cp not in ts}
         eased = (ts, redraw, f"{grid} {style}") if blended and grid in EASED else None
         glyphs = _pixelated(font, enclosed, glyphs, grid, eased, emboldened)
+        # Or drawn by hand, cell by cell, on this grid
+        for cp, (kind, frame, _) in enclosed.items():
+            rows = by_cells().get((grid, style, chr(cp)))
+            if rows:
+                glyphs[CODEPOINTS[cp]] = _cells(kind, frame, rows, grid)
     add(
         font, {name: (g, em) for name, g in glyphs.items()}, {cp: CODEPOINTS[cp] for cp in enclosed}
     )
