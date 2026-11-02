@@ -2,20 +2,14 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Enclosed content drawn by hand (src/glyphs/drawn): as heavy as thickened,
-# its slits and Q's tail gap cut open again as wide as MCKL's. Each drawn
-# letter in its ring and one other enclosure, then blended neighbours.
+# Italic's enclosed R and W (src/glyphs/drawn), drawn heavier: thickened by
+# hand as before, then moved further as Redaction's upright R and W are from
+# Regular to Bold, slanted, as heavy as the capitals that blend. Each in its
+# ring, disc and square, then those neighbours.
+Italic: Ⓡ 🅡 🅁 Ⓦ 🅦 🅆 🄬
+Italic: Ⓟ Ⓑ Ⓓ Ⓥ Ⓧ
+
 # 🄬 is Italic's R in every style.
-Regular: Ⓦ 🅦 ⓦ ㎽ Ⓠ 🅠 🄬   Ⓥ Ⓧ Ⓞ ⓥ ⓧ ⓞ
-Bold: Ⓦ 🅦 Ⓠ 🅠 🄬   Ⓥ Ⓧ Ⓞ ⓦ
-Italic: Ⓡ 🅡 Ⓦ 🅦 Ⓠ 🅠 🄬
-Italic: ⓐ ㎪ ⓓ ㍲ ⓔ ㋍ ⓕ ㎙ ⓗ ㏊ ⓚ ㎏ ⓜ ㎡ ⓝ ㎚ ⓡ ㎭ ⓤ ⓥ ㏜ ⓦ ⓧ ㏓ ⓨ ㏉ ⓩ ㎐
-Italic: ⓑ ⓒ ⓞ ⓟ ⓣ Ⓟ Ⓥ
+*: 🄬
 
-# Pixel fallbacks (70), drawn as before group 4: drawn by hand, Italic's ⓧ
-# read as И, Regular's 🅆 as ?V; Italic's ⓔ ⓗ ⓕ ⓩ keep theirs. Not taken,
-# as before they ran into their enclosure: Bold's 🅆 (reads P), 🄬 (Л)
-Regular: 🅆
-Bold: 🅆
-
-text: Week ⓦ: Ⓦ, Ⓠ and Ⓡ, 5 ㎏ at 10 ㎞ — ⓐⓓⓗⓚ ⓜⓝⓡⓤ ⓥⓦⓧⓨⓩ 🄬 🅆 — 第ⓦ週、Ⓠとⓡを確認し、5㎏を量る。
+text: Week Ⓦ: Ⓡ by Ⓟ Ⓑ Ⓓ, Ⓦ by Ⓥ Ⓧ — 🅡 🅦 🅁 🅆 🄬 — 第Ⓦ週、ⓇをⓅⒷⒹの隣で、ⓌをⓋⓍの隣で確かめる。🄬

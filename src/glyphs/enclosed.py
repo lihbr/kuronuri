@@ -30,8 +30,12 @@ half open and its counters and pieces stay (_cap), lowercase no further
 than its style's carved lowercase goes (_limit). Where that narrows
 MCKL's carving (Q W in every style, Italic's R and lowercase, Regular's
 w), it is drawn by hand instead, saved in DRAWN (by_hand): as heavy, its
-slits and the gap of Q's tail cut open again, as wide as MCKL's. Bold's
-🄫 🄬 are Italic's C R, as heavy as Bold's content where they blend (C).
+slits and the gap of Q's tail cut open again, as wide as MCKL's. Italic's
+R and W, lighter so than its capitals that blend, are then moved further,
+as Redaction's upright R and W are from Regular to Bold, slanted, as far
+as makes them as heavy as those: their slits move with them as Bold's
+do, their tips (W's, R's tail) as pointed as Redaction's. Bold's 🄫 🄬
+are Italic's C R, as heavy as Bold's content where they blend (C).
 Each glyph is shrunk back as tall as its own. Glyphs are spaced as near as
 typed where their ink comes nearest, any way (_nearest); figures as far
 apart as they look on average, all alike (_optically). Content is as big
@@ -549,7 +553,8 @@ def by_hand(style):
     """{character: (outline, amount)} of the glyphs of `style` drawn by hand
     (DRAWN): Redaction's own made heavier, its outline moved out by
     `amount`, as thickened, but its carving cut open again as MCKL cut it,
-    which thickening narrows (Italic's lowercase, Q W w)."""
+    which thickening narrows (Italic's lowercase, Q W w), and Italic's R W
+    moved further as blending moves the upright glyph, as tall."""
     ufo = DRAWN / f"{style}.ufo"
     if not ufo.exists():
         return {}
@@ -575,7 +580,8 @@ def _heavy(font, char, plan, of):
     blended (_blended), or where it does not blend, thickened (_thick).
 
     A glyph drawn by hand is as heavy as `char` thickened as far as it goes
-    (_limit), which every enclosure of it alone draws it; in a word thickened
+    (_limit), Italic's R W as heavy as its capitals blended (by_hand),
+    which every enclosure of it alone draws it; in a word thickened
     less, as the letters with it go (㎦ km³: as far as ³), it is thinned by
     as much, which opens its carving more."""
     t, amount, _ = plan
