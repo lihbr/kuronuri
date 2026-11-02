@@ -18,7 +18,8 @@
 - Every outline drawn by hand (glyphs/drawn) loads, is used, and has no
   self-intersections: enclosed content has the pieces and counters of
   Redaction's glyph; 〒 stands upright, as tall as T, its two bars and stem
-  as thick as T's (Italic's measured across its slant), in two pieces.
+  as thick as T's (Italic's measured across its slant), in two pieces; the
+  owner's arrow head is that of Regular's → as built, in one piece.
 - No two superscript letters (ª º, those `ordn` raises, the c of ℅) are
   drawn alike, but on 100, where they are three cells high: there c and e
   have the same placements, and come out alike.
@@ -49,7 +50,7 @@ from fontTools.unicodedata import script
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
 from family import STYLES, redaction  # noqa: E402
-from glyphs import enclosed, fullwidth, numerals, punctuation  # noqa: E402
+from glyphs import arrows, enclosed, fullwidth, numerals, punctuation  # noqa: E402
 from glyphs.shapes import DRAWN, _pieces, drawn, path, runs, slope  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
@@ -296,7 +297,8 @@ def check_hand():
     """Every outline drawn by hand (shapes.drawn) loads, is used, and does not
     cross itself: enclosed content (enclosed.by_hand) is content of an
     enclosure, made heavier so, with the pieces and counters of Redaction's
-    glyph; 〒 is fullwidth's (check_postal)."""
+    glyph; 〒 is fullwidth's (check_postal); the owner's arrow head is
+    arrows' (check_arrows)."""
     problems = []
     used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
     postal = chr(fullwidth.POSTAL)
@@ -306,7 +308,7 @@ def check_hand():
         if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(every):
             problems.append(f"{ufo.name}: not every glyph loads, with a code point")
         font = redaction(None, style)
-        for c in sorted(set(every) - set(hand) - {postal}):
+        for c in sorted(set(every) - set(hand) - {postal} - set(arrows.SOURCES)):
             problems.append(f"{ufo.name}: {c} is not used")
         for c, (p, amount) in hand.items():
             plan = (0, enclosed._limit(style, c), 0)
@@ -315,10 +317,39 @@ def check_hand():
             if not amount > 0 or _pieces(p) != _pieces(path(font, c)):
                 problems.append(f"{ufo.name}: {c} is not Redaction's made heavier")
         for c, (p, _) in every.items():
+            if c in arrows.SOURCES:  # as SVGs are filled, by their winding: → twists at its notch
+                p = pathops.simplify(p, clockwise=True)
             if crossed := crossings(p):
                 problems.append(f"{ufo.name}: {c} crosses itself ({crossed})")
         if postal in every:
             problems += [f"{ufo.name}: 〒 {p}" for p in check_postal(font, every[postal][0])]
+        if any(c in every for c in arrows.SOURCES):
+            problems += [f"{ufo.name}: {p}" for p in check_arrows(font, every)]
+    return problems
+
+
+def check_arrows(font, every):
+    """The owner's head of → (`every`, the glyphs drawn by hand for `font`, a
+    Redaction style) is in one piece, and that of its → as built: within
+    it, as tall; only in Regular."""
+    problems = []
+    if font["name"].getDebugName(2) != "Regular":
+        return [f"{c} is drawn in another style than Regular" for c in arrows.SOURCES]
+    built = arrows._paths(arrows.Arrows(arrows.Pen(font, font)))
+    for c, name in zip(arrows.SOURCES, ("arrowright",)):
+        if c not in every:
+            problems.append(f"{c} is missing")
+            continue
+        p = every[c][0]
+        if _pieces(p) != (1, 0):
+            problems.append(f"{c} is not one piece")
+        b = built[name]
+        x0, y0, x1, y1 = p.bounds
+        bx0, by0, bx1, by1 = b.bounds
+        p = p.transform(1, 0, 0, 1, bx1 - x1, 0)  # tips together
+        out = abs(pathops.op(p, b, pathops.PathOp.DIFFERENCE).area)
+        if out > 1 or abs((y1 - y0) - (by1 - by0)) > 1:  # as tall as its head
+            problems.append(f"{c} is not the head of {name} as built")
     return problems
 
 

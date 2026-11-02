@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="arrowright" format="2">
+  <advance width="335"/>
+  <unicode hex="2192"/>
+  <outline>
+    <contour>
+      <point x="4" y="565" type="line"/>
+      <point x="265" y="316" type="line"/>
+      <point x="265" y="314" type="line"/>
+      <point x="4" y="65" type="line"/>
+      <point x="0" y="68" type="line"/>
+      <point x="179" y="316" type="line"/>
+      <point x="179" y="314" type="line"/>
+      <point x="0" y="562" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>the owner's SVG tip, y flipped, scaled by 1.424, rounded</string>
+    </dict>
+  </lib>
+</glyph>
