@@ -1,0 +1,178 @@
+// Arrows drawn by hand on a grid, cell by cell (glyphs/arrows.py, _pixels):
+// pixelated, the heads of pairs on 100 came out a cell over and under the
+// shaft, so ⇄ read as two crosses and ↹ as daggers.
+//
+// A glyph is a line "grid styles character", styles separated by commas,
+// then its cells, top row first: "#" ink, "." air. It stands where the
+// arrow pixelates, centred on it, so its shafts stay on the rows of the
+// minus. The arrow's alt (ss01) is the same: on 100 their heads come out
+// alike. Upright, arrows that are it turned or mirrored (⇆ ⇅ ⇵ of ⇄, ⇋ of
+// ⇌) are its cells so. Italic's are drawn as they stand, each: slanted by
+// rows of cells, the swept barbs stood upright, and pixelating left blots
+// where they bridged. Lines starting with // are notes.
+
+// Heads three cells out over two shafts: each barb swept back a cell, the
+// outer two cells out, the inner one, so the heads miss each other
+100 Regular ⇄
+...#..
+....#.
+######
+....#.
+......
+.#....
+######
+.#....
+..#...
+
+// Bold's barbs two cells thick, as its heads are swept a cell back
+100 Bold ⇄
+..##..
+...##.
+######
+...##.
+......
+.##...
+######
+.##...
+..##..
+
+// Harpoons: the barb swept back as ⇄'s outer barbs
+100 Regular ⇌
+...#..
+....#.
+######
+......
+######
+.#....
+..#...
+
+100 Bold ⇌
+..##..
+...##.
+######
+......
+######
+.##...
+..##..
+
+// ↹: ⇄'s heads into bars as tall as them, on their outer side
+100 Regular ↹
+#..#....
+#.#.....
+#######.
+#.#.....
+........
+.....#.#
+.#######
+.....#.#
+....#..#
+
+100 Bold ↹
+#..##...
+#.##....
+#######.
+#.##....
+........
+....##.#
+.#######
+....##.#
+...##..#
+
+// ↸: ↖ a corner of three cells on a chain of cells, under its bar
+100 Regular ↸
+#####
+.....
+###..
+##...
+#.#..
+...#.
+....#
+
+100 Bold ↸
+#####
+.....
+###..
+###..
+##.#.
+...#.
+....#
+
+// Italic: each arrow shifted as its shaft slants, a cell either way, so the
+// top one stands two cells right of the bottom one, as the rest of Italic's
+// pairs; shafts that stand lean, and the bars of ↹ with them
+100 Italic ⇄
+.....#..
+......#.
+..######
+......#.
+........
+.#......
+######..
+.#......
+..#.....
+
+100 Italic ⇆
+....#...
+...#....
+..######
+...#....
+........
+....#...
+######..
+....#...
+...#....
+
+100 Italic ⇅
+...#....#.
+..###...#.
+.#.#....#.
+...#...#.#
+..#...###.
+..#....#..
+
+100 Italic ⇵
+...#....#..
+...#...###.
+...#....#.#
+#.#.....#..
+.###...#...
+..#....#...
+
+// Its harpoons' shafts are two rows apart, on rows slanting does not move
+100 Italic ⇌
+...#..
+....#.
+######
+......
+######
+.#....
+..#...
+
+100 Italic ⇋
+..#...
+.#....
+######
+......
+######
+....#.
+...#..
+
+100 Italic ↹
+.#..#....
+.#.#.....
+.#######.
+#..#.....
+.........
+......#.#
+.#######.
+......#.#
+.....#..#
+
+100 Italic ↸
+...#####
+........
+..###...
+.##.....
+.#.#....
+....#...
+....#...

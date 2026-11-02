@@ -81,7 +81,6 @@ import pixel
 from family import STYLES, log, redaction
 
 from .shapes import (
-    DRAWN,
     SHIFTS,
     THIN,
     _pieces,
@@ -94,6 +93,7 @@ from .shapes import (
     circle,
     content,
     drawn,
+    drawn_cells,
     embolden,
     glyph,
     grooves,
@@ -114,8 +114,8 @@ from .shapes import (
 # Content drawn by hand (by_hand), in DRAWN: each glyph Redaction's own made
 # heavier, its lib saying how far
 AMOUNT = "com.lihbr.kuronuri.amount"  # how far out a drawn glyph's outline was moved
-# Enclosed glyphs drawn by hand on a grid, cell by cell (by_cells)
-CELLS = DRAWN / "cells.txt"
+# Enclosed glyphs drawn by hand on a grid, cell by cell (by_cells), in DRAWN
+CELLS = "cells.txt"
 # Least a drawn glyph is thinned by in a word (_heavy): _plan rounds its amount,
 # and thinned by a hair, skia-pathops lost the curve under Italic's k's serif
 HAIR = 0.1
@@ -1212,18 +1212,9 @@ def enclosure(smooth, grid, kind):
 @functools.cache
 def by_cells():
     """{(grid, style, character): rows} of the enclosed glyphs drawn by hand
-    on a grid (CELLS), each its cells, top row first, "#" ink, "." air."""
-    out, rows = {}, None
-    for line in CELLS.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("//"):
-            continue
-        if set(line) <= {"#", "."}:
-            rows.append(line)
-            continue
-        grid, style, char = line.split()
-        out[int(grid), style, char] = rows = []
-    return out
+    on a grid (CELLS, shapes.drawn_cells), each its cells, top row first,
+    "#" ink, "." air."""
+    return drawn_cells(CELLS)
 
 
 def _cells(kind, frame, rows, grid):

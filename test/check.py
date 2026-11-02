@@ -15,8 +15,9 @@
   Redaction's glyph centred in the em; Roman numerals, ‼ and ⑴ are as wide
   as what they are made of, set with kerning; enclosed numbers and letters
   are centred on the em box.
-- Enclosed glyphs drawn by hand on a grid (glyphs/drawn/cells.txt) are so,
-  cell for cell, in the fonts of their grid and style.
+- Enclosed glyphs and arrows drawn by hand on a grid (glyphs/drawn/cells.txt
+  and arrows.txt) are so, cell for cell, in the fonts of their grid and
+  style, and the arrows' alts too.
 - Every outline drawn by hand (glyphs/drawn) loads, is used, and has no
   self-intersections: enclosed content has the pieces and counters of
   Redaction's glyph; 〒 stands upright, as tall as T, its two bars and stem
@@ -53,7 +54,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
 from family import STYLES, redaction  # noqa: E402
 from glyphs import arrows, enclosed, fullwidth, numerals, punctuation  # noqa: E402
-from glyphs.shapes import DRAWN, _pieces, drawn, path, runs, slope  # noqa: E402
+from glyphs.shapes import DRAWN, _pieces, drawn, drawn_cells, path, runs, slope  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
@@ -195,26 +196,40 @@ def check_font(path):
 
 
 def check_cells(path, font, grid):
-    """Enclosed glyphs drawn by hand on `grid`, cell by cell
-    (enclosed.by_cells), are so in the font, of its style."""
+    """Glyphs drawn by hand on `grid`, cell by cell, are so in the font, of
+    its style: enclosed ones (enclosed.by_cells), and arrows and their alts
+    (arrows.CELLS), Italic's as they stand."""
     style = path.stem.split("-")[1]
     gs, cmap, problems = font.getGlyphSet(), font.getBestCmap(), []
+    names = {}
     for (g, s, char), rows in enclosed.by_cells().items():
+        names[g, s, cmap[ord(char)]] = char, rows
+    for (g, s, char), rows in drawn_cells(arrows.CELLS).items():
+        for suffix in arrows.SIZES:
+            names[g, s, cmap[ord(char)] + suffix] = char, rows
+    for (g, s, name), (char, rows) in names.items():
         if (g, s) != (grid, style):
             continue
         p = pathops.Path()
-        gs[cmap[ord(char)]].draw(pathops.PathPen(p, glyphSet=gs))
-        x0, _, _, y1 = p.bounds
+        gs[name].draw(pathops.PathPen(p, glyphSet=gs))
+        x0, y0, x1, y1 = p.bounds
         cells = [
             "".join(
                 "#" if p.contains((x0 + (c + 0.5) * grid, y1 - (r + 0.5) * grid)) else "."
-                for c in range(len(rows[0]))
+                for c in range(round((x1 - x0) / grid))
             )
-            for r in range(len(rows))
+            for r in range(round((y1 - y0) / grid))
         ]
-        if cells != rows or p.bounds[2] - x0 != len(rows[0]) * grid:
-            problems.append(f"{path.name}: {char} is not as drawn cell by cell")
+        if cells != _trimmed(rows):
+            problems.append(f"{path.name}: {name} ({char}) is not as drawn cell by cell")
     return problems
+
+
+def _trimmed(rows):
+    """Cells `rows` without rows and columns of air around them."""
+    full = [i for i, r in enumerate(rows) if "#" in r]
+    used = [c for c in range(len(rows[0])) if any(r[c] == "#" for r in rows)]
+    return [r[used[0] : used[-1] + 1] for r in rows[full[0] : full[-1] + 1]]
 
 
 def check_drawn(path, font):

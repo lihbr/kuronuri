@@ -2,11 +2,12 @@
 // by_cells): pixelated, they read as other glyphs, and every fallback ran
 // into their enclosure.
 //
-// A glyph is a line "grid style character", then its cells, top row first:
-// "#" ink, "." air. Its enclosure is as the build pixelates it, cell for
-// cell, and spans the whole block, so the block sits where it does; the
-// cells inside it are the content. The build checks the enclosure, and
-// draws the glyph so on that grid alone. Lines starting with // are notes.
+// A glyph is a line "grid styles character" (styles separated by commas),
+// then its cells, top row first: "#" ink, "." air. Its enclosure is as the
+// build pixelates it, cell for cell, and spans the whole block, so the
+// block sits where it does; the cells inside it are the content. The build
+// checks the enclosure, and draws the glyph so on that grid alone. Lines
+// starting with // are notes.
 
 // Bold's 🅆 read as P: a W, its strokes down thick, up thin, as Redaction's
 70 Bold 🅆

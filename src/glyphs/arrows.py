@@ -24,7 +24,11 @@ least 3 cells long, their barbs on the edge of a cell and blunt enough to
 keep their reach (blunter where pixels come apart); every direction is its
 arrow's pixels mirrored or turned (← is →), italic's are upright ones
 slanted by rows of cells, bridged where that pulls them apart, and
-pinholes and notches pixelating leaves are filled (_pixels).
+pinholes and notches pixelating leaves are filled (_pixels). On 70 and 100
+(HEAVY), Bold's heads are swept a cell further back, as its n is a cell
+heavier there, but its shafts stay its minus, Regular's there. On 100,
+pairs are drawn by hand, cell by cell (CELLS): pixelated, their heads came
+out a cell over and under the shaft, crosses.
 
 `calt` turns -> <- <-> -^ ^- => <=> =^ into arrows, but leaves the ^-^ ^=^
 =^.^= emoticons alone. `ss01` swaps in the alt arrows.
@@ -47,6 +51,7 @@ from .shapes import (
     add,
     cells,
     drawn,
+    drawn_cells,
     glyph,
     path,
     pixelate_glyphs,
@@ -74,6 +79,12 @@ SIZES = {
 # a time where an arrow's pixels come apart where its drawing does not
 REACH = 0.25
 BLUNT = 5
+# Grids Bold's heads are swept a cell further back on, its arms a cell
+# heavier: there its n's stems are a cell heavier than Regular's, but its
+# minus, plus and < > are Regular's, cell for cell, and so were its arrows
+HEAVY = (70, 100)
+# Arrows drawn by hand on a grid, cell by cell, in shapes.DRAWN (_pixels)
+CELLS = "arrows.txt"
 # code point: (glyph name, direction in degrees, double headed)
 SINGLE = {
     0x2190: ("arrowleft", 180, False),
@@ -111,6 +122,7 @@ HALFWIDTH = {0xFFE9: 180, 0xFFEA: 90, 0xFFEB: 0, 0xFFEC: -90}
 CODEPOINTS = {cp: name for cp, (name, _, _) in ARROWS.items()} | {
     cp: f"uni{cp:04X}" for cp in [*COMPOUND, *BLOCK, *CURVED, *HALFWIDTH]
 }
+CHARACTERS = {name: chr(cp) for cp, name in CODEPOINTS.items()}
 ALTERNATES = [name + ".ss01" for name in CODEPOINTS.values()]
 SOURCES = "→"  # the owner's head, in Regular's drawn UFO
 SAMPLES = [
@@ -206,6 +218,7 @@ class Pen:
         bars = runs(equals, x=(equals.bounds[0] + equals.bounds[2]) / 2)
         self.equals = (bars[0][0], bars[-1][1])
         self.slant = slope(smooth)
+        self.style = smooth["name"].getDebugName(2)
         self.weight = 1
         if smooth["name"].getDebugName(2) == "Bold":
             (a, b), *_ = runs(path(smooth, "n"), y=200)
@@ -215,15 +228,19 @@ class Pen:
 
 
 class Head:
-    """A head pointing right, its tip at x = 0, on its axis: its points."""
+    """A head pointing right, its tip at x = 0, on its axis: its points, and
+    how far it is `swept` back along its axis, its arms heavier."""
 
-    def __init__(self, points):
-        self.points = points
+    def __init__(self, points, swept=0):
+        self.points, self.swept = points, swept
         self.length = -min(x for x, _ in points)
         self.half = max(y for _, y in points)
 
     def path(self, x=0):
-        return union([[(px + x, py) for px, py in self.points]])
+        p = union([[(px + x, py) for px, py in self.points]])
+        if self.swept:
+            p = union_paths([p, p.transform(1, 0, 0, 1, -self.swept, 0)])
+        return p
 
     @property
     def notch(self):
@@ -284,7 +301,8 @@ class Arrows:
         two in the em, only as far out as drawn, at least 1), no wider
         than drawn (a quarter of a cell's leeway), as sharp as drawn but
         blunt enough to keep their reach (REACH); `diagonal`, those cells
-        are a cell's diagonal (its half), as 45° heads cross them."""
+        are a cell's diagonal (its half), as 45° heads cross them. In Bold
+        on HEAVY, swept a cell back, as it is heavier."""
         points = source()
         scale = max(scale, half / Head(points).half)
         weight = self.pen.weight
@@ -308,7 +326,8 @@ class Arrows:
         beta = max(beta, math.asin(min(1, g / 2 / (REACH * half)))) + self.blunt
         alpha = math.atan2(half, length)
         notch = max(0, length - half / math.tan(min(alpha + beta, math.radians(89))))
-        return Head([(0, 0), (-length, half), (-notch, 0), (-length, -half)])
+        swept = g if g in HEAVY and weight > 1 else 0
+        return Head([(0, 0), (-length, half), (-notch, 0), (-length, -half)], swept)
 
     def tip(self, length, head, both=False):
         """Where the tip of an arrow `length` long, centred, falls: double
@@ -321,6 +340,8 @@ class Arrows:
         strokes `gap` above and below the axis."""
         tail, neck = tail or self.tail, neck or self.neck
         tip = self.tip(length, head, both)
+        if both and head.swept:  # its heads swept no nearer than a cell
+            head = Head(head.points, min(head.swept, max(0, tip - head.length - self.grid / 2)))
         pieces = [head.path(tip)]
         if both:
             pieces.append(head.path(tip).transform(-1, 0, 0, 1, 0, 0))
@@ -652,6 +673,10 @@ def _pixels(a, paths):
         ink[name] = _filled(_ink(on, x0, top), near)
         if name.split(".")[0] in SYMMETRIC:  # as many cells either side of its axis
             ink[name] |= {(x, round(2 * axis(name)) - 1 - y) for x, y in ink[name]}
+        # Or drawn by hand (CELLS), the arrow and its alt alike, centred where
+        # it pixelates, upright: turned as it is (Italic's after, as they stand)
+        if (rows := _by_hand(a, name)) and not a.pen.slant:
+            ink[name] = _centred(rows, ink[name])
     for name, (of, steps) in turned.items():
         on, _, _ = _grid(ink[of])
         on = _turned(on, steps)
@@ -678,8 +703,26 @@ def _pixels(a, paths):
             # and inside block arrows only where they had ink
             hollow = name.split(".")[0] in EQUALS - {f"uni{cp:04X}" for cp in BLOCK} | HOLLOW
             cells_ = _sealed(_kept(moved, pieces), cells_ if hollow else None, slant, axis(name))
+            if rows := _by_hand(a, name):
+                cells_ = _centred(rows, cells_)
         out[name] = _traced(*_grid(cells_), g)
     return out
+
+
+def _by_hand(a, name):
+    """The cells of arrow `name` drawn by hand on the grid of the drawing `a`
+    (CELLS), for its style, or None: the arrow's and its alt's."""
+    return drawn_cells(CELLS).get((a.grid, a.pen.style, CHARACTERS[name.split(".")[0]]))
+
+
+def _centred(rows, ink):
+    """{(x, y)} of cells `rows` (top row first, "#" ink), centred on `ink`."""
+    x0, y0 = min(x for x, _ in ink), min(y for _, y in ink)
+    x1, y1 = max(x for x, _ in ink) + 1, max(y for _, y in ink) + 1
+    on = np.array([[c == "#" for c in r] for r in rows])
+    left = math.floor((x0 + x1 - on.shape[1]) / 2 + 0.5)
+    top = math.floor((y0 + y1 + len(on)) / 2 + 0.5)
+    return _ink(on, left, top)
 
 
 def _ink(on, x0, top):

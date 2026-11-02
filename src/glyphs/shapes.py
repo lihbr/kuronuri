@@ -77,6 +77,29 @@ def path(font, char, transform=(1, 0, 0, 1, 0, 0)):
 
 
 @functools.cache
+def drawn_cells(name):
+    """{(grid, style, character): rows} of the glyphs drawn by hand on a grid,
+    in DRAWN/`name`: a line "grid styles character" (styles separated by
+    commas), then its cells, top row first, "#" ink and "." air. Lines
+    starting with // are notes."""
+    out, rows = {}, None
+    for line in (DRAWN / name).read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("//"):
+            continue
+        if set(line) <= {"#", "."}:
+            if len(rows) and len(line) != len(rows[0]):
+                raise ValueError(f"{name}: rows of a glyph are not as long")
+            rows.append(line)
+            continue
+        grid, styles, char = line.split()
+        rows = []
+        for style in styles.split(","):
+            out[int(grid), style, char] = rows
+    return out
+
+
+@functools.cache
 def drawn(style, slanted=False):
     """{character: (outline, lib)} of the glyphs drawn by hand for `style`, a
     Redaction style (DRAWN), each by its code points: {} without a UFO. Or,
