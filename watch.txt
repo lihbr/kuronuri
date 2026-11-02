@@ -2,10 +2,16 @@
 # "Style: characters", or "*: characters" for every style. "text:" sets the
 # text to try them in. Spaces are ignored.
 
-# Block arrows, now ⇒ closed by a minus-thick bar (⬅ ⬆ ⬇ ⮕ filled), and
-# pairs with heads three quarters as big as →'s, first; then one arrow of
-# each other kind: the owner's head on shafts of Redaction's minus.
-*: ⇦ ⇧ ⇨ ⬆ ⮕ ⇄ ⇆ ⇅ ⇵ ↹ ↸ ⇋ ⇌
-*: → ← ↑ ↗ ↔ ⇒ ⇔ ⇗ ⤴ ⤵ ￫ ￪
+# Enclosed letters drawn by hand, their carving open: Regular's y (ⓥ ⓧ to
+# compare), Bold's g s w y and words with them; Bold's 🄬 as heavy as 🄫
+# beside it; Bold's 🅆 Ⓦ and Italic's 🅆 drawn cell by cell on 70.
+Regular: ⓨ 🅨 ㏉ ⓥ ⓧ
+Bold: ⓦ ⓖ ⓢ ⓨ ㎏ ㏉ ㎳ ㋍ 🆩 Ⓦ 🅆 🅅 🄬 🄫 Ⓡ
+Italic: 🅆 🅅
 
-text: ⇦ ⇧ ⇨ ⬆ ⮕ ⇄ ⇅ ↹ ↸ ⇌, a → b ⇒ c ↔ d ⇔ e, a -> b => c <-> d <=> e, −+→ =⇒, H←↑→↓H, 東京⇄大阪⇒京都、⤴ ￫
+# Arrows: pairs drawn by hand on 100 (every style), Bold's heads heavier on
+# 70 (its pairs by hand there), its → by hand on 100.
+*: ⇄ ⇆ ⇅ ⇵ ↹ ↸ ⇋ ⇌
+Bold: → ← ↔ ⇒ ⇔ ⇨ ⮕ ↗ ⤴ ￫
+
+text: 5㎏ 2㏉ ⓖⓢⓦⓨ Ⓦ 🅆 🄫🄬, Kuronuri 黒塗り ⓨⓥⓧ, 東京⇄大阪 ↹ ⇅ ⇌, a → b ⇒ c ↔ d

@@ -61,7 +61,8 @@ other glyphs are drawn as before group 4 (EMBOLDENED), pixelated with
 their enclosure, and where that ran into it too (Bold's 🅆 Ⓦ, Italic's 🅆
 on 70), they are drawn by hand, cell by cell (CELLS, by_cells), as are a
 few drawn anew by hand that pixelate worse than before (Bold's ⓖ on 70,
-Regular's ⓨ on 50), as before. On 100
+Regular's ⓨ on 50, Bold's ㎏ ㋍ ㎳, its letters spaced anew), as before.
+On 100
 (COARSEST), all content is emboldened: from Bold thinned in an upright
 Regular, which keeps its carving.
 
