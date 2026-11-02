@@ -205,8 +205,9 @@ def check_cells(path, font, grid):
     for (g, s, char), rows in enclosed.by_cells().items():
         names[g, s, cmap[ord(char)]] = char, rows
     for (g, s, char), rows in drawn_cells(arrows.CELLS).items():
-        for suffix in arrows.SIZES:
-            names[g, s, cmap[ord(char)] + suffix] = char, rows
+        alt = font.getGlyphName(shape(path, char, {"ss01": True})[0][0])
+        for name in (cmap[ord(char)], alt):
+            names[g, s, name] = char, rows
     for (g, s, name), (char, rows) in names.items():
         if (g, s) != (grid, style):
             continue
