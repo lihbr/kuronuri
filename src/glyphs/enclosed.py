@@ -64,14 +64,11 @@ the numbered variants they keep MCKL's pixels.
 import functools
 import math
 import unicodedata
-from pathlib import Path
 
 import numpy as np
 import pathops
-from fontTools.pens.pointPen import PointToSegmentPen
 from fontTools.pens.statisticsPen import StatisticsPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
-from fontTools.ufoLib import UFOReader
 
 import pixel
 from family import STYLES, log, redaction
@@ -88,6 +85,7 @@ from .shapes import (
     cells,
     circle,
     content,
+    drawn,
     embolden,
     glyph,
     grooves,
@@ -105,9 +103,8 @@ from .shapes import (
     widths,
 )
 
-# Content drawn by hand (by_hand): a UFO a style, <Style>.ufo, each glyph
-# Redaction's own made heavier, in its units, at the points its glyf stores
-DRAWN = Path(__file__).resolve().parent / "drawn"
+# Content drawn by hand (by_hand), in DRAWN: each glyph Redaction's own made
+# heavier, its lib saying how far
 AMOUNT = "com.lihbr.kuronuri.amount"  # how far out a drawn glyph's outline was moved
 # Least a drawn glyph is thinned by in a word (_heavy): _plan rounds its amount,
 # and thinned by a hair, skia-pathops lost the curve under Italic's k's serif
@@ -555,18 +552,7 @@ def by_hand(style):
     `amount`, as thickened, but its carving cut open again as MCKL cut it,
     which thickening narrows (Italic's lowercase, Q W w), and Italic's R W
     moved further as blending moves the upright glyph, as tall."""
-    ufo = DRAWN / f"{style}.ufo"
-    if not ufo.exists():
-        return {}
-    out = {}
-    glyphs = UFOReader(ufo).getGlyphSet()
-    for name in glyphs.keys():
-        g = glyphs[name]
-        p = pathops.Path()
-        g.drawPoints(PointToSegmentPen(pathops.PathPen(p)))
-        for cp in g.unicodes:
-            out[chr(cp)] = p, g.lib[AMOUNT]
-    return out
+    return {c: (p, lib[AMOUNT]) for c, (p, lib) in drawn(style).items() if AMOUNT in lib}
 
 
 def _by_hand(font, char):

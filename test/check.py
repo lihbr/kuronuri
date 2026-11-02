@@ -48,7 +48,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
 from family import STYLES, redaction  # noqa: E402
 from glyphs import enclosed, fullwidth, numerals, punctuation  # noqa: E402
-from glyphs.shapes import _pieces, path  # noqa: E402
+from glyphs.shapes import DRAWN, _pieces, path  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
@@ -297,7 +297,7 @@ def check_hand():
     problems = []
     used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
     for style in STYLES:
-        ufo = enclosed.DRAWN / f"{style}.ufo"
+        ufo = DRAWN / f"{style}.ufo"
         hand = enclosed.by_hand(style)
         if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(hand):
             problems.append(f"{ufo.name}: not every glyph loads, with a code point")

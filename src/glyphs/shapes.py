@@ -1,13 +1,15 @@
 """Building blocks for glyphs drawn from Redaction's own: its slant, its
-glyphs as paths and components, text set as typed, emboldening, blending
-towards its Bold, measuring strokes, unions of polygons, circles and
-rectangles, pixelation of glyphs drawn outside a font, where in a cell they
-fall best, and adding them to it."""
+glyphs as paths and components, glyphs drawn from them by hand (DRAWN),
+text set as typed, emboldening, blending towards its Bold, measuring
+strokes, unions of polygons, circles and rectangles, pixelation of glyphs
+drawn outside a font, where in a cell they fall best, and adding them to
+it."""
 
 import copy
 import functools
 import io
 import math
+from pathlib import Path
 
 import numpy as np
 import pathops
@@ -15,14 +17,19 @@ import uharfbuzz as hb
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.basePen import BasePen
 from fontTools.pens.cu2quPen import Cu2QuPen
+from fontTools.pens.pointPen import PointToSegmentPen
 from fontTools.pens.recordingPen import DecomposingRecordingPen, RecordingPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib.tables._c_m_a_p import cmap_format_12
+from fontTools.ufoLib import UFOReader
 
 import pixel
 from family import redaction
 
+# Glyphs drawn by hand from Redaction's own (drawn): a UFO a style,
+# <Style>.ufo, in its units, at the points its glyf stores
+DRAWN = Path(__file__).resolve().parent / "drawn"
 CUT = 14  # half the width of Redaction's carving (20 to 27 across), and some
 SLIVER = 3  # half the width of the thinnest of it: thinner, it is a sliver along a concave edge
 SIDE = 0.8  # of ink along a gap, for it to run along a stroke
@@ -64,6 +71,24 @@ def path(font, char, transform=(1, 0, 0, 1, 0, 0)):
         TransformPen(pathops.PathPen(p), transform)
     )
     return p
+
+
+@functools.cache
+def drawn(style):
+    """{character: (outline, lib)} of the glyphs drawn by hand for `style`, a
+    Redaction style (DRAWN), each by its code points: {} without a UFO."""
+    ufo = DRAWN / f"{style}.ufo"
+    if not ufo.exists():
+        return {}
+    out = {}
+    glyphs = UFOReader(ufo).getGlyphSet()
+    for name in glyphs.keys():
+        g = glyphs[name]
+        p = pathops.Path()
+        g.drawPoints(PointToSegmentPen(pathops.PathPen(p)))
+        for cp in g.unicodes:
+            out[chr(cp)] = p, g.lib
+    return out
 
 
 def embolden(p, amount, round=False):
