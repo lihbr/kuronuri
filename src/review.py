@@ -17,7 +17,7 @@ reviewed before they changed.
 .tmp/watch.txt lists glyphs to look at closely, by style: the page shows them
 apart, approved, now and over each other, with text to set them in.
 
-usage: review.py [--approve] [--variants base,10,...] [--styles Regular,Italic,Bold]
+usage: review.py [--approve] [--variants 0,10,...] [--styles Regular,Italic,Bold]
 """
 
 import argparse
@@ -116,7 +116,7 @@ def review_font(src, dst, features=True):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--approve", action="store_true", help="approve the drawn fonts")
-    ap.add_argument("--variants", default="base," + ",".join(map(str, GRIDS)))
+    ap.add_argument("--variants", default="0," + ",".join(map(str, GRIDS)))
     ap.add_argument("--styles", default=",".join(STYLES))
     args = ap.parse_args()
     grids, styles = variants(args.variants), args.styles.split(",")

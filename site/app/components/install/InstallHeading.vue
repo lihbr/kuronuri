@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// A heading in a bar: in English on the left, in Japanese on the right
 const { as = "h3" } = defineProps<{ ja: string; as?: "h2" | "h3" }>()
 </script>
 

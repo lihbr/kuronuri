@@ -45,7 +45,7 @@ const kind = computed(
 	() => kinds.value?.find((kind) => kind.kind === settings.kind) ?? kinds.value?.[0],
 )
 const font = computed(() => ({
-	fontFamily: `"${familyOf(settings.variant)}", Kuronuri, serif`,
+	fontFamily: `"${familyOf(settings.variant)}", "Kuronuri 0", serif`,
 	...STYLES[settings.style],
 	fontFeatureSettings: settings.ss01 ? '"ss01"' : undefined,
 }))
@@ -66,7 +66,7 @@ const glyphs = computed(() =>
 <template>
 	<GlyphLayout :size="settings.size" :dark="settings.dark">
 		<template #header>
-			<h1 class="font-bold">Kuronuri glyphs</h1>
+			<h1 class="font-bold lowercase">Kuronuri glyphs</h1>
 			<GlyphRange v-model="settings.size" />
 			<div class="flex flex-wrap gap-1">
 				<GlyphToggle
@@ -121,7 +121,7 @@ const glyphs = computed(() =>
 				:style="font"
 				@update:model-value="settings.texts[kind.kind] = $event ?? ''"
 			/>
-			<p class="mb-4 opacity-60">
+			<p class="mb-4 opacity-60 lowercase">
 				Glyphs shaded in <span class="bg-flamingo/16 px-1">flamingo</span> are Redaction’s as they
 				are, in <span class="bg-navy/16 px-1">navy</span> drawn from them, in
 				<span class="bg-current/8 px-1">grey</span> Noto Serif JP’s, pixelated for the numbered

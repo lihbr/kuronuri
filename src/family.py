@@ -37,7 +37,7 @@ def log(*args):
 
 
 def family_name(grid, family=FAMILY):
-    return family if grid is None else f"{family} {grid}"
+    return f"{family} {0 if grid is None else grid}"
 
 
 def ps_name(grid, style):
@@ -49,8 +49,8 @@ def slug(grid):
 
 
 def variants(arg):
-    """Grids from a --variants argument: "base,10,..."; base is None."""
-    return [None if v == "base" else int(v) for v in arg.split(",")]
+    """Grids from a --variants argument: "0,10,..."; 0, smooth, is None."""
+    return [int(v) or None for v in arg.split(",")]
 
 
 def subset_options():

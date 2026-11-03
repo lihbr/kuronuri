@@ -1,28 +1,22 @@
 <script setup lang="ts">
 import latin20 from "kuronuri/files/kuronuri-20-latin-400-normal.woff2?url"
 import latin50Italic from "kuronuri/files/kuronuri-50-latin-400-italic.woff2?url"
-import title95 from "kuronuri/files/kuronuri-95-700-normal.woff2?url"
-import title108 from "kuronuri/files/kuronuri-108-700-normal.woff2?url"
-import title119 from "kuronuri/files/kuronuri-119-700-normal.woff2?url"
 
-// The slices of the fonts the hero first paints with
-const TITLE = { [title95]: "塗", [title108]: "黒", [title119]: "りフォント" }
-
-// Japanese faces load after the first paint, so the title's characters get their own
-const titleFaces = Object.entries(TITLE).map(([href, characters]) => {
-	const range = [...characters].map((c) => `U+${c.codePointAt(0)!.toString(16)}`).join(", ")
-	return `@font-face { font-family: "Kuronuri"; font-weight: 700; font-display: swap; src: url("${href}") format("woff2"); unicode-range: ${range}; }`
+const TITLE = import.meta.glob<string>("../assets/title/*.svg", {
+	query: "?raw",
+	import: "default",
+	eager: true,
 })
+const title = (name: string) => TITLE[`../assets/title/${name}.svg`]
 
 useHead({
-	link: [...Object.keys(TITLE), latin50Italic, latin20].map((href) => ({
+	link: [latin50Italic, latin20].map((href) => ({
 		rel: "preload",
 		href,
 		as: "font",
 		type: "font/woff2",
 		crossorigin: "anonymous",
 	})),
-	style: [{ innerHTML: titleFaces.join("\n") }],
 })
 
 const variant = ref(0)
@@ -34,12 +28,12 @@ let interval: ReturnType<typeof setInterval> | undefined
 
 function onPointerMove(event: PointerEvent) {
 	if (event.pointerType !== "mouse") return
-	const index = Math.floor((event.clientX / window.innerWidth) * FONTS.length)
-	variant.value = Math.min(Math.max(index, 0), FONTS.length - 1)
+	const index = Math.floor((event.clientX / window.innerWidth) * VARIANTS.length)
+	variant.value = Math.min(Math.max(index, 0), VARIANTS.length - 1)
 }
 
 function cycle() {
-	if (touch?.matches && motion?.matches) variant.value = (variant.value + 1) % FONTS.length
+	if (touch?.matches && motion?.matches) variant.value = (variant.value + 1) % VARIANTS.length
 }
 
 onMounted(() => {
@@ -73,12 +67,13 @@ onBeforeUnmount(() => {
 		</div>
 		<hgroup class="row-span-2 layout grid-rows-subgrid">
 			<div class="col-span-full lg:col-start-3 lg:col-span-6 lg:-mx-2.5 @container dark">
-				<h1
-					lang="ja"
-					:class="FONTS[variant]"
-					class="text-center pt-[3cqi] pb-[1cqi] font-bold text-[13.6cqi]/tight whitespace-nowrap overflow-hidden"
-				>
-					黒塗りフォント
+				<h1 lang="ja" class="pt-[3.34cqi] pb-[1.34cqi] overflow-hidden">
+					<span class="sr-only">黒塗りフォント</span>
+					<span
+						aria-hidden="true"
+						class="flex justify-center *:h-[16.32cqi] *:w-auto *:overflow-visible"
+						v-html="title(VARIANTS[variant]!)"
+					/>
 				</h1>
 			</div>
 			<p

@@ -1,8 +1,10 @@
-import origins from "kuronuri/glyphs.json"
 import { defineEventHandler } from "nuxt/server"
 
+// Written by the font build (src/build.py)
+import origins from "../data/glyphs.json"
+
 // Nitro imports CSS as text
-import css from "kuronuri/kuronuri.css"
+import css from "kuronuri/kuronuri-0.css"
 
 export type Kind = { kind: string; characters: string }
 /** Characters that are Redaction's as they are, and drawn from them: the rest is Noto Serif JP's */

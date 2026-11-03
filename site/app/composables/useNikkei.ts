@@ -2,13 +2,10 @@ import type { Day } from "~~/server/api/nikkei.get"
 
 const STORAGE_KEY = "kuronuri:nikkei"
 
-/** The last trading days of the Nikkei 225: built with the site, then refreshed once a day */
 export function useNikkei(): ComputedRef<Day[]> {
 	const { data: built } = useFetch("/api/nikkei")
 	const fresh = ref<Day[]>()
 
-	// Static hosts answer with their HTML fallback, and an older version of the site may have stored
-	// fewer days: only take the same number of days as the build, and not older ones
 	function isUsable(candidate: unknown): candidate is Day[] {
 		return (
 			!!built.value &&
@@ -31,7 +28,7 @@ export function useNikkei(): ComputedRef<Day[]> {
 			fresh.value = days
 			localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, days }))
 		} catch {
-			// The built data stays
+			// noop, use built data
 		}
 	})
 

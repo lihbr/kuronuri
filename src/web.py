@@ -17,6 +17,8 @@ import json
 from pathlib import Path
 
 from fontTools import subset
+from fontTools.pens.svgPathPen import SVGPathPen
+from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
 from fontTools.unicodedata import mirrored
 
@@ -105,4 +107,26 @@ def font_face(family, style, weight, url, cps):
         f'  src: url("{url}?no-inline") format("woff2");\n'
         f"  unicode-range: {unicode_range(cps)};\n"
         f"}}\n"
+    )
+
+
+def outline(ttf, text):
+    """`text` set in a font, as an SVG of one path in font units, in the
+    colour of the text around it: as wide as its advances and as tall as
+    the font's line before line-height (hhea ascent to descent), its
+    baseline at the ascent. For the site's title to paint without the
+    font."""
+    font = TTFont(ttf)
+    glyphs, cmap, hmtx = font.getGlyphSet(), font.getBestCmap(), font["hmtx"]
+    hhea = font["hhea"]
+    pen = SVGPathPen(glyphs, ntos=lambda n: f"{round(n, 1):g}")
+    x = 0
+    for c in text:
+        name = cmap[ord(c)]
+        glyphs[name].draw(TransformPen(pen, (1, 0, 0, -1, x, hhea.ascent)))
+        x += hmtx[name][0]
+    height = hhea.ascent - hhea.descent
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {x} {height}">'
+        f'<path fill="currentColor" d="{pen.getCommands()}"/></svg>\n'
     )

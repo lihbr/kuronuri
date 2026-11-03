@@ -55,7 +55,7 @@ jobs:
       - run: pnpm install
       - run: pnpm venv
       # a quick subset: one plain and one pixelated family
-      - run: pnpm build --variants base,100 --styles Regular
+      - run: pnpm build --variants 0,100 --styles Regular
       - uses: actions/upload-artifact@v7
         with:
           name: dist

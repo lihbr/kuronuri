@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// A line every two columns, in the middle of their gutter: 1 on 4 columns, 2 on 6, 4 on 10.
 const LINES = [
 	"left-1/2 md:hidden",
 	"left-1/3 max-md:hidden lg:left-1/5",

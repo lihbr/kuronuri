@@ -1,6 +1,6 @@
 @import "tailwindcss";
-/* Only the Latin of each family blocks the render, the hero declares its title's Japanese, and the rest loads after: see plugins/fonts.client.ts */
-@import "kuronuri/kuronuri-latin.css";
+/* Only the Latin of each family blocks the render, the hero's title is outlines, and the rest loads after: see plugins/fonts.client.ts */
+@import "kuronuri/kuronuri-0-latin.css";
 @import "kuronuri/kuronuri-10-latin.css";
 @import "kuronuri/kuronuri-20-latin.css";
 @import "kuronuri/kuronuri-35-latin.css";
@@ -9,13 +9,13 @@
 @import "kuronuri/kuronuri-100-latin.css";
 
 @theme {
-	--font-0: "Kuronuri", serif;
-	--font-10: "Kuronuri 10", "Kuronuri", serif;
-	--font-20: "Kuronuri 20", "Kuronuri", serif;
-	--font-35: "Kuronuri 35", "Kuronuri", serif;
-	--font-50: "Kuronuri 50", "Kuronuri", serif;
-	--font-70: "Kuronuri 70", "Kuronuri", serif;
-	--font-100: "Kuronuri 100", "Kuronuri", serif;
+	--font-0: "Kuronuri 0", serif;
+	--font-10: "Kuronuri 10", "Kuronuri 0", serif;
+	--font-20: "Kuronuri 20", "Kuronuri 0", serif;
+	--font-35: "Kuronuri 35", "Kuronuri 0", serif;
+	--font-50: "Kuronuri 50", "Kuronuri 0", serif;
+	--font-70: "Kuronuri 70", "Kuronuri 0", serif;
+	--font-100: "Kuronuri 100", "Kuronuri 0", serif;
 	--color-paper: #fffbf3;
 	--color-ink: #151515;
 	--color-flamingo: #e84311;

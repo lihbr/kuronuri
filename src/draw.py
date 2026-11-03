@@ -7,7 +7,7 @@ glyphs/, tabular figures (layout.py) and the vertical metrics the merge
 needs. It takes seconds: draw, then review (review.py), then build (build.py,
 which draws first).
 
-usage: draw.py [--variants base,10,...] [--styles Regular,Italic,Bold]
+usage: draw.py [--variants 0,10,...] [--styles Regular,Italic,Bold]
 """
 
 import argparse
@@ -74,7 +74,7 @@ def draw_all(grids, styles):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--variants", default="base," + ",".join(map(str, GRIDS)))
+    ap.add_argument("--variants", default="0," + ",".join(map(str, GRIDS)))
     ap.add_argument("--styles", default=",".join(STYLES))
     args = ap.parse_args()
     draw_all(variants(args.variants), args.styles.split(","))

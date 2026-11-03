@@ -9,8 +9,7 @@ export const VARIANTS = ["0", "10", "20", "35", "50", "70", "100"]
 
 export const FONTS = ["font-0", "font-10", "font-20", "font-35", "font-50", "font-70", "font-100"]
 
-export const familyOf = (variant: string): string =>
-	variant === "0" ? "Kuronuri" : `Kuronuri ${variant}`
+export const familyOf = (variant: string): string => `Kuronuri ${variant}`
 
 /**
  * A glyph in a GlyphGrid, its advance shaded: on the review page, in flamingo when new and in navy

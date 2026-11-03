@@ -11,8 +11,10 @@ pixelated from Noto Serif JP (pixel.py).
   draw.py merged with Noto Serif JP
 - dist/web: the npm package, a CSS file per family and its unicode-range
   slices (web.py)
+- site/: what the site needs from the fonts, versioned, so it deploys
+  without building them
 
-usage: build.py [--variants base,10,...] [--styles Regular,Italic,Bold] [--web-only]
+usage: build.py [--variants 0,10,...] [--styles Regular,Italic,Bold] [--web-only]
 """
 
 import argparse
@@ -47,6 +49,7 @@ from family import (  # noqa: E402
     FAMILY_JA,
     GRIDS,
     NOTO_WEIGHT,
+    ROOT,
     SELECTORS,
     SOURCES,
     STYLES,
@@ -61,6 +64,10 @@ from family import (  # noqa: E402
 )
 
 NOTO_VF = SOURCES / "noto-serif-jp" / "NotoSerifJP[wght].ttf"
+
+SITE = ROOT / "site"
+# The site's title, drawn in Bold in every family
+TITLE = "黒塗りフォント"
 
 
 NAMES = {
@@ -238,9 +245,7 @@ def build_web():
     """Slice every font in dist/ttf into dist/web, the npm package, laid out
     like a fontsource package: files/ and, per family, a CSS file and a
     Latin-only one for pages without Japanese (the full one is ten times
-    the size of the Latin slices it would load). glyphs.json tells which
-    characters are Redaction's, as they are, and which are drawn from them
-    (glyphs/): the rest is Noto Serif JP's."""
+    the size of the Latin slices it would load)."""
     out = DIST / "web"
     shutil.rmtree(out, ignore_errors=True)
     (out / "files").mkdir(parents=True)
@@ -265,23 +270,43 @@ def build_web():
         (out / families[-1]).write_text("\n".join(faces))
         (out / f"{slug(grid)}-latin.css").write_text("\n".join(latin))
     (out / "index.css").write_text("".join(f'@import "./{f}";\n' for f in families))
-    origins = {
-        "redaction": sorted(set(redaction(None, "Regular").getBestCmap()) - set(glyphs.CODEPOINTS)),
-        "drawn": sorted(glyphs.CODEPOINTS),
-    }
-    (out / "glyphs.json").write_text(
-        json.dumps({k: "".join(map(chr, cps)) for k, cps in origins.items()}, ensure_ascii=False)
-    )
     log(f"writing {len(tasks)} web slices")
     with ProcessPoolExecutor() as ex:
         list(ex.map(web.write_slice, tasks, chunksize=8))
 
 
+def build_site():
+    """Write what the site needs from the fonts into site/, versioned so it
+    deploys without building them: app/assets/title/, its title as an SVG
+    per family, by grid (0 for the base family), to inline and paint without
+    the Japanese slices it would need; server/data/glyphs.json, which characters are
+    Redaction's, as they are, and which are drawn from them (glyphs/), the
+    rest being Noto Serif JP's."""
+    title = SITE / "app" / "assets" / "title"
+    title.mkdir(parents=True, exist_ok=True)
+    for grid in [None, *GRIDS]:
+        ttf = DIST / "ttf" / f"{ps_name(grid, 'Bold')}.ttf"
+        if ttf.exists():
+            (title / f"{grid or 0}.svg").write_text(web.outline(ttf, TITLE))
+    origins = {
+        "redaction": sorted(set(redaction(None, "Regular").getBestCmap()) - set(glyphs.CODEPOINTS)),
+        "drawn": sorted(glyphs.CODEPOINTS),
+    }
+    data = SITE / "server" / "data"
+    data.mkdir(parents=True, exist_ok=True)
+    (data / "glyphs.json").write_text(
+        json.dumps({k: "".join(map(chr, cps)) for k, cps in origins.items()}, ensure_ascii=False)
+        + "\n"
+    )
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--variants", default="base," + ",".join(map(str, GRIDS)))
+    ap.add_argument("--variants", default="0," + ",".join(map(str, GRIDS)))
     ap.add_argument("--styles", default=",".join(STYLES))
-    ap.add_argument("--web-only", action="store_true", help="only redo dist/web from dist/ttf")
+    ap.add_argument(
+        "--web-only", action="store_true", help="only redo dist/web and site/ from dist/ttf"
+    )
     args = ap.parse_args()
     if not args.web_only:
         grids = variants(args.variants)
@@ -300,6 +325,7 @@ def main():
             for ps in ex.map(assemble, tasks):
                 log(ps)
     build_web()
+    build_site()
 
 
 if __name__ == "__main__":

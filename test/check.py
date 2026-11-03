@@ -165,14 +165,13 @@ def check_font(path):
     for c in "，．：＝":
         if shape(path, f"日{c}", direction="ttb")[0][1] == gid[ord(c)]:
             problems.append(f"{path.name}: {c} does not turn in vertical text")
-    m = re.match(r"Kuronuri(\d*)-(\w+)", path.stem)
-    source = redaction(int(m.group(1)) if m.group(1) else None, m.group(2))
+    m = re.match(r"Kuronuri(\d+)-(\w+)", path.stem)
+    source = redaction(int(m.group(1)) or None, m.group(2))
     for tag, attrs in METRICS.items():
         for attr in attrs:
             if getattr(font[tag], attr) != getattr(source[tag], attr):
                 problems.append(f"{path.name}: {tag} {attr} is not Redaction's")
-    if m := re.match(r"Kuronuri(\d+)-", path.name):
-        grid = int(m.group(1))
+    if grid := int(m.group(1)):
         glyf, hmtx = font["glyf"], font["hmtx"]
         off = 0
         for name in font.getGlyphOrder():
@@ -240,8 +239,7 @@ def _trimmed(rows):
 
 def check_drawn(path, font):
     """The glyphs drawn from Redaction's are made of them, where they should be."""
-    m = re.match(r"Kuronuri(\d+)-", path.name)
-    g = int(m.group(1)) if m else 1
+    g = int(re.match(r"Kuronuri(\d+)-", path.name).group(1)) or 1
     em = snap_advance(1000, g)
     cmap, hmtx, gs = font.getBestCmap(), font["hmtx"], font.getGlyphSet()
 

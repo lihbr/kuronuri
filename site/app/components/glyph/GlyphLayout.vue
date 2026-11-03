@@ -3,6 +3,9 @@
 // height is --header, for what sticks under it. --line is the colour of lines, opaque
 defineProps<{ size: number; dark: boolean }>()
 
+// Tools, not the marketing page: text at a fixed size, not fluid with the viewport (index.css)
+useHead({ htmlAttrs: { style: "font-size: 16px" } })
+
 const header = useTemplateRef("header")
 const height = ref(0)
 const observer = import.meta.client

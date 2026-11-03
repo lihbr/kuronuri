@@ -4,12 +4,11 @@ import type { StyleValue } from "vue"
 
 // Glyphs set in `font`, `size` pixels big, in square cells for glyphs `width` ems wide. Only the
 // rows on screen are rendered: a grid can have thousands of glyphs, in as many font slices to
-// download
+// download. Full bleed, out of the padding of main (GlyphLayout) or of what bleeds out of it too
 const props = defineProps<{ glyphs: GridGlyph[]; font: StyleValue; size: number; width?: number }>()
 
-// Cells are whole pixels, and overlap their neighbours by their border, in one colour
-const cell = computed(() => Math.floor(props.size * (Math.max(props.width ?? 1, 1) + 0.3) + 20))
-const track = computed(() => cell.value - 1)
+// Cells are at least this big, square, and overlap their neighbours by their border, in one colour
+const minimum = computed(() => Math.floor(props.size * (Math.max(props.width ?? 1, 1) + 0.3) + 20))
 const PADDING = 14 // on each side of a glyph, and the borders of its cell
 
 const grid = useTemplateRef("grid")
@@ -29,7 +28,14 @@ watch(grid, (element, previous) => {
 	if (element) observer?.observe(element)
 })
 onBeforeUnmount(() => observer?.disconnect())
-const columns = computed(() => Math.max(1, Math.floor((available.value - 1) / track.value)))
+// Full bleed: rows start a pixel early and the grid clips them, hiding the outer borders of the
+// first and last columns. As many columns as fit, grown to fill the width, and rows as tall, in
+// whole pixels
+const columns = computed(() => Math.max(1, Math.floor((available.value + 1) / (minimum.value - 1))))
+const track = computed(() =>
+	Math.max(minimum.value - 1, Math.round((available.value + 1) / columns.value)),
+)
+const cell = computed(() => track.value + 1)
 
 // Wider glyphs (⸻, Ⅷ) span as many cells as they need, so cells stay in columns: measured once
 // rendered, and again when fonts load
@@ -85,16 +91,16 @@ onBeforeUnmount(() => document.fonts.removeEventListener("loadingdone", measure)
 <template>
 	<div
 		ref="grid"
-		class="relative"
+		class="relative -mx-5 overflow-x-clip"
 		:style="[font, { height: `${virtualizer.getTotalSize() + 1}px` }]"
 	>
 		<div
 			v-for="row in virtualizer.getVirtualItems()"
 			:key="row.key"
-			class="absolute inset-x-0 top-0 grid"
+			class="absolute -left-px right-0 top-0 grid"
 			:style="{
 				transform: `translateY(${row.start - virtualizer.options.scrollMargin}px)`,
-				gridTemplateColumns: `repeat(${columns}, ${track}px)`,
+				gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
 			}"
 		>
 			<figure

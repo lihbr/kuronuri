@@ -9,7 +9,6 @@
 		<div class="group col-span-full mb-5 lg:col-start-3 lg:col-span-8">
 			<SpecimenNote mark="01">50 italic, 20px</SpecimenNote>
 			<SpecimenMark mark="01" class="block mb-2.5" />
-			<!-- Over the lines -->
 			<figure class="font-50 italic text-xl/tight lowercase">
 				<blockquote lang="en" class="bg-paper">
 					Of course it can always be improved, it can always be reimagined, it can always be
@@ -63,7 +62,6 @@
 		<div class="group col-span-2 md:col-span-1 lg:col-start-6 self-start max-md:order-3 md:mt-90">
 			<SpecimenNote mark="04" class="md:justify-end">35 regular, 16px</SpecimenNote>
 			<SpecimenMark mark="04" class="block mb-2.5 text-right" />
-			<!-- Its height is the length of a line, lines go from right to left -->
 			<figure
 				lang="ja"
 				class="w-fit max-w-full h-[52em] ml-auto md:h-[60.5em] writing-vertical font-35 text-base/tight bg-paper"
@@ -118,7 +116,6 @@
 				/>
 			</figure>
 
-			<!-- Below large screens, the note is under the year, over the space left by the calendar -->
 			<div
 				class="group col-span-4 md:col-span-2 md:max-lg:col-start-5 grid grid-cols-[auto_auto] max-lg:grid-rows-[auto_1fr] justify-between items-start max-lg:relative max-md:order-6 mt-2.5"
 			>

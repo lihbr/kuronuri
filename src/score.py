@@ -53,7 +53,7 @@ a bar), the smooth ones twice as big (redrawn-base.png, a row a style), and
 the superscripts as built (superiors-<style>.png: Redaction's blue, drawn
 ones black). Draws the fonts first (draw.py).
 
-usage: score.py [--variants base,10,...] [--styles Regular,Italic,Bold] [--no-draw]
+usage: score.py [--variants 0,10,...] [--styles Regular,Italic,Bold] [--no-draw]
 """
 
 import argparse
@@ -986,7 +986,7 @@ def _stack(rows, gap=16):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--variants", default="base," + ",".join(map(str, GRIDS)))
+    ap.add_argument("--variants", default="0," + ",".join(map(str, GRIDS)))
     ap.add_argument("--styles", default=",".join(STYLES))
     ap.add_argument("--no-draw", action="store_true", help="score the fonts drawn already")
     args = ap.parse_args()

@@ -27,7 +27,6 @@
   "exports": {
     ".": "./dist/web/index.css",
     "./*.css": "./dist/web/*.css",
-    "./glyphs.json": "./dist/web/glyphs.json",
     "./files/*": "./dist/web/files/*",
     "./package.json": "./package.json"
   },
