@@ -4,7 +4,7 @@
 
 [kuronuri](https://kuronuri.lihbr.com) (黒塗り, "blacked out") is a font family created by [lihbr](https://lihbr.com). it extends [redaction](https://www.redaction.us), by [mckl](https://www.mckltype.com), and draws kana and kanji using [noto serif jp](https://fonts.google.com/noto/specimen/Noto+Serif+JP) as a base. like redaction, it comes in seven families, from smooth to pixelated: kuronuri 0, 10, 20, 35, 50, 70, and 100.
 
-kuronuri also comes with new glyphs drawn in redaction's style, including fractions (⅐), arrows (⇒), enclosed characters (🆞), and more. font-feature settings were also added for tabular figures `tnum`, fractions `frac`, superscripts `sups`, subscripts `subs`, ordinals `ordn`, contextual alternates `calt`, and alternate arrows `ss01`.
+kuronuri also comes with new glyphs drawn in redaction's style, including fractions (⅐), arrows (→), enclosed characters (🆞), and more. font-feature settings were also added for tabular figures `tnum`, fractions `frac`, superscripts `sups`, subscripts `subs`, ordinals `ordn`, contextual alternates `calt`, and alternate arrows `ss01`.
 
 ## install インストール
 
