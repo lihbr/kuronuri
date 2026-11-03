@@ -6,12 +6,16 @@
 *.jpg binary
 *.jpeg binary
 *.gif binary
+*.webp binary
+*.avif binary
 *.ico binary
 *.ttf binary
 *.otf binary
 *.woff binary
 *.woff2 binary
 *.zip binary
+*.mp4 binary
+*.webm binary
 
 # treats lock files as binaries to prevent merge headache
 pnpm-lock.yaml -diff

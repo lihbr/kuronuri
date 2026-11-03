@@ -1,6 +1,7 @@
 line-length = 100
 target-version = "py312"
-extend-exclude = ["sources", "temp"]
+extend-exclude = [".cache", ".tmp"]
+cache-dir = ".cache/ruff"
 
 [lint]
 select = ["E", "F", "W", "I", "UP", "B"]

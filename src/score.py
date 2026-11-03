@@ -44,7 +44,7 @@ a mean and worst glyph per group (digit ①, number ⑳, capital Ⓐ, lowercase
 ⓐ, word 🆒), in the fonts drawn and in those last approved
 (.cache/approved): see enclosed_glyphs.
 
-Writes temp/score: score.json, everything measured, and, per style, PNGs
+Writes .tmp/score: score.json, everything measured, and, per style, PNGs
 of the glyphs drawn again over Redaction's (redrawn-<style>.png: shared
 ink black, ink only Redaction has blue, ink only the drawing has orange,
 the drawing's points green, on the curve, and grey, off it, carving pale:
@@ -94,7 +94,7 @@ from glyphs.shapes import (  # noqa: E402
     union_paths,
 )
 
-OUT = ROOT / "temp" / "score"
+OUT = ROOT / ".tmp" / "score"
 CARVED = 20  # largest pixel that shows carving
 NEAR = 40  # farthest a gap is from Redaction's to be the same
 SPECK = 20  # least area of a gap, under which it is noise

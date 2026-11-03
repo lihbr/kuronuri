@@ -50,7 +50,7 @@ export default defineNuxtConfig({
 	$development: {
 		nitro: {
 			publicAssets: [
-				{ dir: fileURLToPath(new URL("../temp/review", import.meta.url)), baseURL: "/_review" },
+				{ dir: fileURLToPath(new URL("../.tmp/review", import.meta.url)), baseURL: "/_review" },
 			],
 		},
 	},
