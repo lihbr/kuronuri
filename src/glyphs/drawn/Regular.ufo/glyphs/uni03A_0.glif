@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03A0" format="2">
+  <advance width="769"/>
+  <unicode hex="03A0"/>
+  <outline>
+    <contour>
+      <point x="549" y="639" type="line"/>
+      <point x="549" y="105" type="line" smooth="yes"/>
+      <point x="549" y="71"/>
+      <point x="513" y="34"/>
+      <point x="478" y="31" type="qcurve" smooth="yes"/>
+      <point x="455" y="29" type="line"/>
+      <point x="455" y="0" type="line"/>
+      <point x="749" y="0" type="line"/>
+      <point x="749" y="29" type="line"/>
+      <point x="726" y="31" type="line" smooth="yes"/>
+      <point x="691" y="34"/>
+      <point x="655" y="71"/>
+      <point x="655" y="105" type="qcurve" smooth="yes"/>
+      <point x="655" y="595" type="line" smooth="yes"/>
+      <point x="655" y="629"/>
+      <point x="691" y="666"/>
+      <point x="726" y="669" type="qcurve" smooth="yes"/>
+      <point x="749" y="671" type="line"/>
+      <point x="749" y="700" type="line"/>
+      <point x="20" y="700" type="line"/>
+      <point x="20" y="671" type="line"/>
+      <point x="43" y="669" type="line" smooth="yes"/>
+      <point x="78" y="666"/>
+      <point x="114" y="629"/>
+      <point x="114" y="595" type="qcurve" smooth="yes"/>
+      <point x="114" y="105" type="line" smooth="yes"/>
+      <point x="114" y="71"/>
+      <point x="78" y="34"/>
+      <point x="43" y="31" type="qcurve" smooth="yes"/>
+      <point x="20" y="29" type="line"/>
+      <point x="20" y="0" type="line"/>
+      <point x="314" y="0" type="line"/>
+      <point x="314" y="29" type="line"/>
+      <point x="291" y="31" type="line" smooth="yes"/>
+      <point x="256" y="34"/>
+      <point x="220" y="71"/>
+      <point x="220" y="105" type="qcurve" smooth="yes"/>
+      <point x="220" y="639" type="line"/>
+      <point x="184" y="639" type="line"/>
+      <point x="184" y="659" type="line"/>
+      <point x="585" y="659" type="line"/>
+      <point x="585" y="639" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>20</integer>
+        <integer>20</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction T, I, H</string>
+    </dict>
+  </lib>
+</glyph>

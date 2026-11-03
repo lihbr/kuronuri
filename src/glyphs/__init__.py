@@ -16,6 +16,7 @@ from . import (
     figures,
     fullwidth,
     japanese,
+    letterlike,
     letters,
     maths,
     numerals,
@@ -23,12 +24,14 @@ from . import (
     punctuation,
     signs,
     small,
+    squared,
     symbols,
 )
 
 MODULES = [
     arrows,
     letters,
+    letterlike,
     signs,
     maths,
     symbols,
@@ -40,6 +43,7 @@ MODULES = [
     numerals,
     enclosed,
     japanese,
+    squared,
 ]
 CODEPOINTS = {cp: name for m in MODULES for cp, name in m.CODEPOINTS.items()}
 

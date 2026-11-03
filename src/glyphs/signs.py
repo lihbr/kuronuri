@@ -7,8 +7,9 @@ Redaction 35's minus is two cells thick, which makes diagonal strokes heavy.
 Redaction's glyphs (components), as far apart as the plus is tall (or a
 stroke apart, if further), so in the numbered variants they keep MCKL's
 pixels. ‰ is the percent sign (a component) and its bottom ring again, as
-far right of it as the ring is thick: on a grid, the pixels of the percent
-sign where its smooth ring is, MCKL's own.
+far right of it as half the ring is thick, about as close as the ring is to
+the slash: on a grid, the pixels of the percent sign where its smooth ring
+is, MCKL's own, a cell apart at least.
 """
 
 import math
@@ -37,6 +38,7 @@ CODEPOINTS = {
 }
 ALTERNATES = []
 RING = "perthousand.ring"  # the ring ‰ adds to the percent sign
+APART = 0.5  # of the thickness of that ring, between it and the ring of the percent sign
 SAMPLES = ["a<b>c 1<2", "+−±÷×=<>", "±1 ÷2 x±y", "H<H>H", "東京<大阪", "50% 5‰ %‰"]
 
 
@@ -123,7 +125,7 @@ def add_glyphs(font, smooth, grid=None):
     x0, y0, x1, y1 = outer.bounds
     ring = [outer, *(c for c in contours if inside(c, outer))]
     thick = x1 - max(c.bounds[2] for c in ring if c is not outer)
-    shift = pixel.snap(x1 - x0 + thick, grid or 1)
+    shift = pixel.snap(x1 - x0 + thick * APART, grid or 1)
     p = union([])
     for c in ring:
         p.addPath(c)
@@ -157,6 +159,7 @@ def add_glyphs(font, smooth, grid=None):
             if percent.contains((x + grid / 2, y + grid / 2)) and ring_s(x + grid / 2, y + grid / 2)
         ]
         p = union_paths(cells)
+        shift = max(shift, round(p.bounds[2] - p.bounds[0]) + grid)
     ring_glyph = glyph(p.transform(1, 0, 0, 1, shift, 0))
     percent = cmap[ord("%")]
     add(font, {RING: (ring_glyph, 0)}, {})

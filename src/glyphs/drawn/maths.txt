@@ -1,0 +1,55 @@
+// Integrals drawn by hand on 100, cell by cell (glyphs/maths.py,
+// _operators): pixelated, ∫ came out a slash with a cell hanging off it,
+// and the stem of ∮ filled its ring. Bold's ∫ steps two cells where it
+// turns. ∬ ∭ are drawn from ∫'s cells on every grid (_repeated).
+//
+// A glyph is a line "grid styles character x,y" (styles separated by
+// commas), x,y the cell its bottom left cell is in, then its cells, top row
+// first: "#" ink, "." air. ∫ is drawn alike in Regular and Italic, as it is
+// smooth: Italic's f, without its bar. ∮ is it through a ring five cells
+// high, a cell thick as the minus is, a cell clear of the stem each side.
+// Lines starting with // are notes.
+
+100 Regular,Italic ∫ 0,-1
+.....##
+....#..
+....#..
+....#..
+...#...
+...#...
+..#....
+..#....
+##.....
+
+100 Regular,Italic ∮ 0,-1
+.....##
+....#..
+.#####.
+#...#.#
+#..#..#
+#..#..#
+.#####.
+..#....
+##.....
+
+100 Bold ∫ 0,-1
+.....###
+....##..
+....#...
+....#...
+...##...
+...#....
+...#....
+..##....
+###.....
+
+100 Bold ∮ 0,-1
+.....###
+....##..
+.######.
+#...#..#
+#..##..#
+#..#...#
+.######.
+..##....
+###.....

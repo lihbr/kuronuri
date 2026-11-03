@@ -5,7 +5,7 @@
     <key>familyName</key>
     <string>Kuronuri drawn</string>
     <key>note</key>
-    <string>Glyphs drawn by hand from Redaction's own, in its units: enclosed content made heavier, carving open (glyphs/enclosed.py), and 〒 from its T (glyphs/fullwidth.py)</string>
+    <string>Glyphs drawn by hand from Redaction's own, in its units: enclosed content made heavier, carving open (glyphs/enclosed.py), 〒 from its T (glyphs/fullwidth.py), and operators from its letters: ∑ of Z and X, ∏ ∐ of T and I, ∂ of 6, ∫ ∬ ∭ ∮ of Italic’s f (glyphs/maths.py), and letters: Σ Π as ∑ ∏, μ of u and p, ℏ of Italic’s ħ (glyphs/letterlike.py)</string>
     <key>styleName</key>
     <string>Italic</string>
     <key>unitsPerEm</key>

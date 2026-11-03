@@ -759,6 +759,19 @@ def shrunk(smooth, scale, weight=1, target=None, of="n"):
 
 
 @functools.cache
+def with_letters(style):
+    """Redaction's `style`, smooth, with the letters drawn for it
+    (letterlike.py: μ, and Noto Serif JP's ℓ Ω as tall as its own): to set
+    text with them, as the units of squared.py (㎍ ㎖ ㏀). Not to be changed."""
+    from . import letterlike
+
+    font = redaction(None, style)
+    letterlike.add_glyphs(font, redaction(None, style))
+    letterlike.add_noto(font)
+    return font
+
+
+@functools.cache
 def masters():
     """Redaction's Regular and Bold, smooth, to blend glyphs between."""
     return redaction(None, "Regular"), redaction(None, "Bold")

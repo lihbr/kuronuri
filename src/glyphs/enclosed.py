@@ -61,7 +61,7 @@ other glyphs are drawn as before group 4 (EMBOLDENED), pixelated with
 their enclosure, and where that ran into it too (Bold's 🅆 Ⓦ, Italic's 🅆
 on 70), they are drawn by hand, cell by cell (CELLS, by_cells), as are a
 few drawn anew by hand that pixelate worse than before (Bold's ⓖ on 70,
-Regular's ⓨ on 50, Bold's ㎏ ㋍ ㎳, its letters spaced anew), as before.
+Regular's ⓨ on 50), as before.
 On 100 (COARSEST), all content is emboldened: from Bold thinned in an
 upright Regular, which keeps its carving.
 
@@ -72,7 +72,6 @@ the numbered variants they keep MCKL's pixels.
 
 import functools
 import math
-import unicodedata
 
 import numpy as np
 import pathops
@@ -191,13 +190,13 @@ LIKENED = (70,)
 # of Regular's and Italic's 🄬 reads as Л, but as before it ran into its
 # enclosure, as Regular's 🅦 blots. Bold's 🅆 read as P, its Ⓦ as TV,
 # Italic's 🅆 as T over v, and ran into theirs as before: they are drawn
-# by hand, cell by cell (by_cells).
+# by hand, cell by cell (by_cells). The units among them (㎢ ㏇ ㏞ ㎮ ㎧ ㎨
+# ㎁ ㎃ ㎄ ㎫) are now squared.py's, set as Japanese text sets them.
 EMBOLDENED = {
-    35: {"Regular": "㎢㏇", "Italic": "㏞㎮㎧㎨"},
-    50: {"Regular": "🅊🆋🆌🆍🆎🆏", "Italic": "㎮㎨ⓛⓣ④🆋🆌🆍🆎🆏"},
+    50: {"Regular": "🅊🆋🆌🆍🆎🆏", "Italic": "ⓛⓣ④🆋🆌🆍🆎🆏"},
     70: {
         "Regular": "🅸ⒽⓂ⑧➇🆋🆌🆍🆎🆏🆒🅆",
-        "Italic": "ⓔⓗⓕⓒⓩⓧ🄼㎁㎃㎄㎫🆋🆌🆍🆎🆏",
+        "Italic": "ⓔⓗⓕⓒⓩⓧ🄼🆋🆌🆍🆎🆏",
         "Bold": "ⓂⓗⒾⓇ🆋🆌🆍🆎🆏",
     },
 }
@@ -214,20 +213,6 @@ def _run(start, contents):
 DIGITS = [str(i) for i in range(1, 51)]
 
 
-def _squared():
-    """{code point: text} of the squared Latin words of Unicode (㎏ ㍱ ㋌)
-    whose letters Redaction all has: as decomposed, ∕ as /."""
-    letters = set(redaction(None, "Regular").getBestCmap())
-    squared = {}
-    for cp in [0x3250, *range(0x32CC, 0x32D0), *range(0x3371, 0x33E0), 0x33FF]:
-        tag, *parts = unicodedata.decomposition(chr(cp)).split() or [""]
-        text = "".join(chr(int(c, 16)) for c in parts).replace("∕", "/")
-        if tag == "<square>" and all(ord(c) in letters for c in text):
-            squared[cp] = text
-    return squared
-
-
-SQUARED = _squared()
 UPPER = [chr(c) for c in range(ord("A"), ord("Z") + 1)]
 LOWER = [c.lower() for c in UPPER]
 # (enclosure, {code point: content}, each content as big as fits, content in italic)
@@ -269,9 +254,8 @@ ENCLOSURES = [
         True,
         False,
     ),
-    # Square words, as ㌀, without a square: Latin ones (units: ㎏ ㎑), what
-    # Redaction has all the letters of
-    ("none", {0x1F190: "DJ"} | SQUARED, True, False),
+    # Square words without a square (units, ㎏ ㎑, are squared.py's)
+    ("none", {0x1F190: "DJ"}, True, False),
     ("boxring", _run(0x3248, [str(10 * i) for i in range(1, 9)]), False, False),
     ("raised", {0x1F16A: "MC", 0x1F16B: "MD", 0x1F16C: "MR"}, False, False),
     ("block", _run(0x1F170, UPPER), False, False),

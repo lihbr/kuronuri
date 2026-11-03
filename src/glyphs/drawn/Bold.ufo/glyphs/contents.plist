@@ -12,6 +12,30 @@
     <string>g.glif</string>
     <key>s</key>
     <string>s.glif</string>
+    <key>uni03A0</key>
+    <string>uni03A_0.glif</string>
+    <key>uni03A3</key>
+    <string>uni03A_3.glif</string>
+    <key>uni03BC</key>
+    <string>uni03B_C_.glif</string>
+    <key>uni210F</key>
+    <string>uni210F_.glif</string>
+    <key>uni2202</key>
+    <string>uni2202.glif</string>
+    <key>uni220F</key>
+    <string>uni220F_.glif</string>
+    <key>uni2210</key>
+    <string>uni2210.glif</string>
+    <key>uni2211</key>
+    <string>uni2211.glif</string>
+    <key>uni222B</key>
+    <string>uni222B_.glif</string>
+    <key>uni222C</key>
+    <string>uni222C_.glif</string>
+    <key>uni222D</key>
+    <string>uni222D_.glif</string>
+    <key>uni222E</key>
+    <string>uni222E_.glif</string>
     <key>uni3012</key>
     <string>uni3012.glif</string>
     <key>w</key>

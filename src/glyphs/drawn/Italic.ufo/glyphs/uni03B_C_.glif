@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03BC" format="2">
+  <advance width="719"/>
+  <unicode hex="03BC"/>
+  <unicode hex="00B5"/>
+  <outline>
+    <contour>
+      <point x="472" y="74" type="line"/>
+      <point x="464" y="35"/>
+      <point x="495" y="-6"/>
+      <point x="526" y="-6" type="qcurve" smooth="yes"/>
+      <point x="566" y="-6"/>
+      <point x="650" y="60"/>
+      <point x="699" y="125" type="qcurve"/>
+      <point x="691" y="130" type="line"/>
+      <point x="657" y="95"/>
+      <point x="603" y="53"/>
+      <point x="582" y="53" type="qcurve" smooth="yes"/>
+      <point x="568" y="53"/>
+      <point x="558" y="77"/>
+      <point x="571" y="111" type="qcurve" smooth="yes"/>
+      <point x="713" y="470" type="line"/>
+      <point x="622" y="470" type="line"/>
+      <point x="525" y="218" type="line"/>
+      <point x="470" y="136"/>
+      <point x="376" y="46"/>
+      <point x="340" y="46" type="qcurve" smooth="yes"/>
+      <point x="320" y="46"/>
+      <point x="309" y="65" type="qcurve" smooth="yes"/>
+      <point x="304" y="74"/>
+      <point x="306" y="91" type="qcurve"/>
+      <point x="362" y="235" type="line"/>
+      <point x="362" y="235" type="line"/>
+      <point x="465" y="484" type="line"/>
+      <point x="277" y="447" type="line"/>
+      <point x="310" y="430" type="line" smooth="yes"/>
+      <point x="330" y="420"/>
+      <point x="339" y="392"/>
+      <point x="328" y="365" type="qcurve" smooth="yes"/>
+      <point x="272" y="235" type="line"/>
+      <point x="272" y="235" type="line"/>
+      <point x="272" y="235" type="line"/>
+      <point x="236" y="149" type="line" smooth="yes"/>
+      <point x="224" y="122"/>
+      <point x="220" y="98" type="qcurve"/>
+      <point x="167" y="-40" type="line"/>
+      <point x="166" y="-40" type="line"/>
+      <point x="130" y="-135" type="line" smooth="yes"/>
+      <point x="119" y="-165"/>
+      <point x="81" y="-199"/>
+      <point x="52" y="-202" type="qcurve" smooth="yes"/>
+      <point x="32" y="-204" type="line"/>
+      <point x="22" y="-230" type="line"/>
+      <point x="267" y="-230" type="line"/>
+      <point x="277" y="-204" type="line"/>
+      <point x="256" y="-202" type="line" smooth="yes"/>
+      <point x="224" y="-199"/>
+      <point x="209" y="-166"/>
+      <point x="220" y="-135" type="qcurve" smooth="yes"/>
+      <point x="257" y="-40" type="line"/>
+      <point x="256" y="-40" type="line"/>
+      <point x="269" y="-6" type="line"/>
+      <point x="285" y="-11"/>
+      <point x="305" y="-11" type="qcurve" smooth="yes"/>
+      <point x="354" y="-11"/>
+      <point x="469" y="95"/>
+      <point x="531" y="185" type="qcurve"/>
+      <point x="534" y="185" type="line"/>
+      <point x="511" y="126" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>22</integer>
+        <integer>6</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction u, p</string>
+    </dict>
+  </lib>
+</glyph>

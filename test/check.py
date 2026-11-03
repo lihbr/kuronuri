@@ -15,14 +15,17 @@
   Redaction's glyph centred in the em; Roman numerals, ‼ and ⑴ are as wide
   as what they are made of, set with kerning; enclosed numbers and letters
   are centred on the em box.
-- Enclosed glyphs and arrows drawn by hand on a grid (glyphs/drawn/cells.txt
-  and arrows.txt) are so, cell for cell, in the fonts of their grid and
-  style, and the arrows' alts too.
+- Enclosed glyphs, arrows and integrals drawn by hand on a grid
+  (glyphs/drawn/cells.txt, arrows.txt and maths.txt) are so, cell for cell,
+  in the fonts of their grid and style, and the arrows' alts too.
 - Every outline drawn by hand (glyphs/drawn) loads, is used, and has no
   self-intersections: enclosed content has the pieces and counters of
   Redaction's glyph; 〒 stands upright, as tall as T, its two bars and stem
   as thick as T's (Italic's measured across its slant), in two pieces; the
-  owner's arrow head is that of Regular's → as built, in one piece.
+  owner's arrow head is that of Regular's → as built, in one piece; ∑ ∏ ∐
+  ∂ ∫ have the pieces and counters of the letter each is drawn from (Z T T
+  6 f), and ∬ ∭ as many pieces as integrals; so do Σ Π μ ℏ (Z T u, and
+  Italic's ħ), every letter of letterlike.py drawn.
 - No two superscript letters (ª º, those `ordn` raises, the c of ℅) are
   drawn alike, but on 100, where they are three cells high: there c and e
   have the same placements, and come out alike.
@@ -53,7 +56,7 @@ from fontTools.unicodedata import script
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 import glyphs  # noqa: E402
 from family import STYLES, redaction  # noqa: E402
-from glyphs import arrows, enclosed, fullwidth, numerals, punctuation  # noqa: E402
+from glyphs import arrows, enclosed, fullwidth, letterlike, maths, numerals, punctuation  # noqa: E402
 from glyphs.shapes import DRAWN, _pieces, drawn, drawn_cells, path, runs, slope  # noqa: E402
 from pixel import snap, snap_advance  # noqa: E402
 
@@ -197,8 +200,8 @@ def check_font(path):
 
 def check_cells(path, font, grid):
     """Glyphs drawn by hand on `grid`, cell by cell, are so in the font, of
-    its style: enclosed ones (enclosed.by_cells), and arrows and their alts
-    (arrows.CELLS), Italic's as they stand."""
+    its style: enclosed ones (enclosed.by_cells), arrows and their alts
+    (arrows.CELLS), Italic's as they stand, and integrals (maths.CELLS)."""
     style = path.stem.split("-")[1]
     gs, cmap, problems = font.getGlyphSet(), font.getBestCmap(), []
     names = {}
@@ -208,6 +211,8 @@ def check_cells(path, font, grid):
         alt = font.getGlyphName(shape(path, char, {"ss01": True})[0][0])
         for name in (cmap[ord(char)], alt):
             names[g, s, name] = char, rows
+    for (g, s, char), rows in drawn_cells(maths.CELLS).items():
+        names[g, s, cmap[ord(char)]] = char, rows
     for (g, s, name), (char, rows) in names.items():
         if (g, s) != (grid, style):
             continue
@@ -341,7 +346,8 @@ def check_hand():
     enclosure, made heavier so, with the pieces and counters of Redaction's
     glyph, and slanted content drawn for another style than Italic's (Bold's
     🄬) is used there, of Italic's glyph; 〒 is fullwidth's (check_postal);
-    the owner's arrow head is arrows' (check_arrows)."""
+    the owner's arrow head is arrows' (check_arrows); the operators are
+    maths' (check_operators)."""
     problems = []
     used = {c for _, contents, _, _ in enclosed.ENCLOSURES for t in contents.values() for c in t}
     slanted = {
@@ -353,9 +359,9 @@ def check_hand():
         ufo = DRAWN / f"{style}.ufo"
         every, hand = drawn(style), enclosed.by_hand(style)
         theirs = enclosed.by_hand(style, True)
-        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(every) + len(
-            drawn(style, True)
-        ):
+        # each glyph once, those of two code points (μ µ, Ω Ω) too
+        loaded = {id(p) for p, _ in [*every.values(), *drawn(style, True).values()]}
+        if ufo.exists() and len(UFOReader(ufo).getGlyphSet()) != len(loaded):
             problems.append(f"{ufo.name}: not every glyph loads, with a code point")
         font = redaction(None, style)
         for c, (p, amount) in theirs.items():
@@ -370,7 +376,8 @@ def check_hand():
                 problems.append(f"{ufo.name}: slanted {c} is not Redaction's made heavier")
             if crossed := crossings(p):
                 problems.append(f"{ufo.name}: slanted {c} crosses itself ({crossed})")
-        for c in sorted(set(every) - set(hand) - {postal} - set(arrows.SOURCES)):
+        operators = {chr(cp) for cp in [*maths.OPERATORS, *letterlike.LETTERS]}
+        for c in sorted(set(every) - set(hand) - {postal} - set(arrows.SOURCES) - operators):
             problems.append(f"{ufo.name}: {c} is not used")
         for c, (p, amount) in hand.items():
             plan = (0, enclosed._limit(style, c), 0)
@@ -387,6 +394,51 @@ def check_hand():
             problems += [f"{ufo.name}: 〒 {p}" for p in check_postal(font, every[postal][0])]
         if any(c in every for c in arrows.SOURCES):
             problems += [f"{ufo.name}: {p}" for p in check_arrows(font, every)]
+        problems += [f"{ufo.name}: {p}" for p in check_operators(font, every)]
+        problems += [f"{ufo.name}: {p}" for p in check_letters(font, every)]
+    return problems
+
+
+# Letters of letterlike.py drawn from one of Redaction's, of its Italic if so
+FROM = {"Σ": ("Z", False), "Π": ("T", False), "μ": ("u", False)}
+FROM |= {"ℏ": ("ħ", True)}
+
+
+def check_letters(font, every):
+    """The letters drawn by hand for `font`, a Redaction style (`every`, its
+    glyphs drawn by hand), are all there, those drawn from one of
+    Redaction's (FROM) with its pieces and counters."""
+    problems = []
+    italic = redaction(None, "Italic")
+    for cp in letterlike.LETTERS:
+        c = chr(cp)
+        if c not in every:
+            problems.append(f"{c} is missing")
+        elif c in FROM:
+            letter, of_italic = FROM[c]
+            if _pieces(every[c][0]) != _pieces(path(italic if of_italic else font, letter)):
+                problems.append(f"{c} has not the pieces and counters of {letter}")
+    return problems
+
+
+def check_operators(font, every):
+    """The operators drawn by hand for `font`, a Redaction style (`every`,
+    its glyphs drawn by hand), are all there: ∬ ∭ in as many pieces as
+    integrals, the others but ∮ with the pieces and counters of the letter
+    each is drawn from, Italic's f for ∫."""
+    problems = []
+    italic = redaction(None, "Italic")
+    for cp, letter in maths.OPERATORS.items():
+        c = chr(cp)
+        if c not in every:
+            problems.append(f"{c} is missing")
+            continue
+        pieces = _pieces(every[c][0])
+        if cp in maths.REPEATED:
+            if pieces != (maths.REPEATED[cp], 0):
+                problems.append(f"{c} is not {maths.REPEATED[cp]} integrals apart")
+        elif cp != 0x222E and pieces != _pieces(path(italic if letter == "f" else font, letter)):
+            problems.append(f"{c} has not the pieces and counters of {letter}")
     return problems
 
 

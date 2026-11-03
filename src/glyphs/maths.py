@@ -10,6 +10,30 @@ other signs (≤ ≦ ≲ ≃ ≅ ≈), and are crossed by a slash (≠ ≮ ∉).
 Sets and logic (∩ ⊂ ∈ ∧ ⊥ ∠) are drawn with the same strokes, round where
 they turn, and the dots (∴) are Redaction's period, ⋯ its ellipsis. ∀ ∃ ∆ ∇ stand on the
 baseline, as tall as capitals. On a grid, they are pixelated.
+
+Operators are drawn by hand from Redaction's letters (shapes.drawn), so they
+keep its carving: ∑ the top of Z mirrored over the bottom of Z, their
+diagonals meeting in a point, the lower one as thin as X's thin stroke, Z's
+notch above the bar; ∏ two stems of T as far apart as those of H, T's notch
+under the bar inside each, a bar as thick as T's across them ending in I's
+serifs, and ∐ that turned over; ∂ 6 mirrored, upright first in Italic; ∫
+Italic's f without its bar, turned 8° counter-clockwise so it stands
+straighter, in every style (Bold's emboldened), ∬ ∭ it again as close as
+its hooks clear the next stem, and ∮ it through a ring as big as Noto Serif
+JP's, as thick as the minus. ∑ ∏ ∐ are as tall as Noto Serif JP's, as
+operators are taller than capitals (as tall as them, they are the Greek Σ
+Π of letterlike.py): drawn as tall as capitals of lighter letters, as
+Redaction's Regular is of its Bold (shapes.blend), then scaled up so, as
+heavy as its own, their notches cut smaller first, so they are Z's and
+T's; ∏ ∐ as wide as Noto Serif JP's, their stems nearer. They and the
+integrals are centred where Noto Serif JP's were, which set them before
+(below the baseline, and the integrals higher); ∂ stands on it, as 6. On a
+grid, they are
+pixelated where in a cell they fall best, on the rows of the letter drawn
+from and its strokes as thick (∫ on its own rows, as f's); upright, ∂ is
+MCKL's 6 mirrored, its pixels and carving. On 100, the integrals are drawn
+by hand, cell by cell (drawn/maths.txt), and on every grid ∬ ∭ are the
+pixels of ∫ again, as close as no cell touches the next.
 """
 
 import math
@@ -23,9 +47,12 @@ from .shapes import (
     _hull,
     add,
     circle,
+    drawn,
+    drawn_cells,
     embolden,
     glyph,
     path,
+    phased,
     pixelate_glyphs,
     rect,
     runs,
@@ -48,8 +75,14 @@ LINES += [0x221E, 0x221D, 0x2205, 0x29FA, 0x29FB]
 CIRCLED = [0x2295, 0x2296, 0x2297, 0x2298, 0x2299, 0x29BF, 0x22A0]
 DOTS = [0x2234, 0x2235, 0x2236, 0x2237, 0x22EF]
 CAPITALS = [0x2200, 0x2203, 0x2206, 0x2207]
+# Drawn by hand, by the letter each is drawn from (its rows and strokes on a grid)
+OPERATORS = {0x2211: "Z", 0x220F: "T", 0x2210: "T", 0x2202: "6"}
+OPERATORS |= {cp: "f" for cp in (0x222B, 0x222C, 0x222D, 0x222E)}
+CELLS = "maths.txt"  # the operators drawn by hand on a grid, cell by cell
+REPEATED = {0x222C: 2, 0x222D: 3}  # ∬ ∭: ∫ so many times; on a grid, its pixels
 CODEPOINTS = {
-    cp: f"uni{cp:04X}" for cp in [*RELATIONS, *TILDES, *SETS, *LINES, *CIRCLED, *DOTS, *CAPITALS]
+    cp: f"uni{cp:04X}"
+    for cp in [*RELATIONS, *TILDES, *SETS, *LINES, *CIRCLED, *DOTS, *CAPITALS, *OPERATORS]
 }
 ALTERNATES = []
 SAMPLES = [
@@ -61,6 +94,9 @@ SAMPLES = [
     "⊕⊖⊗⊘⊙⦿⊠ ∴∵∶∷⋯",
     "∀x∃y ∆x∇f ∅",
     "x∈A∪B ∀ε∃δ p∧q⊢r",
+    "∑∏∐∂∫∬∭∮ ΣΠ",
+    "∂f/∂x ∑xi ∏ai ∫f dx ∬A ∮C",
+    "(∑ aₙxⁿ) [∏ (1 + x)] ∫₀¹ f(x) dx",
 ]
 
 
@@ -493,3 +529,78 @@ def add_glyphs(font, smooth, grid=None):
     if grid:
         glyphs = pixelate_glyphs(glyphs, grid)
     add(font, {name: (g, widths[name]) for name, g in glyphs.items()}, CODEPOINTS)
+    add(font, _operators(font, smooth, grid, side), CODEPOINTS)
+
+
+def _operators(font, smooth, grid, side):
+    """{name: (glyph, advance)} of the operators drawn by hand for the style
+    of `smooth`, `side` from their ink each side. On a grid, cells drawn by
+    hand (CELLS), or upright, ∂ MCKL's 6 mirrored, its pixels and carving;
+    ∬ ∭ the pixels of ∫ again (_repeated); the others pixelated where in a
+    cell they fall best, on the rows of the letter each is drawn from and
+    its strokes as thick."""
+    style = smooth["name"].getDebugName(2)
+    hand = drawn(style)
+    cmap, glyf = font.getBestCmap(), font["glyf"]
+    out = {}
+    for letter in dict.fromkeys(OPERATORS.values()):
+        cps = [cp for cp, of in OPERATORS.items() if of == letter]
+        shapes = {}
+        for cp in cps:
+            p = hand[chr(cp)][0]
+            shapes[CODEPOINTS[cp]] = glyph(p.transform(1, 0, 0, 1, -p.bounds[0], 0))
+        if grid:
+            source = glyf[cmap[ord(letter)]]
+            source.recalcBounds(glyf)
+            # its rows, as far up or down as the operator is drawn from it
+            low = hand[chr(cps[0])][0].bounds[1] - path(smooth, letter).bounds[1]
+            dy = pixel.snap(low, grid)
+            rows = None if letter == "f" else (source.yMin + dy, source.yMax + dy)
+            shapes = phased(shapes, grid, rows, [source], carved=True)
+            for cp in cps:
+                cells = drawn_cells(CELLS).get((grid, style, chr(cp)))
+                if cells:
+                    shapes[CODEPOINTS[cp]] = _cells(cells, grid)
+                elif cp == 0x2202 and not slope(smooth):
+                    six = path(font, "6")
+                    x0, _, x1, _ = six.bounds
+                    shapes[CODEPOINTS[cp]] = glyph(six.transform(-1, 0, 0, 1, x0 + x1, 0))
+                elif cp in REPEATED:  # after ∫, in OPERATORS
+                    one = shapes[CODEPOINTS[0x222B]]
+                    shapes[CODEPOINTS[cp]] = _repeated(one, REPEATED[cp], grid)
+        for name, g in shapes.items():
+            g.recalcBounds(None)
+            g.coordinates.translate((side - g.xMin, 0))
+            out[name] = g, pixel.snap(g.xMax - g.xMin + 2 * side, grid or 1)
+    return out
+
+
+def _repeated(g, n, grid):
+    """Pixel glyph `g` `n` times, whole cells apart, as close as no cell of
+    one touches the next, even at a corner."""
+    p = pathops.Path()
+    g.draw(pathops.PathPen(p), None)
+    grown = embolden(p, grid / 4)  # cells that touch overlap so, those a cell apart do not
+    k = 1
+    while pathops.op(
+        grown, grown.transform(1, 0, 0, 1, k * grid, 0), pathops.PathOp.INTERSECTION
+    ).area:
+        k += 1
+    return glyph(union_paths([p.transform(1, 0, 0, 1, i * k * grid, 0) for i in range(n)]))
+
+
+def _cells(cells, grid):
+    """A glyph of `cells` drawn by hand (shapes.drawn_cells), its bottom left
+    cell where they say."""
+    x, y = cells.at
+    top = y + len(cells)
+    return glyph(
+        union_paths(
+            [
+                rect((x + j) * grid, (top - i - 1) * grid, (x + j + 1) * grid, (top - i) * grid)
+                for i, row in enumerate(cells)
+                for j, c in enumerate(row)
+                if c == "#"
+            ]
+        )
+    )
