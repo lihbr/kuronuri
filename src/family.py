@@ -10,8 +10,8 @@ from fontTools import subset
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = ROOT / "sources"
 CACHE = ROOT / ".cache"
+SOURCES = CACHE / "sources"
 DIST = ROOT / "dist"
 
 FAMILY = "Kuronuri"

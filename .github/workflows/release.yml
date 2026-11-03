@@ -30,16 +30,17 @@ jobs:
           cache: pip
       - uses: actions/cache@v6
         with:
-          path: sources
+          path: .cache/sources
           key: sources-${{ hashFiles('src/fetch_sources.sh') }}
       - uses: actions/cache@v6
         with:
-          path: .cache
+          path: |
+            .cache
+            !.cache/sources
           key: glyphs-${{ hashFiles('src/pixel.py') }}
           restore-keys: glyphs-
       - run: pnpm install
       - run: pnpm venv
-      - run: '[ -f "sources/noto-serif-jp/NotoSerifJP[wght].ttf" ] || pnpm sources'
       - run: pnpm build
       - run: pnpm test
 

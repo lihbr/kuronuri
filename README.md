@@ -1,124 +1,54 @@
 # kuronuri 黒塗り
 
-[![release][release-src]][release-href]
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![license][license-src]][license-href]
 
-[redaction](https://www.redaction.us), with japanese support, and more
+[kuronuri](https://kuronuri.lihbr.com) (黒塗り, "blacked out") is a font family created by [lihbr](https://lihbr.com). it extends [redaction](https://www.redaction.us), by [mckl](https://www.mckltype.com), and draws kanas and kanjis using [noto serif jp](https://fonts.google.com/noto/specimen/Noto+Serif+JP) as a base. like redaction, it comes in seven families, from smooth to pixelated: kuronuri 0, 10, 20, 35, 50, 70, and 100.
 
-kuronuri (黒塗り, "blacked out") pairs the latin of redaction by mckl with the kana and kanji of [noto serif jp](https://fonts.google.com/noto/specimen/Noto+Serif+JP). like redaction, it comes in pixelated variants: kuronuri 10, 20, 35, 50, 70 and 100, where the number is the size of a pixel in a 1000-unit em.
+kuronuri also comes with new glyphs drawn in redaction's style, among them, fractions ⅐, arrows ⇒, enclosed 🆞, and more. font-feature settings were also added for tabular figures, fractions, superscripts, subscripts, ordinals, contextual alternates, and alternate arrows.
 
-## web
+## install インストール
+
+### desktop デスクトップ
+
+download the [latest release](https://github.com/lihbr/kuronuri/releases/latest) and install the fonts on your system.
+
+### web ウェブ
 
 ```sh
 npm install kuronuri
 ```
 
-import the css of the families you use:
-
-```js
-import "kuronuri/kuronuri-35.css"
-// or, for pages without japanese
-import "kuronuri/kuronuri-35-latin.css"
-```
-
 ```css
-body {
-	font-family: "Kuronuri 35", serif;
-}
+/* css, -0, -10, -20, -35, -50, -70, -100 */
+@import "kuronuri/kuronuri-35.css";
+
+/* latin only */
+@import "kuronuri/kuronuri-35-latin.css";
 ```
 
-the fonts are split into woff2 slices, each with a `unicode-range`, the way google fonts serves japanese: browsers only download the slices a page uses. a paragraph of japanese and english takes 16 slices, 230 KB for kuronuri, 112 KB for kuronuri 35. the css of a family is 90 KB gzipped, its latin-only css under 1 KB.
+the fonts are split into woff2 slices, and the package is laid out like a [fontsource](https://fontsource.org) one.
 
-the package is laid out like a [fontsource](https://fontsource.org) one: `kuronuri.css` to `kuronuri-100.css`, their `-latin.css`, `index.css` importing every family, and the fonts in `files/`. with [nuxt fonts](https://fonts.nuxt.com), use the `npm` provider:
+## contributing コントリビューション
 
-```ts
-export default defineNuxtConfig({
-	modules: ["@nuxt/fonts"],
-	fonts: {
-		families: [
-			{ name: "Kuronuri 35", provider: "npm", providerOptions: { npm: { package: "kuronuri" } } },
-		],
-	},
-})
-```
+see [contributing.md](./CONTRIBUTING.md)
 
-## desktop
+## credits クレジット
 
-download `kuronuri-<version>.zip` from the [releases](https://github.com/lihbr/kuronuri/releases), it has the ttf and woff2 files.
+[redaction](https://www.redaction.us), © 2019 mckl inc., by jeremy mickel and forest young
+[noto serif jp](https://github.com/notofonts/noto-cjk), © 2017-2024 adobe, © 2012 google inc.
 
-| family       | pixel | woff2  | ttf     |
-| ------------ | ----- | ------ | ------- |
-| kuronuri     |       | 3.1 MB | 8.0 MB  |
-| kuronuri 10  | 10    | 2.3 MB | 16.7 MB |
-| kuronuri 20  | 20    | 1.7 MB | 9.6 MB  |
-| kuronuri 35  | 35    | 1.3 MB | 6.6 MB  |
-| kuronuri 50  | 50    | 1.1 MB | 5.3 MB  |
-| kuronuri 70  | 70    | 0.9 MB | 4.4 MB  |
-| kuronuri 100 | 100   | 0.6 MB | 3.3 MB  |
+## licenses ライセンス
 
-## features
-
-- regular, italic and bold, like redaction. japanese stays upright in italic
-- the japanese of noto serif jp: kana, 13,736 kanji, punctuation, vertical forms and variation sequences. no cyrillic, greek, vietnamese, korean or bopomofo, they would not match redaction
-- fullwidth letters, digits, signs and punctuation drawn from redaction's, for japanese text, also in vertical text: ２０２６年, ＮＨＫ, 本当！？, １，０００, and 〒, and small forms: ﹖﹗﹙﹚
-- roman numerals, and enclosed numbers, letters and words drawn from redaction's: Ⅻ ⅻ ① ㊿ ❶ ⓵ ㉈ Ⓐ 🄰 🅰 🆒 🅪 ⑴ ⒈, latin squares: ㎏ ㎑ ㍱, and dates and hours: ㋀ ㏠ ㍘
-- fractions and figures: ⅓ ⅝ ⅒ ⁴ ₂ ª º №, as features too: `font-variant-numeric: diagonal-fractions` (frac) or `ordinal` (ordn), `font-variant-position: super` (sups) or `sub` (subs), and `numr`, `dnom`, `sinf`
-- ordinals: `font-variant-numeric: ordinal` raises the suffixes of 1st 2nd 3rd 4th, 1er 1re 2e 2nde and 1a 2o 3as, and turns `No. 5` into № 5. a suffix followed by a letter or digit stays as typed: 3am, 2e3
-- ʁ, for french in phonetic notation: \\libʁ\\, < > ± ÷ ‰, ‼ ⁇ ⁈ ⁉, ₩ ₫ ℃ ℉ ℡ ℻
-- tabular figures, also in japanese text: `font-variant-numeric: tabular-nums`
-- arrows: ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ⇐ ⇑ ⇒ ⇓ ⇔ ⇕ ⇖ ⇗ ⇘ ⇙ ⇄ ⇅ ↹ ⇌ ⤴ ⇨ ⮕. `->` `<-` `<->` `-^` `^-` `=>` `<=>` `=^` turn into arrows, to type them as is: `font-variant-ligatures: no-contextual`
-- alt arrows, every arrow with smaller heads: `font-feature-settings: "ss01"`
-- maths: ≤ ≥ ≠ ≡ ≈ ≅ ≪ ≲ ∓ ∈ ∉ ∋ ⊂ ⊆ ∩ ∪ ∧ ∨ ∀ ∃ ∅ ∞ ∝ √ ∠ ⊥ ∥ ⊕ ⊗ ∴ ⋯ ∆ ∇, without the greek and integrals (∑ ∏ ∂ ∫), which stay noto's
-
-## how it's made
-
-- **kuronuri:** noto serif jp 500 is merged into redaction regular, and 800 into bold, the weights with the closest stems.
-- **pixelated variants:** the latin is mckl's redaction 10 to 100. the japanese is pixelated on the same grid by [`src/pixel.py`](./src/pixel.py): a cell becomes a pixel when the outline covers half of it, then thin strokes that fall between cells are put back. advances, vertical origins and kerning are snapped to the grid too.
-- **drawn glyphs:** [`src/glyphs`](./src/glyphs) draws what redaction lacks from redaction's own glyphs, into redaction, before the merge ([`src/draw.py`](./src/draw.py)). smooth drawings are pixelated for the numbered variants, glyphs made of redaction's keep mckl's pixels.
-  - [`arrows.py`](./src/glyphs/arrows.py): the owner's arrow head, →'s, saved as drawn in [`src/glyphs/drawn`](./src/glyphs/drawn) (regular's `arrowright`, scaled by 1.424), on shafts of redaction's minus, its stroke on its axis all along, so `a → b` and `−+→` line up. ← ↑ ↓ and the diagonals are → turned, ↔ ↕ have the head at both ends, double arrows (⇒) two shafts as far apart as its equals sign into the head scaled to span them, block arrows (⇦ ⇧ ⇨ ⇩) ⇒ closed by a minus-thick bar, ⬅ ⬆ ⬇ ⮕ their outline filled. pairs (⇄ ⇅ ↹ ↸), harpoons (⇌, half the head) have heads three quarters as big, curved (⤴) and halfwidth (￫) arrows smaller ones. the alt arrows are every arrow again with smaller heads. bold takes its own minus, its head heavier by redaction's bold n's stem over regular's, its tips as pointed; italic is regular slanted as its plus. pixelated with strokes as many cells either side of their axis, barbs blunt enough to keep their reach (blunter where pixels come apart), every direction its arrow mirrored or turned (← is →), italic's slanted by rows of cells, bridged where that pulls them apart. on 70 and 100, bold's n is a cell heavier than regular's but its minus, plus and < > are regular's, cell for cell, so bold's shafts stay its minus; on 70 its heads are swept a cell further back, their arms a cell heavier (not 45° ones, which fill in). on 100, pairs are drawn by hand, cell by cell, their barbs swept back so they read as heads, not crosses, and so are bold's → and its pairs on 70, whose heads met swept, in [`src/glyphs/drawn/arrows.txt`](./src/glyphs/drawn/arrows.txt) (as cells.txt, below: upright, turned for every direction; italic's as they stand).
-  - [`letters.py`](./src/glyphs/letters.py): ʁ is redaction's `R` upside down, shrunk to the x-height, emboldened first so its stems match the lowercase.
-  - [`signs.py`](./src/glyphs/signs.py): `<` `>` span the plus with the stroke of the minus, `±` and `÷` are made of the plus, minus and period, `‰` of the percent sign and its ring again.
-  - [`maths.py`](./src/glyphs/maths.py): line work in the square of the plus, on the axis of the minus: bars as thick as the minus and the stem of the plus, other strokes as those of `<`. relations stack `<`, the bars of the equals sign and a tilde of the same strokes, sets and logic turn round, the dots are its period and ⋯ its ellipsis, ∀ ∃ ∆ ∇ are as tall as capitals.
-  - [`symbols.py`](./src/glyphs/symbols.py): ₩ is its `W` crossed by the bars of its equals sign, ₫ its `đ` over a rule, ℃ ℉ its ° and letter as typed, ℡ ℻ its capitals as small caps, as tall as its z, made heavier as its bold is of its regular so their stems match its n, and pixelated where in a cell they fall best, as the superscripts.
-  - [`punctuation.py`](./src/glyphs/punctuation.py): ‼ ⁇ ⁈ ⁉ are redaction's ! and ? set with its kerning, as wide as typed.
-  - [`figures.py`](./src/glyphs/figures.py): superscripts are its digits shrunk to the size of its ¹, made heavier first as its bold is of its regular (past bold for bold), so they keep their hairlines and carving, and pixelated where in a cell their counters come out as drawn (35 to 70), subscripts and denominators the same lower, fractions are laid out as its ½. its `frac`, `sups` and `numr` do every figure, `subs`, `sinf` and `dnom` are added.
-  - [`ordinals.py`](./src/glyphs/ordinals.py): ª º and the letters of ordinals (and of ℀ ℅) are its own shrunk as the superscripts, their x-height at the top of its ¹, their stems as its ¹'s: its bold thinned for regular; for italic and bold, made heavier as its bold is of its regular where their outlines match, else grown across only, their tips kept pointed, their tapering strokes grown as much as they are thick, and their carving cut again (bold's s, which runs into itself blended, by as much ink as blending would add), as big as emboldened, spaced as their own letters shrunk, as its ¹ ² ³ are of 1 2 3. pixelated where in a cell their counters come out (35 to 70), and their carving (10, 20), no two alike. № is its N and º, and `ordn` is added.
-  - [`fullwidth.py`](./src/glyphs/fullwidth.py): redaction's glyphs centred in the em, and 〒 drawn by hand from its T, in [`src/glyphs/drawn`](./src/glyphs/drawn): its top again above it, as far apart as noto's bars, their beaks cut short so they read as a pair, upright in italic too, as japanese is. pixelated where in a cell it falls best, its bars whole cells apart (10 to 70); on 100 cut from mckl's T, its lower bar laid straight. ， ． ： ＝ － sit where noto's do, and turn in vertical text as noto's do, through its `vert`; other punctuation that turns stays noto's.
-  - [`small.py`](./src/glyphs/small.py): small forms are redaction's glyphs seven tenths as big, centred in the em.
-  - [`japanese.py`](./src/glyphs/japanese.py): ㋀ ㏠ ㍘ are redaction's figures and noto's kanji (月 日 点), condensed side by side in the em as noto's are, emboldened sideways so their stems stay.
-  - [`numerals.py`](./src/glyphs/numerals.py): roman numerals are redaction's letters set with its kerning, as wide as typed.
-  - [`enclosed.py`](./src/glyphs/enclosed.py): rings, discs and squares as thin as redaction's minus, where noto's ring is, around its glyphs shrunk like ʁ, the same size across a family, and latin squares (㎏) without a square. content is its own in every style, scaled and placed, made 1.15 times as heavy against its n as its heaviest style draws it (smaller than ⑳, as heavy as it): no style thinned, its bold as much heavier than its regular as redaction's is. heavier as its bold is of its regular where their outlines match, so it keeps mckl's carving: regular towards bold, bold past it, shrunk back as tall, italic the upright way, slanted; else thickened all round (its dots scaled) no further than its carving stays half open (italic's lowercase, q w y, bold's g s, 🄬). where that narrows its carving (q and w in every style, italic's r and lowercase, regular's lowercase w y, bold's g s w y), it is drawn by hand, in [`src/glyphs/drawn`](./src/glyphs/drawn) (a ufo a style, in redaction's units): its own points moved out as far, its slits and q's tail gap cut open again as wide as mckl's, and the notches of bold's s's top and g's ear too, thinned in words thickened less (㎦); italic's R and W then moved further as redaction's upright R and W are from regular to bold, slanted, as heavy as its capitals that blend, their slits with them, their tips as pointed as redaction's. 🄫 🄬 are its italic's c and r, in bold too: bold's r, of italic's drawn, moved further still, as redaction's upright R is from regular to bold, as heavy as its Ⓡ, its slits as much wider as bold's are (in the bold ufo, marked slanted). glyphs as near as typed where their ink comes nearest, any way, figures as far apart as they look on average; as big in every style as typed in its bold, upright, or smaller where a style's own is wider (italic's m), shrunk only past 0.9 of the room inside, and a glyph alone where nearer its enclosure than ¾ of its stroke: its figures nearer, narrowed, then shrunk, centred as the rest (⓾); lines (hi-/res) centred on their box. pixelated apart from their enclosure where in a cell they fall best (10 to 70); on 35 to 70, where their pixels would lose a piece or a counter, emboldened a little, or else thinned, no lighter than before (⑩ on 70), and on 70 lowercase placed as like its smooth drawing as its pixels come; a few that read as other glyphs are as before (ⓔ ⓗ ⓕ ⓧ 🅆 ㎁ ㎮ Ⓜ …), and bold's 🅆 Ⓦ and italic's 🅆 on 70 are drawn by hand, cell by cell (and bold's ⓖ on 70, regular's ⓨ on 50 and a few bold words with them, ㎏ ㋍ ㎳, drawn anew, keep their cells as before), in [`src/glyphs/drawn/cells.txt`](./src/glyphs/drawn/cells.txt): a line `grid styles character` (styles separated by commas), then the glyph's cells, top row first, `#` ink and `.` air, its enclosure as the build pixelates it (checked), the content inside. on 100, content is its bold shrunk in regular, emboldened in italic and bold. ⑴ ⒈ are redaction's glyphs as typed.
-- **web:** [`src/web.py`](./src/web.py) slices the fonts along google's character groups ([`src/data/google-jp-slices.json`](./src/data/google-jp-slices.json)). the slices leave out `aalt`, `nlck`, `hist` and `dlig`, which pull in hundreds of rarely used glyphs. their urls end in `?no-inline`, so vite doesn't inline the smallest ones into the css.
-
-## development
-
-```sh
-# needs node, pnpm, and python 3.14
-pnpm install
-pnpm venv                                       # python dependencies in .venv
-pnpm sources                                    # downloads redaction and noto serif jp
-pnpm review                                     # draws the glyphs of src/glyphs for localhost:3000/review (pnpm dev): seconds
-pnpm review --approve                           # what changed since approved is framed, before and after, this approves it
-pnpm score                                      # scores drawn glyphs against redaction's own (¹ ² ³, ¼ ⅗, ™), and superscript letters against approved, to temp/score: seconds
-pnpm build                                      # dist/ (the npm package is dist/web): ~15 min, ~4 once cached
-pnpm build --variants base,35 --styles Regular  # only a few fonts
-pnpm build:web                                  # only redoes dist/web
-pnpm test                                       # checks every font and slice
-pnpm dev                                        # kuronuri.lihbr.com on localhost:3000, from dist/web, and /review
-pnpm lint                                       # or pnpm format
-pnpm release                                    # bumps the version and pushes a tag, ci publishes to npm and github
-```
-
-## credits
-
-- [redaction](https://www.redaction.us), © 2019 mckl inc., by jeremy mickel and forest young
-- [noto serif jp](https://github.com/notofonts/noto-cjk), © 2017-2024 adobe, © 2012 google inc.
-
-fonts are [ofl](./OFL.txt), code is [mit](./LICENSE)
+fonts are [ofl](./OFL.txt)
+code is [mit](./LICENSE)
 
 <!-- Badges -->
 
-[release-src]: https://img.shields.io/github/v/release/lihbr/kuronuri?style=flat-square&colorA=000000&colorB=e84311
-[release-href]: https://github.com/lihbr/kuronuri/releases
+[npm-version-src]: https://img.shields.io/npm/v/kuronuri?style=flat-square&colorA=000000&colorB=e84311
+[npm-version-href]: https://npmjs.com/package/kuronuri
+[npm-downloads-src]: https://img.shields.io/npm/dm/kuronuri?style=flat-square&colorA=000000&colorB=e84311
+[npm-downloads-href]: https://npmjs.com/package/kuronuri
 [license-src]: https://img.shields.io/badge/license-OFL--1.1-000000?style=flat-square&labelColor=000000&color=e84311
 [license-href]: https://github.com/lihbr/kuronuri/blob/master/OFL.txt

@@ -6,11 +6,9 @@
 .idea
 .nuxt
 .output
-.ruff_cache
+.tmp
 .venv
 .vercel
 __pycache__
 dist
 node_modules
-sources
-temp

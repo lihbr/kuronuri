@@ -48,11 +48,11 @@ async function copy() {
 			<hr class="border-ink/50" />
 			<pre
 				class="font-50 whitespace-pre-wrap"
-			><code class="font-50"><i class="text-ink/50">/* css, -10, -20, -35, -50, -70, -100 */</i>
-import "kuronuri/kuronuri-35.css"
+			><code class="font-50"><i class="text-ink/50">/* css, -0, -10, -20, -35, -50, -70, -100 */</i>
+@import "kuronuri/kuronuri-35.css";
 
 <i class="text-ink/50">/* latin only */</i>
-import "kuronuri/kuronuri-35-latin.css"</code></pre>
+@import "kuronuri/kuronuri-35-latin.css";</code></pre>
 			<hr class="border-ink/50" />
 			<pre
 				class="font-50 whitespace-pre-wrap"

@@ -5,8 +5,6 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --host",
-    "deploy": "rm -rf .vercel/output && NITRO_PRESET=vercel pnpm build && npx vercel deploy --prebuilt --archive=tgz",
-    "deploy:prod": "rm -rf .vercel/output && NITRO_PRESET=vercel pnpm build && npx vercel deploy --prebuilt --archive=tgz --prod",
     "format": "oxfmt",
     "lint": "oxlint --deny-warnings",
     "generate": "nuxt generate",

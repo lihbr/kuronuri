@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The glyphs drawn in src/glyphs, in development only (nuxt.config.ts), from what `pnpm review`
-// writes to temp/review: the drawn fonts, with the built ones behind them for everything else, and
+// writes to .tmp/review: the drawn fonts, with the built ones behind them for everything else, and
 // what changed since they were approved
 
 type Font = {
@@ -12,7 +12,7 @@ type Font = {
 	italic: boolean
 	characters: Record<string, string>
 	changed: string[]
-	watch: string[] // in watch.txt, to look at closely
+	watch: string[] // in .tmp/watch.txt, to look at closely
 	new: string[]
 	revisions: Record<string, string> // module, "changed" or "watch": hash of its glyphs
 }
@@ -213,7 +213,7 @@ const features = computed(() =>
 		<template v-if="review && (tab === 'changed' || tab === 'watch')">
 			<p class="my-4 opacity-60">
 				approved in red, now, then over each other<template v-if="tab === 'watch'"
-					>: the glyphs of watch.txt, changed or not, and text to try them in</template
+					>: the glyphs of .tmp/watch.txt, changed or not, and text to try them in</template
 				>
 			</p>
 			<section v-for="font in compared(tab as Compared)" :key="font.name" class="font">

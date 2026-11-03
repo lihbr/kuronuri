@@ -66,7 +66,7 @@ onBeforeUnmount(() => {
 				© 2017-2024 Adobe, © 2012 Google Inc.
 			</p>
 			<p>
-				Kuronuri, directed by <NuxtLink to="https://lihbr.com">lihbr</NuxtLink><br />fonts are
+				Kuronuri, created by <NuxtLink to="https://lihbr.com">lihbr</NuxtLink><br />fonts are
 				<NuxtLink to="https://github.com/lihbr/kuronuri/blob/HEAD/OFL.txt">OFL</NuxtLink>,
 				<NuxtLink to="https://github.com/lihbr/kuronuri">code</NuxtLink> is mit
 			</p>

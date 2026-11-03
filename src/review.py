@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Review the glyphs drawn by draw.py, in every variant and style.
 
-Draws the fonts, then writes temp/review: the fonts, with the features the
+Draws the fonts, then writes .tmp/review: the fonts, with the features the
 build adds, and review.json, what the site's /review page shows (`pnpm dev`,
 in development only): for each module of glyphs/, a grid of its glyphs and
 text to edit, with the features in its `FEATURES` on, set with the built
@@ -14,7 +14,7 @@ approves them. Each module of each font, and its changed glyphs, has a
 revision, a hash of its glyphs, so the page can tell which ones were
 reviewed before they changed.
 
-watch.txt lists glyphs to look at closely, by style: the page shows them
+.tmp/watch.txt lists glyphs to look at closely, by style: the page shows them
 apart, approved, now and over each other, with text to set them in.
 
 usage: review.py [--approve] [--variants base,10,...] [--styles Regular,Italic,Bold]
@@ -39,8 +39,8 @@ import layout  # noqa: E402
 from family import CACHE, GRIDS, ROOT, STYLES, family_name, log, ps_name, variants  # noqa: E402
 
 APPROVED = CACHE / "approved"
-OUT = ROOT / "temp" / "review"
-WATCH = ROOT / "watch.txt"
+OUT = ROOT / ".tmp" / "review"
+WATCH = ROOT / ".tmp" / "watch.txt"
 PUA = 0xF0000  # review fonts map glyphs without a code point (alternates) from here
 
 
@@ -83,7 +83,7 @@ def revision(now, names):
 
 
 def watch():
-    """{style or "*": characters} of watch.txt, and its text, if any: lines
+    """{style or "*": characters} of .tmp/watch.txt, and its text, if any: lines
     "Style: characters" ("*" for every style) and "text: ...", after #
     comments. Spaces between characters are ignored."""
     styles, text = {}, ""
