@@ -10,6 +10,7 @@ const FEATURES: Feature[] = [
 	{ sample: "11", label: "tabular figures", tag: "tnum" },
 	{ sample: "7/8", label: "fractions", tag: "frac" },
 	{ before: "m", sample: "3", label: "superscripts", tag: "sups" },
+	{ before: "O", sample: "2", label: "subscripts", tag: "subs" },
 	{ sample: "12a", label: "ordinals", tag: "ordn" },
 	{ sample: "-^", label: "arrows", tag: "calt" },
 	{ sample: "^-", label: "alternate arrows", tag: "ss01" },

@@ -14,7 +14,7 @@ glyphs come from four tiers:
 1. **redaction:** mckl's glyphs and pixel fonts, as they are, downloaded into `.cache/sources/` by `pnpm venv`
 2. **noto serif jp:** the kana and kanji, 500 merged into regular and italic and 800 into bold, the weights whose stems match. [`src/pixel.py`](./src/pixel.py) pixelates them for the numbered variants
 3. **drawn by code:** what redaction lacks, drawn from its glyphs in [`src/glyphs`](./src/glyphs), a module per group, each explained in its docstring. components keep mckl's pixels, the rest are pixelated where in a cell they fall best
-4. **drawn by hand:** where code loses mckl's carving or pixels read as another glyph, in [`src/glyphs/drawn`](./src/glyphs/drawn): outlines in a ufo per style, in redaction's units, and cells in `cells.txt` and `arrows.txt`, `#` ink and `.` air, top row first. `pnpm unit` checks the fonts match them fraction ⅐, 
+4. **drawn by hand:** where code loses mckl's carving or pixels read as another glyph, in [`src/glyphs/drawn`](./src/glyphs/drawn): outlines in a ufo per style, in redaction's units, and cells in `cells.txt`, `arrows.txt` and `maths.txt`, `#` ink and `.` air, top row first. `pnpm unit` checks the fonts match them fraction ⅐, 
 
 the scripts:
 

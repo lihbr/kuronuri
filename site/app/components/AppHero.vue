@@ -82,11 +82,18 @@ onBeforeUnmount(() => {
 				</h1>
 			</div>
 			<p
-				class="col-start-3 col-span-2 md:col-start-6 md:col-span-1 lg:col-start-8 self-start mt-2.5 font-20 text-xl/tight lowercase"
+				class="col-start-0 col-span-2 md:col-start-5 md:col-span-1 lg:col-start-7 self-start mt-2.5 font-20 text-xl/tight lowercase"
 			>
 				Kuronuri Font,
 				<NuxtLink to="https://www.redaction.us" target="_blank" class="italic">Redaction</NuxtLink>,
-				with japanese support, and more
+				with japanese support, and more.
+			</p>
+			<p
+				class="col-start-3 col-span-2 md:col-start-6 md:col-span-1 lg:col-start-8 self-start mt-2.5 font-20 text-xl/tight lowercase"
+				lang="ja"
+			>
+				<NuxtLink to="https://www.redaction.us" target="_blank" class="italic">Redaction</NuxtLink>
+				を日本語に対応させ、さらに拡張。
 			</p>
 		</hgroup>
 	</header>
