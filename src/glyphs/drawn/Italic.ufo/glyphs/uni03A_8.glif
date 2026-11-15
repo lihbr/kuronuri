@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03A8" format="2">
+  <advance width="814"/>
+  <unicode hex="03A8"/>
+  <outline>
+    <contour>
+      <point x="386" y="299" type="line"/>
+      <point x="394" y="319" type="line"/>
+      <point x="354" y="319" type="line"/>
+      <point x="459" y="595" type="line"/>
+      <point x="472" y="630"/>
+      <point x="450" y="665"/>
+      <point x="413" y="669" type="qcurve"/>
+      <point x="392" y="671" type="line"/>
+      <point x="403" y="700" type="line"/>
+      <point x="691" y="700" type="line"/>
+      <point x="680" y="671" type="line"/>
+      <point x="656" y="669" type="line"/>
+      <point x="622" y="666"/>
+      <point x="576" y="629"/>
+      <point x="563" y="595" type="qcurve"/>
+      <point x="450" y="299" type="line"/>
+      <point x="523" y="299" type="line"/>
+      <point x="598" y="303"/>
+      <point x="653" y="350" type="qcurve"/>
+      <point x="713" y="400"/>
+      <point x="747" y="497" type="qcurve"/>
+      <point x="767" y="555" type="line"/>
+      <point x="766" y="555" type="line"/>
+      <point x="776" y="584" type="line"/>
+      <point x="789" y="621"/>
+      <point x="769" y="664"/>
+      <point x="738" y="668" type="qcurve"/>
+      <point x="716" y="671" type="line"/>
+      <point x="726" y="700" type="line"/>
+      <point x="968" y="700" type="line"/>
+      <point x="958" y="671" type="line"/>
+      <point x="934" y="668" type="line"/>
+      <point x="895" y="663"/>
+      <point x="842" y="622"/>
+      <point x="829" y="584" type="qcurve"/>
+      <point x="819" y="555" type="line"/>
+      <point x="795" y="484" type="line"/>
+      <point x="755" y="369"/>
+      <point x="675" y="304" type="qcurve"/>
+      <point x="601" y="244"/>
+      <point x="501" y="239" type="qcurve"/>
+      <point x="387" y="239" type="line"/>
+      <point x="380" y="219" type="line"/>
+      <point x="419" y="219" type="line"/>
+      <point x="375" y="105" type="line"/>
+      <point x="362" y="70"/>
+      <point x="383" y="35"/>
+      <point x="421" y="31" type="qcurve"/>
+      <point x="443" y="29" type="line"/>
+      <point x="432" y="0" type="line"/>
+      <point x="144" y="0" type="line"/>
+      <point x="155" y="29" type="line"/>
+      <point x="178" y="31" type="line"/>
+      <point x="211" y="34"/>
+      <point x="258" y="71"/>
+      <point x="271" y="105" type="qcurve"/>
+      <point x="323" y="239" type="line"/>
+      <point x="249" y="239" type="line"/>
+      <point x="152" y="244"/>
+      <point x="125" y="304" type="qcurve"/>
+      <point x="95" y="369"/>
+      <point x="143" y="484" type="qcurve"/>
+      <point x="173" y="555" type="line"/>
+      <point x="185" y="584" type="line"/>
+      <point x="201" y="622"/>
+      <point x="180" y="663"/>
+      <point x="145" y="668" type="qcurve"/>
+      <point x="123" y="671" type="line"/>
+      <point x="135" y="700" type="line"/>
+      <point x="377" y="700" type="line"/>
+      <point x="365" y="671" type="line"/>
+      <point x="341" y="668" type="line"/>
+      <point x="307" y="664"/>
+      <point x="254" y="621"/>
+      <point x="238" y="584" type="qcurve"/>
+      <point x="226" y="555" type="line"/>
+      <point x="201" y="497" type="line"/>
+      <point x="161" y="400"/>
+      <point x="182" y="350" type="qcurve"/>
+      <point x="201" y="303"/>
+      <point x="273" y="299" type="qcurve"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>95</integer>
+        <integer>-154</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction U, its thin arm twice, shorter, and I through it, H's ledge under the cup on the right, and in it on the left: the stem is cut from one side at a time</string>
+    </dict>
+  </lib>
+</glyph>

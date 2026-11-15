@@ -212,3 +212,172 @@
 .#########
 .....###.#
 .....##..#
+
+// Diagonals on 100: pixelated, the head of ↗ filled three cells of four
+// each way and left its shaft a cell, a black corner; ⇗ a block with two
+// cells off it. So they are a cell bigger each way (five, ⇗ six): barbs
+// along the top and the side from the tip, a cell thick, the corner
+// between them filled once, and the shaft a chain of cells from the
+// opposite corner into it. The alt's barbs are a cell shorter and its head
+// solid, as its head is smaller ("↗.ss01": the alt's own cells, where it
+// is not the arrow's). Bold's corner is filled a cell further. ⇗ has two
+// chains three cells apart, so they do not touch, each into a barb; its
+// alt is the same, as ⇒'s is. ↖ ↘ ↙ are ↗ mirrored and turned. A row of
+// air above ↗ keeps it on the rows of →, as it does Italic's ↗ ↖; two
+// above ⇗ stand it on the baseline, as ⇑ is, its six rows under capitals.
+
+100 Regular ↗
+.....
+.####
+...##
+..#.#
+.#..#
+#....
+
+100 Regular ↗.ss01
+.....
+..###
+...##
+..#.#
+.#...
+#....
+
+100 Bold ↗
+.....
+.####
+..###
+..#.#
+.#..#
+#....
+
+100 Bold ↗.ss01
+.....
+..###
+..###
+..#.#
+.#...
+#....
+
+100 Regular ⇗
+......
+......
+.#####
+..#..#
+.#...#
+#...##
+...#..
+..#...
+
+100 Bold ⇗
+......
+......
+.#####
+..#.##
+.#...#
+#...##
+...#.#
+..#...
+
+// Italic's, each as it stands: the top row a cell right (⇗'s top two),
+// the bottom one a cell left, where the chain still holds together; two
+// rows of air above the double ones, on the baseline as upright
+
+100 Italic ↗
+......
+..####
+...##.
+..#.#.
+.#..#.
+#.....
+
+100 Italic ↗.ss01
+......
+...###
+...##.
+..#.#.
+.#....
+#.....
+
+100 Italic ↖
+.....
+.####
+##...
+#.#..
+#..#.
+...#.
+
+100 Italic ↖.ss01
+....
+.###
+##..
+#.#.
+...#
+...#
+
+100 Italic ↘
+.#...
+.#..#
+..#.#
+...##
+####.
+
+100 Italic ↘.ss01
+#...
+#...
+.#.#
+..##
+###.
+
+100 Italic ↙
+.....#
+.#..#.
+.#.#..
+.##...
+####..
+
+100 Italic ↙.ss01
+.....#
+....#.
+.#.#..
+.##...
+###...
+
+100 Italic ⇗
+......
+......
+.#####
+..#..#
+.#..#.
+#..##.
+..#...
+.#....
+
+100 Italic ⇖
+......
+......
+.#####
+.#..#.
+#...#.
+##...#
+..#...
+..#...
+
+100 Italic ⇘
+......
+......
+...#..
+....#.
+#...##
+.#...#
+..#..#
+#####.
+
+100 Italic ⇙
+.......
+.......
+....#..
+...#...
+.##...#
+.#...#.
+.#..#..
+#####..

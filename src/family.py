@@ -1,6 +1,7 @@
 """What the family is made of, shared by draw.py, build.py and review.py: its
 variants and styles, their names, and the sources."""
 
+import hashlib
 import json
 import os
 import time
@@ -24,12 +25,29 @@ STYLES = {
     "Italic": dict(weight=400, italic=True),
     "Bold": dict(weight=700, italic=False),
 }
-# Noto Serif JP weight paired with each Redaction weight, matched on stem width.
+# Noto Serif JP weight paired with each Redaction weight, matched on stem width:
+# its metrics, punctuation and symbols on every grid...
 NOTO_WEIGHT = {400: 500, 700: 800}
+# ...and its kanji and kana but on the coarse grids, from pixel.PHASED, where
+# they are lighter (noto_weight): there each of Noto's hairlines fills a whole
+# cell, and a kanji, with many more strokes than a letter, comes out darker
+# than the Latin beside it; lighter, its stems take a cell less on 50, where
+# dense kanji close their counters first.
+NOTO_LIGHT = {400: 400, 700: 700}
 # Variation selectors: a kanji followed by one asks for a variant of it (葛 and
 # U+E0100), what Noto Serif JP's cmap 14 maps. Subsetting keeps a variation
 # sequence only when its selector is asked for too.
 SELECTORS = {*range(0xFE00, 0xFE10), *range(0xE0100, 0xE01F0)}
+
+
+def noto_weight(weight, grid):
+    """The Noto Serif JP weight of the kanji and kana set with Redaction's
+    `weight` on `grid` (None, smooth): the one place it is decided, for
+    the build (build.notos) and the signs drawn of Noto's kanji
+    (glyphs/japanese.py)."""
+    from pixel import PHASED
+
+    return (NOTO_LIGHT if grid and grid >= PHASED else NOTO_WEIGHT)[weight]
 
 
 def log(*args):
@@ -79,7 +97,10 @@ def noto_glyphs(weight, text):
 
     source = SOURCES / "noto-serif-jp" / "NotoSerifJP[wght].ttf"
     stat = source.stat()  # a new source makes a new file
-    key = f"{''.join(f'{ord(c):x}' for c in sorted(set(text)))}-{stat.st_size}-{stat.st_mtime_ns}"
+    chars = "".join(f"{ord(c):x}" for c in sorted(set(text)))
+    if len(chars) > 64:  # too long a file name: hashed
+        chars = hashlib.sha1(chars.encode()).hexdigest()[:16]
+    key = f"{chars}-{stat.st_size}-{stat.st_mtime_ns}"
     path = CACHE / f"noto-{weight}-{key}.ttf"
     if not path.exists():
         font = TTFont(source)

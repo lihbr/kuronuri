@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03C4" format="2">
+  <advance width="363"/>
+  <unicode hex="03C4"/>
+  <outline>
+    <contour>
+      <point x="193" y="429" type="line"/>
+      <point x="152" y="429" type="line"/>
+      <point x="125" y="429"/>
+      <point x="81" y="413"/>
+      <point x="74" y="401" type="qcurve"/>
+      <point x="56" y="374" type="line"/>
+      <point x="38" y="374" type="line"/>
+      <point x="78" y="470" type="line"/>
+      <point x="433" y="470" type="line"/>
+      <point x="417" y="429" type="line"/>
+      <point x="254" y="429" type="line"/>
+      <point x="248" y="411" type="line"/>
+      <point x="279" y="411" type="line"/>
+      <point x="168" y="122" type="line"/>
+      <point x="157" y="93"/>
+      <point x="179" y="65"/>
+      <point x="219" y="65"/>
+      <point x="270" y="97"/>
+      <point x="304" y="134" type="qcurve"/>
+      <point x="308" y="132" type="line"/>
+      <point x="276" y="76"/>
+      <point x="195" y="-5"/>
+      <point x="146" y="-5" type="qcurve"/>
+      <point x="99" y="-5"/>
+      <point x="54" y="66"/>
+      <point x="80" y="134" type="qcurve"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>38</integer>
+        <integer>-70</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction Italic t, under a bar drawn as thick as Π's, mirrored to the left, z's beak at its left end, leaning</string>
+    </dict>
+  </lib>
+</glyph>

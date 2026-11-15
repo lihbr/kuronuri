@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03B1" format="2">
+  <advance width="603"/>
+  <unicode hex="03B1"/>
+  <outline>
+    <contour>
+      <point x="240" y="-11" type="qcurve"/>
+      <point x="197" y="-11"/>
+      <point x="120" y="27"/>
+      <point x="63" y="95"/>
+      <point x="30" y="185"/>
+      <point x="30" y="236" type="qcurve"/>
+      <point x="30" y="287"/>
+      <point x="63" y="376"/>
+      <point x="120" y="443"/>
+      <point x="197" y="481"/>
+      <point x="240" y="481" type="qcurve"/>
+      <point x="296" y="481"/>
+      <point x="369" y="413"/>
+      <point x="394" y="355" type="qcurve"/>
+      <point x="408" y="325" type="line"/>
+      <point x="391" y="296" type="line"/>
+      <point x="399" y="277" type="line"/>
+      <point x="499" y="457" type="line"/>
+      <point x="512" y="480"/>
+      <point x="538" y="480" type="qcurve"/>
+      <point x="557" y="480"/>
+      <point x="583" y="454"/>
+      <point x="583" y="435" type="qcurve"/>
+      <point x="583" y="416"/>
+      <point x="562" y="390"/>
+      <point x="548" y="390" type="qcurve"/>
+      <point x="537" y="390"/>
+      <point x="535" y="399" type="qcurve"/>
+      <point x="535" y="413" type="line"/>
+      <point x="518" y="413" type="line"/>
+      <point x="435" y="264" type="line"/>
+      <point x="508" y="100" type="line"/>
+      <point x="518" y="76"/>
+      <point x="536" y="48"/>
+      <point x="540" y="48" type="qcurve"/>
+      <point x="566" y="48"/>
+      <point x="590" y="69" type="qcurve"/>
+      <point x="592" y="68" type="line"/>
+      <point x="576" y="33"/>
+      <point x="515" y="-8"/>
+      <point x="479" y="-8" type="qcurve"/>
+      <point x="470" y="-8"/>
+      <point x="436" y="41"/>
+      <point x="417" y="82" type="qcurve"/>
+      <point x="388" y="147" type="line"/>
+      <point x="405" y="176" type="line"/>
+      <point x="397" y="195" type="line"/>
+      <point x="366" y="139" type="line"/>
+      <point x="340" y="93"/>
+      <point x="300" y="25"/>
+      <point x="262" y="-11"/>
+    </contour>
+    <contour>
+      <point x="130" y="250" type="qcurve"/>
+      <point x="130" y="205"/>
+      <point x="143" y="125"/>
+      <point x="165" y="65"/>
+      <point x="195" y="31"/>
+      <point x="212" y="31" type="qcurve"/>
+      <point x="241" y="31"/>
+      <point x="307" y="110"/>
+      <point x="344" y="178" type="qcurve"/>
+      <point x="361" y="208" type="line"/>
+      <point x="339" y="259" type="line"/>
+      <point x="302" y="341"/>
+      <point x="238" y="439"/>
+      <point x="212" y="439" type="qcurve"/>
+      <point x="189" y="439"/>
+      <point x="152" y="388"/>
+      <point x="130" y="302"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>30</integer>
+        <integer>11</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Drawn: a bowl as Redaction o's left side, whose stroke goes on from its top down to the right, thick, to a's tail, and from its bottom up to the right, thin, to a ball as c's, joined to it by r's step; they cross as x's strokes do, straight through, x's notch cut into the thick one above and below</string>
+    </dict>
+  </lib>
+</glyph>

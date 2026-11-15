@@ -36,19 +36,78 @@ def sort_features(table):
 def share_features(table, feature_tags):
     """Make the given features, as registered for DFLT, apply under every
     script and language system. Digits are script-neutral, so in Japanese
-    text HarfBuzz shapes them as kana or hani; without this `tnum` and `frac`
-    would only work next to Latin letters."""
+    text HarfBuzz shapes them as kana or hani, and Latin as latn JAN when
+    the language is Japanese: language systems Noto Serif JP brings, which
+    features added before the merge (Redaction's, the drawn glyphs') do not
+    reach. A language system with a feature of the same tag already (Noto
+    Serif JP's `kern`) gets the lookups added to it instead: HarfBuzz uses
+    only the first feature of a tag in a language system."""
     records = table.FeatureList.FeatureRecord
-    wanted = set()
-    for rec in table.ScriptList.ScriptRecord:
-        if rec.ScriptTag == "DFLT" and rec.Script.DefaultLangSys is not None:
-            wanted = {
-                i
-                for i in rec.Script.DefaultLangSys.FeatureIndex
-                if records[i].FeatureTag in feature_tags
-            }
+    shared = [
+        i
+        for rec in table.ScriptList.ScriptRecord
+        if rec.ScriptTag == "DFLT" and rec.Script.DefaultLangSys is not None
+        for i in rec.Script.DefaultLangSys.FeatureIndex
+        if records[i].FeatureTag in feature_tags
+    ]
     for ls in _lang_systems(table):
-        ls.FeatureIndex = sorted(set(ls.FeatureIndex) | wanted)
+        for i in shared:
+            same = [j for j in ls.FeatureIndex if records[j].FeatureTag == records[i].FeatureTag]
+            for j in same:
+                feature = records[j].Feature
+                feature.LookupListIndex = sorted(
+                    set(feature.LookupListIndex) | set(records[i].Feature.LookupListIndex)
+                )
+            if not same:
+                ls.FeatureIndex = sorted({*ls.FeatureIndex, i})
+
+
+CONTEXTUAL = (ot.ContextSubst, ot.ChainContextSubst, ot.ContextPos, ot.ChainContextPos)
+
+
+def _nested(lookup):
+    """The records of `lookup`, if contextual, that apply other lookups, of
+    every subtable, extensions' too."""
+    stack = [getattr(st, "ExtSubTable", st) for st in lookup.SubTable]
+    stack = [st for st in stack if isinstance(st, CONTEXTUAL)]
+    while stack:
+        obj = stack.pop()
+        if isinstance(obj, (ot.SubstLookupRecord, ot.PosLookupRecord)):
+            yield obj
+        elif isinstance(obj, list):
+            stack.extend(obj)
+        elif isinstance(obj, ot.BaseTable) and not isinstance(obj, ot.Coverage):
+            stack.extend(v for v in vars(obj).values() if isinstance(v, (list, ot.BaseTable)))
+
+
+def _remap(table, remap):
+    """Point the features and contextual lookups of `table` at the lookups
+    {old index: new index}, those dropped (None) at none."""
+    for rec in table.FeatureList.FeatureRecord:
+        indices = (remap[i] for i in rec.Feature.LookupListIndex)
+        rec.Feature.LookupListIndex = [i for i in indices if i is not None]
+    for lookup in table.LookupList.Lookup:
+        for record in _nested(lookup):
+            if remap[record.LookupListIndex] is None:
+                raise ValueError(f"a lookup applies lookup {record.LookupListIndex}, removed")
+            record.LookupListIndex = remap[record.LookupListIndex]
+
+
+def insert_lookups(table, lookups, at):
+    """Insert `lookups` at index `at` of the lookup list of `table`, a GSUB
+    or GPOS: lookups apply in the order of the list, whatever their
+    features. Returns their indices."""
+    count = len(table.LookupList.Lookup)
+    _remap(table, {i: i + len(lookups) if i >= at else i for i in range(count)})
+    table.LookupList.Lookup[at:at] = lookups
+    return list(range(at, at + len(lookups)))
+
+
+def remove_lookups(table, indices):
+    """Remove the lookups at `indices` from `table`, and from its features."""
+    kept = [i for i in range(len(table.LookupList.Lookup)) if i not in set(indices)]
+    _remap(table, {old: new for new, old in enumerate(kept)} | {i: None for i in indices})
+    table.LookupList.Lookup = [table.LookupList.Lookup[i] for i in kept]
 
 
 def add_tabular_figures(font, grid=None):
@@ -88,13 +147,41 @@ def extend_feature(table, tag, lookup):
         rec.Feature.LookupListIndex.append(len(table.LookupList.Lookup) - 1)
 
 
-def add_feature(table, tag, lookup, params=None):
-    """Append `lookup` and a feature `tag` using it, for every script and
-    language system."""
-    table.LookupList.Lookup.append(lookup)
+def use_lookups(table, tag, lookups):
+    """Make the features `tag` there are use `lookups` too, or add one using
+    them, for every script and language system. Lookups not in the lookup
+    list yet are appended to it, the others are referenced where they are:
+    features sharing a lookup apply it once, whichever of them are on."""
+    listed = table.LookupList.Lookup
+    indices = []
+    for lookup in lookups:
+        at = next((i for i, other in enumerate(listed) if other is lookup), None)
+        if at is None:
+            listed.append(lookup)
+            at = len(listed) - 1
+        indices.append(at)
+    records = [r for r in table.FeatureList.FeatureRecord if r.FeatureTag == tag]
+    for rec in records:
+        rec.Feature.LookupListIndex = sorted({*rec.Feature.LookupListIndex, *indices})
+    if not records:
+        add_feature(table, tag, None, indices=indices)
+    return indices
+
+
+def add_feature(table, tag, lookup, params=None, at=None, indices=None):
+    """Add `lookup`, at the end of the lookup list or at index `at`, and a
+    feature `tag` using it, for every script and language system; or, with
+    `indices`, a feature using the lookups listed there."""
+    if indices is None:
+        if at is None:
+            table.LookupList.Lookup.append(lookup)
+            at = len(table.LookupList.Lookup) - 1
+        else:
+            insert_lookups(table, [lookup], at)
+        indices = [at]
     feature = ot.Feature()
     feature.FeatureParams = params
-    feature.LookupListIndex = [len(table.LookupList.Lookup) - 1]
+    feature.LookupListIndex = list(indices)
     rec = ot.FeatureRecord()
     rec.FeatureTag = tag
     rec.Feature = feature

@@ -37,6 +37,8 @@ SAMPLES = [
     "1a 2o 3as 4os, 1st 2nd 3rd 4th 11th 21st 102nd, 1er 1re 2e 2nde 1ers",
     "No. 5, No.12, No 5, say No.",
     "as typed: 3am 2e3 2h30 10s 1stuff A4",
+    "4th; 4th: 1st, 2nd.",
+    "1stと2nd、No. 5の3rd (japanese), 1st 2nd (sups too)",
 ]
 FEATURES = ["ordn"]
 
@@ -45,27 +47,29 @@ def add_glyphs(font, smooth, grid=None):
     ordinals = {cp: name for cp, (_, name) in ORDINALS.items()}
     add(font, superiors(font, smooth, grid, LETTERS), ordinals)
     add(font, {"uni2116": typed(font, shaper(font), "Nº", grid)}, {0x2116: "uni2116"})
-    layout.add_feature(font["GSUB"].table, "ordn", _ordn(font))
+    # First, before Redaction's `sups`: 1st with both on would lose its digit
+    # to it, and the suffix its context (figures.py puts `frac` before)
+    layout.add_feature(font["GSUB"].table, "ordn", _ordn(font), at=2)
 
 
 def _ordn(font):
     """A lookup raising the suffixes of ordinals after digits (1st, 2e,
     1ª), but not other letters after them (3am, 2e3), longer suffixes
-    first, and turning No. before a number into №."""
+    first, and turning No. before a number into №. The lookups it applies
+    are inserted first in the font."""
     gsub, cmap = font["GSUB"].table, font.getBestCmap()
     word = {name for cp, name in cmap.items() if chr(cp).isalnum()}
     digits = {cmap[ord(d)] for d in "0123456789"}
 
-    def lookup(builder):
-        gsub.LookupList.Lookup.append(builder.build())
-        builder.lookup_index = len(gsub.LookupList.Lookup) - 1
-
     raise_ = otl.SingleSubstBuilder(font, None)
     raise_.mapping = {cmap[ord(c)]: name for c, name in LETTERS.items() if c != "c"}
-    lookup(raise_)
     numero = otl.LigatureSubstBuilder(font, None)
     numero.ligatures = {tuple(cmap[ord(c)] for c in "No."): "uni2116"}
-    lookup(numero)
+    # the first two lookups, the third applying them
+    for i, builder in zip(
+        layout.insert_lookups(gsub, [raise_.build(), numero.build()], 0), (raise_, numero)
+    ):
+        builder.lookup_index = i
 
     ordn = otl.ChainContextSubstBuilder(font, None)
     for suffix in sorted(SUFFIXES, key=len, reverse=True):

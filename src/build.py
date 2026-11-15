@@ -18,16 +18,21 @@ usage: build.py [--variants 0,10,...] [--styles Regular,Italic,Bold] [--web-only
 """
 
 import argparse
+import functools
 import hashlib
+import inspect
 import io
 import json
+import math
 import os
 import shutil
+import statistics
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
+import fontTools
 from fontTools import subset
 from fontTools.merge import Merger
 from fontTools.merge import Options as MergeOptions
@@ -39,6 +44,7 @@ from fontTools.varLib import instancer
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import draw  # noqa: E402
+import family  # noqa: E402
 import glyphs  # noqa: E402
 import layout  # noqa: E402
 import pixel  # noqa: E402
@@ -56,12 +62,15 @@ from family import (  # noqa: E402
     VERSION,
     family_name,
     log,
+    noto_weight,
     ps_name,
     redaction,
     slug,
     subset_options,
     variants,
 )
+from glyphs import shapes  # noqa: E402
+from glyphs.shapes import drawn_cells  # noqa: E402
 
 NOTO_VF = SOURCES / "noto-serif-jp" / "NotoSerifJP[wght].ttf"
 
@@ -88,12 +97,13 @@ NAMES = {
 }
 
 
+@functools.cache
 def noto(weight):
     """Noto Serif JP at `weight`, for the Japanese only: without what Redaction
     covers, nor the Latin, Greek and Cyrillic letters and combining accents
     Redaction lacks (Noto's design would not match it), nor Latin ligatures
-    (ﬀ), Hangul and Bopomofo. Rebuilt on every run so the pixel cache below
-    never sees a stale instance. The glyphs drawn in glyphs/ are cut out at
+    (ﬀ), Hangul and Bopomofo. Rebuilt on every run (once) so the pixel cache
+    below never sees a stale instance. The glyphs drawn in glyphs/ are cut out at
     the merge, so drawing more does not pixelate Noto again."""
     log(f"instancing Noto Serif JP {weight}")
     font = instancer.instantiateVariableFont(
@@ -118,19 +128,122 @@ def noto(weight):
     path = CACHE / f"noto-{weight}.ttf"
     font.recalcTimestamp = False  # same bytes every run, for the cache key
     font.save(path)
+    path.with_suffix(".json").write_text(json.dumps({"inputs": instancing(weight)}))
     return path
 
 
-def noto_pixel(path, grid):
-    """The Noto instance at `path` pixelated on `grid`, cached under a hash of
-    the instance and of pixel.py."""
-    key = hashlib.sha1(path.read_bytes() + Path(pixel.__file__).read_bytes()).hexdigest()[:8]
+def instancing(weight):
+    """A hash of what the Noto instance at `weight` is made of: the variable
+    font, its weight, what noto() keeps of it (its code, Redaction's
+    characters, the subsetter's options in family.py, the variation
+    selectors) and the fontTools that instances it."""
+    key = hashlib.sha1(NOTO_VF.read_bytes())
+    key.update(f"{weight} {fontTools.version} {sorted(SELECTORS)}".encode())
+    key.update(inspect.getsource(noto).encode())
+    key.update(Path(family.__file__).read_bytes())
+    key.update(repr(sorted(redaction(None, "Regular").getBestCmap())).encode())
+    return key.hexdigest()
+
+
+def instance(weight, fresh=True):
+    """The path of noto(weight): instanced again unless not `fresh` and the
+    instance was made of what it would be made of now (instancing, recorded
+    beside it)."""
+    path, record = CACHE / f"noto-{weight}.ttf", CACHE / f"noto-{weight}.json"
+    made = json.loads(record.read_text()).get("inputs") if record.exists() else None
+    if fresh or not path.exists() or made != instancing(weight):
+        return noto(weight)
+    return path
+
+
+def noto_light(weight, light, fresh=True):
+    """Noto Serif JP at `weight`, as noto() makes it, with its kanji and
+    kana drawn at `light` (lighten). Returns its path. `fresh` as instance()."""
+    font = lighten(TTFont(instance(weight, fresh)), TTFont(instance(light, fresh)))
+    path = CACHE / f"noto-{weight}-{light}.ttf"
+    font.recalcTimestamp = False  # same bytes every run, for the cache key
+    font.save(path)
+    return path
+
+
+def lighten(font, lighter):
+    """`font`, a Noto Serif JP instance, with the outlines of its kanji and
+    kana (pixel.phased_glyphs) taken from `lighter`, another instance of the
+    same glyphs, centred in the advances of `font`, their vertical origins
+    kept. Every advance, vertical metric, GPOS value and every other glyph
+    stays that of `font`, so lighter kanji change ink, not spacing."""
+    glyf, hmtx, vmtx = font["glyf"], font["hmtx"], font["vmtx"]
+    for name in pixel.phased_glyphs(font):
+        old, new = glyf[name], lighter["glyf"][name]
+        if old.numberOfContours <= 0 or new.numberOfContours <= 0:
+            continue
+        old.recalcBounds(glyf)
+        dx = round((hmtx[name][0] - lighter["hmtx"][name][0]) / 2)
+        new.coordinates.translate((dx, 0))
+        new.recalcBounds(lighter["glyf"])
+        vadv, tsb = vmtx[name]
+        hmtx[name] = (hmtx[name][0], new.xMin)
+        vmtx[name] = (vadv, old.yMax + tsb - new.yMax)
+        glyf[name] = new
+    return font
+
+
+def notos(grids, styles, fresh=True):
+    """{(Noto weight, grid): path} of the Noto Serif JP the fonts of `grids`
+    and `styles` merge, by the weight of their kanji and kana
+    (family.noto_weight), pixelated on their grid: noto(), or noto_light()
+    where the kanji and kana are lighter. Instanced again unless not `fresh`
+    (instance())."""
+    out, made = {}, {}
+    for weight in sorted({STYLES[s]["weight"] for s in styles}):
+        for grid in grids:
+            base, kanji = NOTO_WEIGHT[weight], noto_weight(weight, grid)
+            if kanji not in made:
+                made[kanji] = (
+                    instance(base, fresh) if kanji == base else noto_light(base, kanji, fresh)
+                )
+            if grid is None:
+                out[kanji, grid] = made[kanji]
+            else:
+                stands = instance(base, fresh) if kanji != base else None
+                out[kanji, grid] = noto_pixel(made[kanji], grid, stands, pinned(weight, grid))
+    return out
+
+
+def pinned(weight, grid):
+    """{code point: cells} of the kanji and kana drawn by hand on `grid`
+    (glyphs/drawn/japanese.txt) for the styles of Redaction's `weight`,
+    which share their Noto Serif JP: alike in each, or none."""
+    out = {}
+    for (g, style, char), cells in drawn_cells(pixel.JAPANESE).items():
+        if g == grid and STYLES[style]["weight"] == weight:
+            if (out.setdefault(ord(char), cells).at, out[ord(char)]) != (cells.at, cells):
+                raise ValueError(f"{char} is drawn otherwise in styles that share Noto on {grid}")
+    for style, spec in STYLES.items():
+        if spec["weight"] == weight:
+            mine = {c for (g, s, c) in drawn_cells(pixel.JAPANESE) if g == grid and s == style}
+            if mine != {chr(cp) for cp in out}:
+                raise ValueError(f"{style} on {grid} lacks a glyph of japanese.txt its Noto has")
+    return out
+
+
+def noto_pixel(path, grid, stands=None, cells=None):
+    """The Noto instance at `path` pixelated on `grid`, its kanji and kana
+    placed by phase on the rows of those of the instance at `stands`
+    (pixel.pixelate_font), but those drawn by hand, `cells` ({code point:
+    cells}), cached under a hash of the instances, the cells and pixel.py."""
+    source = path.read_bytes() + (stands.read_bytes() if stands else b"")
+    source += repr(sorted((cp, list(c), c.at) for cp, c in (cells or {}).items())).encode()
+    key = hashlib.sha1(source + Path(pixel.__file__).read_bytes()).hexdigest()[:8]
     out = CACHE / f"{path.stem}-px{grid}-{key}.ttf"
     if not out.exists():
         log(f"pixelating {path.stem} on a {grid}-unit grid")
         for stale in CACHE.glob(f"{path.stem}-px{grid}-*.ttf"):
             stale.unlink()
-        pixel.pixelate_font(TTFont(path), grid).save(out)
+        reference = TTFont(stands) if stands else None
+        pixel.pixelate_font(
+            TTFont(path), grid, phased=True, stands=reference, pinned=cells, log=log
+        ).save(out)
     return out
 
 
@@ -139,6 +252,37 @@ def font_version():
     the rule Geist uses."""
     major, minor, patch = (int(n) for n in VERSION.split("-")[0].split("."))
     return f"{major}.{minor * 100 + patch:03d}"
+
+
+# Redaction Italic's straight stems, its slant measured on them; and what
+# its caret offset is measured on
+STEMS = "EHIL"
+SPACED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+
+@functools.cache
+def slant():
+    """Redaction Italic's slant, which its fonts do not declare (an italic
+    angle of 0, an upright caret): its angle in degrees, measured on the
+    left stems of STEMS, from a quarter to three quarters of their height,
+    clear of serifs, rounded to a tenth; and how far the caret, slanted so
+    from the start of a glyph on the baseline, is moved to fall midway
+    between glyphs, as their side bearings along the slant are (SPACED).
+    Measured smooth, for every variant: the pixel ones are of it."""
+    font = redaction(None, "Italic")
+    slopes = []
+    for c in STEMS:
+        p = shapes.path(font, c)
+        top = p.bounds[3]
+        (a, b), (c0, c1) = shapes.runs(p, y=top / 4)[0], shapes.runs(p, y=top * 3 / 4)[0]
+        slopes.append(((c0 + c1) - (a + b)) / 2 / (top / 2))
+    angle = round(math.degrees(math.atan(statistics.median(slopes))), 1)
+    run = math.tan(math.radians(angle))
+    hmtx, cmap, offsets = font["hmtx"], font.getBestCmap(), []
+    for c in SPACED:
+        x0, _, x1, _ = shapes.path(font, c, (1, 0, -run, 1, 0, 0)).bounds  # unslanted
+        offsets.append((x0 - (hmtx[cmap[ord(c)]][0] - x1)) / 2)
+    return angle, round(statistics.median(offsets))
 
 
 def set_metadata(font, grid, style):
@@ -187,6 +331,13 @@ def set_metadata(font, grid, style):
     font.recalcTimestamp = False
 
     font["post"].formatType = 3.0  # no glyph names, as in Noto: saves space
+    if italic:  # the Latin slants, the Japanese stands upright
+        angle, offset = slant()
+        font["post"].italicAngle = -angle
+        hhea = font["hhea"]
+        hhea.caretSlopeRise = head.unitsPerEm
+        hhea.caretSlopeRun = round(head.unitsPerEm * math.tan(math.radians(angle)))
+        hhea.caretOffset = offset
     font["gasp"] = gasp = newTable("gasp")
     gasp.version = 1
     gasp.gaspRange = {0xFFFF: 0x000F}
@@ -218,8 +369,10 @@ def restore_metrics(font, source):
             setattr(font[tag], attr, getattr(source[tag], attr))
 
 
-def assemble(task):
-    grid, style, noto_src = task
+def merged(grid, style, noto_src):
+    """The drawn font of `grid` and `style` merged with the Noto at
+    `noto_src`, with its features: the built font, but for its metadata,
+    which shaping does not read. review.py sets text in it."""
     font = Merger(options=MergeOptions(drop_tables=[])).merge(
         [str(draw.path(grid, style)), without_drawn(noto_src)]
     )
@@ -230,9 +383,14 @@ def assemble(task):
     # Noto's BASE gives the ideographic em box (-120..880) for every script.
     font["BASE"] = TTFont(noto_src)["BASE"]
     glyphs.add_features(font)
-    layout.share_features(font["GSUB"].table, {"tnum", "frac", "numr", "sups"})
     for tag in ("GSUB", "GPOS"):
         layout.sort_features(font[tag].table)  # the merge appends to them
+    return font
+
+
+def assemble(task):
+    grid, style, noto_src = task
+    font = merged(grid, style, noto_src)
     set_metadata(font, grid, style)
     ps = ps_name(grid, style)
     font.save(DIST / "ttf" / f"{ps}.ttf")
@@ -312,12 +470,8 @@ def main():
         grids = variants(args.variants)
         styles = args.styles.split(",")
         draw.draw_all(grids, styles)
-        notos = {}
-        for weight in sorted({NOTO_WEIGHT[STYLES[s]["weight"]] for s in styles}):
-            path = noto(weight)
-            for grid in grids:
-                notos[weight, grid] = path if grid is None else noto_pixel(path, grid)
-        tasks = [(g, s, notos[NOTO_WEIGHT[STYLES[s]["weight"]], g]) for g in grids for s in styles]
+        src = notos(grids, styles)
+        tasks = [(g, s, src[noto_weight(STYLES[s]["weight"], g), g]) for g in grids for s in styles]
         (DIST / "ttf").mkdir(parents=True, exist_ok=True)
         (DIST / "woff2").mkdir(exist_ok=True)
         # Each assembly takes about 1.5 GB of memory.

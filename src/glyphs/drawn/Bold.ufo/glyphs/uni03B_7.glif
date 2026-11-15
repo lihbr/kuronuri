@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03B7" format="2">
+  <advance width="637"/>
+  <unicode hex="03B7"/>
+  <outline>
+    <contour>
+      <point x="234" y="0" type="line"/>
+      <point x="94" y="0" type="line"/>
+      <point x="94" y="365" type="line"/>
+      <point x="94" y="389"/>
+      <point x="77" y="414"/>
+      <point x="47" y="429" type="qcurve"/>
+      <point x="10" y="447" type="line"/>
+      <point x="234" y="506" type="line"/>
+      <point x="234" y="439" type="line"/>
+      <point x="198" y="394" type="line"/>
+      <point x="198" y="362" type="line"/>
+      <point x="213" y="379" type="line"/>
+      <point x="253" y="429"/>
+      <point x="346" y="505"/>
+      <point x="404" y="505" type="qcurve"/>
+      <point x="472" y="505"/>
+      <point x="552" y="426"/>
+      <point x="552" y="356" type="qcurve"/>
+      <point x="552" y="-230" type="line"/>
+      <point x="412" y="-230" type="line"/>
+      <point x="412" y="337" type="line"/>
+      <point x="412" y="379"/>
+      <point x="369" y="424"/>
+      <point x="332" y="424" type="qcurve"/>
+      <point x="304" y="424"/>
+      <point x="253" y="391"/>
+      <point x="234" y="363" type="qcurve"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>10</integer>
+        <integer>85</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction n, without its feet: its left stem cut at the baseline, its right one carried down to p's descender and cut as ρ's and β's</string>
+    </dict>
+  </lib>
+</glyph>

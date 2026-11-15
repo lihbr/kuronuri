@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03BD" format="2">
+  <advance width="564"/>
+  <unicode hex="03BD"/>
+  <outline>
+    <contour>
+      <point x="433" y="329" type="line"/>
+      <point x="515" y="470" type="line"/>
+      <point x="574" y="470" type="line"/>
+      <point x="486" y="328" type="line"/>
+      <point x="484" y="328" type="line"/>
+      <point x="482" y="323"/>
+      <point x="480" y="319" type="qcurve"/>
+      <point x="455" y="262"/>
+      <point x="359" y="140"/>
+      <point x="219" y="20"/>
+      <point x="130" y="-27" type="qcurve"/>
+      <point x="125" y="-25" type="line"/>
+      <point x="130" y="36"/>
+      <point x="135" y="159"/>
+      <point x="136" y="267"/>
+      <point x="132" y="357"/>
+      <point x="128" y="385" type="qcurve"/>
+      <point x="125" y="404"/>
+      <point x="103" y="435"/>
+      <point x="69" y="448" type="qcurve"/>
+      <point x="204" y="485" type="line"/>
+      <point x="212" y="440"/>
+      <point x="222" y="339"/>
+      <point x="226" y="238"/>
+      <point x="225" y="138"/>
+      <point x="222" y="94" type="qcurve"/>
+      <point x="197" y="76" type="line"/>
+      <point x="196" y="55" type="line"/>
+      <point x="259" y="95"/>
+      <point x="354" y="189"/>
+      <point x="415" y="282"/>
+      <point x="429" y="324" type="qcurve"/>
+      <point x="430" y="327"/>
+      <point x="431" y="329" type="qcurve"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>69</integer>
+        <integer>-10</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction v, without its right serif and half its left one</string>
+    </dict>
+  </lib>
+</glyph>

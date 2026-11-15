@@ -11,18 +11,8 @@
       <point x="78" y="404"/>
       <point x="95" y="384"/>
       <point x="95" y="364" type="qcurve" smooth="yes"/>
-      <point x="95" y="-135" type="line" smooth="yes"/>
-      <point x="95" y="-166"/>
-      <point x="66" y="-199"/>
-      <point x="37" y="-202" type="qcurve" smooth="yes"/>
-      <point x="16" y="-204" type="line"/>
-      <point x="16" y="-230" type="line"/>
-      <point x="266" y="-230" type="line"/>
-      <point x="266" y="-204" type="line"/>
-      <point x="245" y="-202" type="line" smooth="yes"/>
-      <point x="216" y="-199"/>
-      <point x="187" y="-166"/>
-      <point x="187" y="-135" type="qcurve" smooth="yes"/>
+      <point x="95" y="-230" type="line"/>
+      <point x="187" y="-230" type="line"/>
       <point x="187" y="-4" type="line"/>
       <point x="208" y="-10"/>
       <point x="233" y="-10" type="qcurve" smooth="yes"/>
@@ -34,12 +24,8 @@
       <point x="421" y="124" type="line"/>
       <point x="421" y="93" type="line"/>
       <point x="390" y="50" type="line"/>
-      <point x="390" y="-6" type="line"/>
-      <point x="565" y="18" type="line"/>
-      <point x="527" y="35" type="line" smooth="yes"/>
-      <point x="503" y="45"/>
-      <point x="482" y="72"/>
-      <point x="482" y="98" type="qcurve" smooth="yes"/>
+      <point x="390" y="0" type="line"/>
+      <point x="482" y="0" type="line"/>
       <point x="482" y="480" type="line"/>
       <point x="308" y="435" type="line"/>
       <point x="344" y="418" type="line" smooth="yes"/>
@@ -60,10 +46,10 @@
       <key>com.lihbr.kuronuri.sides</key>
       <array>
         <integer>13</integer>
-        <integer>16</integer>
+        <integer>99</integer>
       </array>
       <key>com.lihbr.kuronuri.source</key>
-      <string>Redaction u, p</string>
+      <string>Redaction u, its left stem carried down to p's descender and cut as ρ's and β's, plain, its right one cut at the baseline, without its foot</string>
     </dict>
   </lib>
 </glyph>

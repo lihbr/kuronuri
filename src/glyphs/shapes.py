@@ -8,6 +8,7 @@ it."""
 import copy
 import functools
 import io
+import itertools
 import math
 from pathlib import Path
 
@@ -15,6 +16,7 @@ import numpy as np
 import pathops
 import uharfbuzz as hb
 from fontTools.fontBuilder import FontBuilder
+from fontTools.misc.roundTools import otRound
 from fontTools.pens.basePen import BasePen
 from fontTools.pens.cu2quPen import Cu2QuPen
 from fontTools.pens.pointPen import PointToSegmentPen
@@ -48,6 +50,12 @@ SLIP = 2  # longest line that is a slip of the pen, not drawn: only for a unit i
 SMOOTH = 2  # most degrees an outline turns at a point for it to be smooth
 MITER = 4  # farthest a tip grows past its corner (sideways), over how much: sharper, it is cut
 TAPER = 2.5  # of its stem: how far from a tip a stroke tapers to it, grown (sideways)
+FACING = 0.7  # least an edge faces across, of 1, to grow across all the way (broadened): 45°
+NOTCH = 35  # most degrees of air between the walls of a notch of Redaction's carving
+FLOOR = 35  # longest floor of a notch, between its walls: z's slits are cut across, 32
+FLAT = 40  # longest flat a terminal ends on, cut across its stroke: k's, 39
+WALL = 3  # most edges a wall of a notch runs on, along its gap
+SLIDE = 0.75  # farthest a point slides along an edge that grows otherwise, of the edge after
 CORNER = 20  # least degrees an outline turns at a point for it to be a corner, where a stroke ends
 KAPPA = 0.5523  # control point distance of a cubic quarter circle, over its radius
 SHIFTS = 8  # spots within a cell a glyph is tried at, across and up or down (phased)
@@ -211,6 +219,534 @@ def sideways(p, amount, carve=False, pointed=True, thick=None):
     p.draw(_Sweep(amount, ops))
     grown = ops.resolve()
     return _pointed(*_tapered(grown, p, amount, thick)) if pointed else grown
+
+
+def broadened(p, amount):
+    """`p` with `amount` added to each side of its strokes across only, as
+    sideways adds it, by moving its own points: every edge of its outline,
+    between two points, on the curve or off, moves across as much as it
+    faces across, all the way from FACING, and each point to where its two
+    edges, moved, meet. So it keeps its points, its curves smooth, and its
+    edges straight and as they slant; strokes across do not grow.
+
+    Redaction's carving is kept as MCKL cut it (_carved): the walls and
+    floor of a notch move as one, with the thicker of its two strokes, so
+    it is as wide, as deep and as it slants, and the thinner stroke moves
+    over where it leaves it, as thin; a cut on the flat a stroke ends on
+    moves with that stroke's edge, its flat as long. Sweeping filled a
+    notch and cutting it again (sideways, carve) left steps: a band across
+    a wedge. A join that was smooth is smooth (_joined).
+
+    It raises, and returns nothing distorted, if an edge turns back, the
+    outline crosses itself, its pieces or counters change (a notch, moved
+    as one, only closes so), a point moves farther than a tip grows, MITER
+    times `amount`, or than the shorter of its two edges is long, or a
+    join that was smooth (SMOOTH) no longer is (_broken): its callers grow
+    less then (enclosed._grown_across, _widest).
+
+    Checked on, and to be trusted for, no more than Italic's lowercase as
+    enclosed.py draws it before (by hand, or thickened: a d e f h i j k l
+    m n r s u v w x y z), grown by up to 8 units (test/check.py,
+    check_grown, and check_shipped as built): on other glyphs its guards
+    refuse what was seen to distort (Bold's W grown by 8), but what they
+    pass was not looked at."""
+    if not amount:
+        return p
+    out = pathops.Path()
+    pen = pathops.PathPen(out)
+    for contour in _contours(p):
+        moved = _broadened(p, contour, amount)
+        if moved[-1][1] == "lineTo":  # the line that closes it (_contours)
+            moved.pop()
+        pen.moveTo(moved[0][0])
+        for _, op, args in moved:
+            getattr(pen, op)(*args)
+        pen.closePath()
+    whole = pathops.op(out, pathops.Path(), pathops.PathOp.UNION)
+    if abs(abs(whole.area) - abs(out.area)) > 1:
+        raise ValueError(f"grown by {amount:.1f}: it crosses itself")
+    if _pieces(out) != _pieces(p):
+        raise ValueError(f"grown by {amount:.1f}: its pieces or counters change")
+    return out
+
+
+def _broadened(p, contour, amount):
+    """`contour` of `p` (_contours), its points moved for `p` to grow by
+    `amount` across only (broadened)."""
+    pts = [q for _, _, args in contour for q in args]
+    on = [k == len(args) - 1 for _, _, args in contour for k in range(len(args))]
+    n = len(pts)
+    legs = [_unit(q, pts[(i + 1) % n]) for i, q in enumerate(pts)]
+    if sum(1 for u in legs if u) < 3:
+        return contour
+    side = _inked(p, contour)
+    # Of each point, the edge into it and the edge out of it: points apart
+    ends = [
+        (
+            next((i - k) % n for k in range(1, n + 1) if legs[(i - k) % n]),
+            next((i + k) % n for k in range(n) if legs[(i + k) % n]),
+        )
+        for i in range(n)
+    ]
+    moves = [amount * max(-1, min(1, side * u[1] / FACING)) if u else 0 for u in legs]
+    walls = _carved(p, pts, legs, ends, side, moves, on)
+    new = []
+    for (x, y), (a, b) in zip(pts, ends):
+        u, v = legs[a], legs[b]
+        cross = u[0] * v[1] - u[1] * v[0]
+        q = (x + (moves[a] + moves[b]) / 2, y)  # one edge carried on
+        if side * cross > 0 and moves[a] * moves[b] < 0:
+            # A tip pointing up or down ends where it did, as sideways has
+            # it (_tapered): moved across as the edge that faces across the
+            # most, its edges, grown either way, to it
+            heavy = abs(moves[a]) ** 3, abs(moves[b]) ** 3
+            q = (x + (moves[a] * heavy[0] + moves[b] * heavy[1]) / sum(heavy), y)
+        elif abs(cross) >= math.sin(math.radians(SMOOTH)):
+            # Along each edge, to where they meet: no farther than SLIDE of
+            # the edge it shortens, a wall of carving as it slants
+            t, w = (moves[b] - moves[a]) * v[1] / cross, (moves[b] - moves[a]) * u[1] / cross
+            la = math.dist(pts[a], pts[(a + 1) % n])
+            lb = math.dist(pts[b], pts[(b + 1) % n])
+            if -SLIDE * la <= t and w <= SLIDE * lb:
+                q = (x + moves[a] + t * u[0], y + t * u[1])
+            elif a in walls and b not in walls:
+                t = min(max(t, -SLIDE * la), SLIDE * lb)
+                q = (x + moves[a] + t * u[0], y + t * u[1])
+            elif b in walls and a not in walls:
+                w = max(min(w, SLIDE * lb), -SLIDE * la)
+                q = (x + moves[b] + w * v[0], y + w * v[1])
+        new.append(q)
+
+    def back(i):  # whether the edge from point i turns back, moved
+        v = _unit(new[i], new[(i + 1) % n])
+        return legs[i] and (v is None or legs[i][0] * v[0] + legs[i][1] * v[1] <= 0)
+
+    for i in filter(back, range(n)):
+        # An edge shorter than its ends move together (where x's hairline
+        # leaves its terminal, 13 units), to a point off the curve: as long
+        # as it was, from its point on the curve, towards where the other
+        # would be moved across as its two edges are, half way, which is
+        # how the curve slants where the edge grown over it now ends
+        j = (i + 1) % n
+        if on[i] == on[j]:
+            raise ValueError(f"grown by {amount:.1f}: an edge turns back")
+        off, fixed = (j, i) if on[i] else (i, j)
+        a, b = ends[off]
+        aim = (pts[off][0] + (moves[a] + moves[b]) / 2, pts[off][1])
+        u = _unit(new[fixed], aim) or legs[i]
+        far = math.dist(pts[i], pts[j])
+        new[off] = (new[fixed][0] + u[0] * far, new[fixed][1] + u[1] * far)
+    _joined(pts, new, ends, on)
+    if any(back(i) for i in range(n)):
+        raise ValueError(f"grown by {amount:.1f}: an edge turns back")
+    for i, (q, r) in enumerate(zip(pts, new)):
+        # No farther than a tip grows (MITER times as much), or, slid
+        # along an edge, than the shorter of its two is long (w's wall, 0.84
+        # of it): two edges nearly one, moved apart, meet far off (Bold's W,
+        # grown by 8, a point by 280, 8.6 edges)
+        short = min(math.dist(pts[i - 1], q), math.dist(q, pts[(i + 1) % n]))
+        if math.dist(q, r) > max(MITER * abs(amount), short):
+            raise ValueError(f"grown by {amount:.1f}: a point moves {math.dist(q, r):.0f}")
+    if any(_broken(*turn) for turn in _turns(pts, new, ends)):
+        raise ValueError(f"grown by {amount:.1f}: a smooth join breaks")
+    k, moved = 0, []
+    for _, op, args in contour:
+        moved.append([new[k - 1], op, tuple(new[k : k + len(args)])])
+        k += len(args)
+    return moved
+
+
+def _turns(pts, new, ends):
+    """Degrees the outline of points `pts` turns at each, and with them
+    moved to `new`: between the edges into and out of it (`ends`), points
+    apart. (0, 0) where an edge is no longer one."""
+    out, n = [], len(pts)
+    for i, (a, b) in enumerate(ends):
+        both = []
+        for at in (pts, new):
+            u, v = _unit(at[a], at[i]), _unit(at[i], at[(b + 1) % n])
+            if not (u and v):
+                both = [0, 0]
+                break
+            cross, dot = u[0] * v[1] - u[1] * v[0], u[0] * v[0] + u[1] * v[1]
+            both.append(math.degrees(math.atan2(cross, dot)))
+        out.append(tuple(both))
+    return out
+
+
+def _broken(was, now):
+    """Whether a join that turned `was` degrees, smooth (SMOOTH), is not as
+    smooth turning `now`: by more than it did, and than half of SMOOTH."""
+    return abs(was) <= SMOOTH and abs(now) > max(abs(was), SMOOTH / 2) + 0.1
+
+
+def _joined(pts, new, ends, on):
+    """`new`, the points `pts` of a contour moved (_broadened), its smooth
+    joins smooth again, in place: where the outline turned no more than
+    SMOOTH at a point, and moved turns more (_broken). Between a longer
+    edge and a shorter that ends off the curve (`on`), that end is turned
+    about the point onto the line of the longer, which stays: the wall of
+    a slit, which a curve leaves (k's, x's). Else that point, and those
+    beside it as smooth, are put on the line between the points before and
+    after them, where along it they moved to. A tip held at its height
+    beside a short edge, an edge that slid no farther than SLIDE, or a
+    wall of carving moved with its notch left a kink there (Italic's i's
+    foot, 21°)."""
+    n = len(pts)
+    smooth = [abs(was) <= SMOOTH for was, _ in _turns(pts, new, ends)]
+    if all(smooth):
+        return
+    start = next(i for i in range(n) if not smooth[i])
+    for turned in (True, False, False):  # turning one may break the next
+        turns, run = _turns(pts, new, ends), []
+        for k in range(1, n + 1):
+            i = (start + k) % n
+            if smooth[i]:
+                run.append(i)
+                continue
+            a = ends[run[0]][0] if run else i
+            if any(_broken(*turns[j]) for j in run):
+                j, far = run[0], None
+                before, after = math.dist(pts[a], pts[j]), math.dist(pts[j], pts[i])
+                if turned and len(run) == 1 and before > after and not on[i]:
+                    far, along = i, _unit(new[a], new[j])
+                elif turned and len(run) == 1 and after > before and not on[a]:
+                    far, along = a, _unit(new[i], new[j])
+                now = _unit(new[a], new[i])
+                if far is not None and along:
+                    d = math.dist(new[j], new[far])
+                    new[far] = (new[j][0] + along[0] * d, new[j][1] + along[1] * d)
+                elif now:
+                    for j in run:
+                        d = (new[j][0] - new[a][0]) * now[0] + (new[j][1] - new[a][1]) * now[1]
+                        new[j] = (new[a][0] + d * now[0], new[a][1] + d * now[1])
+            run = []
+
+
+def rounded(g, p, was=None):
+    """Glyph `g`, its contours that are path `p`'s (glyph, of `p` in an
+    enclosure) on whole units where the smooth joins of `p` stay smooth,
+    in place: each point beside a join that turns no more than SMOOTH is
+    put on that of the four corners of the unit it is in which turns those
+    joins least, tried in turn, a few times over. Rounded each to its
+    nearest, three points a few units apart came out a corner (Italic's
+    s, grown, 18° at a join that turned none). A point keeps its nearest
+    across on an upright edge and at the left and right of its contour, up
+    on an edge across and at its top and bottom: a flat stays flat, and its
+    contour as wide and as tall (a's bowl came out a unit narrower); and
+    none is put where a curve would be flat, two lines one, or an edge
+    without length. Not if `p` has cubic curves, blended: those a glyph
+    stores as others, made quadratic.
+
+    Then, with `was`, the same glyph as it was before it grew or was
+    blended further, as stored: a join on the curve that turned no more
+    than SMOOTH there, and now turns more, is made smooth again
+    (_aligned), in `p` blended too: made quadratic afresh, the leftmost
+    point of the upper counter of Italic's g, round in Redaction, came
+    out a point of 11°."""
+    contours = _contours(p)
+    curved = any(op == "curveTo" for contour in contours for _, op, _ in contour)
+    if curved:  # as glyph() stores them, before they are rounded
+        rec = RecordingPen()
+        wound = pathops.op(p, pathops.Path(), pathops.PathOp.UNION, clockwise=True)
+        wound.draw(Cu2QuPen(rec, 1, reverse_direction=False))
+        contours = _recorded(rec.value)
+    exact = [[q for _, _, args in contour for q in args] for contour in contours]
+    exact = [c[:-1] if len(c) > 1 and _near(c[0], c[-1]) else c for c in exact]
+    whole = [[(otRound(x), otRound(y)) for x, y in c] for c in exact]
+    coords, start, own = g.coordinates, 0, {}
+    for at, end in enumerate(g.endPtsOfContours):
+        new = [tuple(coords[i]) for i in range(start, end + 1)]
+        on = [g.flags[i] & 1 for i in range(start, end + 1)]
+        first, start, n = start, end + 1, len(new)
+        # Its points in p, from whichever it starts at, either way round
+        pts = [
+            [c[(k + way * i) % n] for i in range(n)]
+            for c, w in zip(exact, whole)
+            if len(c) == n
+            for way in (1, -1)
+            for k in range(n)
+            if all(w[(k + way * i) % n] == q for i, q in enumerate(new))
+        ]
+        if not pts:
+            continue  # not of p
+        pts = pts[0]
+        own[at] = first, pts, new, on
+        if curved:
+            continue
+        smooth = [abs(_turns_at(pts, i)) <= SMOOTH for i in range(n)]
+        low, high = min(y for _, y in pts), max(y for _, y in pts)
+        left, right = min(x for x, _ in pts), max(x for x, _ in pts)
+
+        def kinks(i, new=new, smooth=smooth, n=n):
+            return sum(abs(_turns_at(new, j % n)) for j in (i - 1, i, i + 1) if smooth[j % n])
+
+        for _ in range(3):
+            for i, (x, y) in enumerate(pts):
+                if not any(smooth[j % n] for j in (i - 1, i, i + 1)):
+                    continue
+                beside = pts[i - 1], pts[(i + 1) % n]
+                across = any(abs(q[1] - y) < 1e-3 for q in beside) or y in (low, high)
+                upright = any(abs(q[0] - x) < 1e-3 for q in beside) or x in (left, right)
+                xs = [new[i][0]] if upright else [math.floor(x), math.ceil(x)]
+                ys = [new[i][1]] if across else [math.floor(y), math.ceil(y)]
+                best, most = (kinks(i), new[i]), _flat(new, on, i)
+                for corner in [(cx, cy) for cx in xs for cy in ys]:
+                    kept, new[i] = new[i], corner
+                    if kinks(i) < best[0] - 1e-9 and _flat(new, on, i) <= most:
+                        best = kinks(i), corner
+                    new[i] = kept
+                new[i] = best[1]
+    if was is not None and len(was.endPtsOfContours) == len(g.endPtsOfContours):
+        start = 0
+        for at, end in enumerate(was.endPtsOfContours):
+            if at in own:
+                before = [tuple(was.coordinates[i]) for i in range(start, end + 1)]
+                _aligned(*own[at][1:], before, [was.flags[i] & 1 for i in range(start, end + 1)])
+            start = end + 1
+    for first, _, new, _ in own.values():
+        for i, q in enumerate(new):
+            coords[first + i] = q
+    g.recalcBounds(None)
+
+
+def _flat(new, on, i):
+    """How many points of contour `new` by point `i` are no longer a
+    curve's or a corner (`on`: whether each is on the curve)."""
+    lost, n = 0, len(new)
+    for j in (i - 1, i, i + 1):
+        a, q, b = new[(j - 1) % n], new[j % n], new[(j + 1) % n]
+        straight = (q[0] - a[0]) * (b[1] - q[1]) == (q[1] - a[1]) * (b[0] - q[0])
+        joined = on[(j - 1) % n] and on[j % n] and on[(j + 1) % n]
+        lost += q == b or (straight and (joined or not on[j % n]))
+    return lost
+
+
+def _aligned(pts, new, on, before, was_on):
+    """rounded: `new`, the points of a contour on whole units (`pts`, where
+    they are drawn; `on`, whether each is on the curve), its joins on the
+    curve that were smooth in `before`, the contour as it was stored before
+    it grew (`was_on`), smooth again, in place: its points on the curve
+    are those, in turn, whichever it starts at. Where the outline turned
+    no more than SMOOTH at one and now turns more, the points off the curve
+    beside it, its control points, are put on one line through it: each on
+    a corner of the unit it is drawn in, those that turn it least, and the
+    joins on the curve past them no more than they turn, then nearest
+    where they are drawn. At the leftmost or rightmost point on the curve
+    of its contour that line is upright, at its top or bottom across, so
+    the contour ends there still. No point on the curve moves, so no cut,
+    flat or stem does, and a join of two lines stays as rounded."""
+    n, ons, were = (
+        len(new),
+        [i for i, o in enumerate(on) if o],
+        [i for i, o in enumerate(was_on) if o],
+    )
+    if len(ons) != len(were) or not ons:
+        return
+    m = len(ons)
+    turn = min(
+        range(m),
+        key=lambda r: sum(math.dist(new[ons[(i + r) % m]], before[j]) for i, j in enumerate(were)),
+    )
+    smooth = {ons[(i + turn) % m]: abs(_turns_at(before, j)) <= SMOOTH for i, j in enumerate(were)}
+    xs, ys = [new[i][0] for i in ons], [new[i][1] for i in ons]
+    low, high = min(y for _, y in pts), max(y for _, y in pts)
+    left, right = min(x for x, _ in pts), max(x for x, _ in pts)
+
+    def spots(i, j):
+        """Where point `j`, off the curve beside the join `i`, may be put."""
+        (x, y), beside = pts[j], (pts[j - 1], pts[(j + 1) % n])
+        across = any(abs(q[1] - y) < 1e-3 for q in beside) or y in (low, high)
+        upright = any(abs(q[0] - x) < 1e-3 for q in beside) or x in (left, right)
+        px = [new[j][0]] if upright else [math.floor(x), math.ceil(x)]
+        py = [new[j][1]] if across else [math.floor(y), math.ceil(y)]
+        if new[i][0] in (min(xs), max(xs)):
+            px = [new[i][0]]
+        elif new[i][1] in (min(ys), max(ys)):
+            py = [new[i][1]]
+        return [(cx, cy) for cx in px for cy in py]
+
+    for _ in range(3):
+        for i in ons:
+            if not smooth[i] or abs(_turns_at(new, i)) <= SMOOTH:
+                continue
+            moving = [j % n for j in (i - 1, i + 1) if not on[j % n]]
+            # The joins it turns: this one, and those past its control points
+            joins = [i, *(j for j in ((i - 2) % n, (i + 2) % n) if smooth.get(j) and j != i)]
+            joins = [j for j in joins if j == i or any(abs(j - k) in (1, n - 1) for k in moving)]
+
+            def cost(i=i, moving=moving, joins=joins):
+                turns = [abs(_turns_at(new, j)) for j in joins]
+                far = sum(math.dist(new[j], pts[j]) for j in moving)
+                return max(turns[0], *(t for t in turns[1:] if t > SMOOTH), 0), far
+
+            best, kept = (cost(), None), [new[j] for j in moving]
+            most = sum(_flat(new, on, j) for j in moving)
+            for spot in itertools.product(*(spots(i, j) for j in moving)):
+                for j, q in zip(moving, spot):
+                    new[j] = q
+                if cost() < best[0] and sum(_flat(new, on, j) for j in moving) <= most:
+                    best = cost(), spot
+            for j, q in zip(moving, best[1] or kept):
+                new[j] = q
+
+
+def _turns_at(pts, i):
+    """Degrees the outline of points `pts` turns at point `i`, 0 where an
+    edge there has no length."""
+    u, v = _unit(pts[i - 1], pts[i]), _unit(pts[i], pts[(i + 1) % len(pts)])
+    if not (u and v):
+        return 0
+    return math.degrees(math.atan2(u[0] * v[1] - u[1] * v[0], u[0] * v[0] + u[1] * v[1]))
+
+
+def _inked(p, contour):
+    """1 if `contour` of `p` (_contours) has its ink on the left, as drawn,
+    else -1: by a point beside the middle of its longest segment."""
+    start, op, args = max(contour, key=lambda seg: math.dist(seg[0], seg[2][-1]))
+    pts = [start, *args]
+    if op == "qCurveTo" and len(args) > 2:  # its first curve: to half way between two points off
+        pts = [start, args[0], ((args[0][0] + args[1][0]) / 2, (args[0][1] + args[1][1]) / 2)]
+    while len(pts) > 1:  # de Casteljau, at its middle
+        last = pts
+        pts = [((a[0] + b[0]) / 2, (a[1] + b[1]) / 2) for a, b in zip(pts, pts[1:])]
+    (x, y), (ux, uy) = pts[0], _unit(last[0], last[1])
+    return 1 if p.contains((x - uy / 2, y + ux / 2)) else -1
+
+
+def _carved(p, pts, legs, ends, side, moves, on):
+    """The edges of a contour of `p` that are Redaction's carving, a notch
+    where a stroke stops short of another: `moves`, how far each edge moves
+    across (broadened), is made the same for all of a notch, in place.
+
+    A notch is a few points, no farther apart than FLOOR in all, at which
+    the outline turns back into its ink, to within NOTCH of the way it
+    came: a wedge's tip, or its floor, and the floor of a slit. Its walls
+    are the edges into and out of them, and those that carry them on
+    (WALL at most) while they are across from each other, the gap between
+    as narrow as carving (CUT), and would grow into it: up a wedge, a
+    hairline grown towards its stem narrowed it by a quarter.
+    All move as the wall of the thicker stroke does, measured behind each
+    wall, or, the two as thick (z's bar and stroke), as the longer wall,
+    the stroke the other stops short of, or half way: the notch keeps its
+    shape, and the thinner stroke, a hairline, its width."""
+    n = len(pts)
+
+    def turn(i):  # degrees the outline turns at point i, away from its ink below 0
+        u, v = legs[ends[i][0]], legs[ends[i][1]]
+        cross, dot = u[0] * v[1] - u[1] * v[0], u[0] * v[0] + u[1] * v[1]
+        return side * math.degrees(math.atan2(cross, dot))
+
+    found = []
+    for i in range(n):
+        if not legs[i] or turn(i) >= -1:
+            continue
+        total, length, j, best = turn(i), 0, i, (turn(i), i)
+        while True:
+            k = (j + 1) % n
+            length += math.dist(pts[j], pts[k])
+            if length >= FLOOR or k == i:
+                break
+            if legs[k]:
+                total += turn(k)
+                if turn(k) < -1 and total < best[0]:
+                    best = (total, k)
+            j = k
+        if -best[0] >= 180 - NOTCH:
+            found.append((best[0], i, best[1]))
+    walls, taken = set(), set()
+    for _, i, j in sorted(found):  # the sharpest first
+        tips = [i]
+        while tips[-1] != j:
+            tips.append((tips[-1] + 1) % n)
+        a, b = ends[i][0], ends[j][1]
+        notch, k = {a}, a
+        while k != b:
+            k = (k + 1) % n
+            notch.add(k)
+        behind = _behind(p, pts, legs, a, True, side), _behind(p, pts, legs, b, False, side)
+        long = [math.dist(pts[k], pts[(k + 1) % n]) for k in (a, b)]
+        move = (moves[a] + moves[b]) / 2
+        for size in (behind, long):
+            if max(size) > 1.25 * min(size):
+                move = moves[a] if size[0] > size[1] else moves[b]
+                break
+        # But a cut, a wall of which is the flat a stroke ends on (a
+        # terminal's, and where e's bar meets its bowl): with the edge that
+        # stroke ends by, past the flat, so the flat is as long as MCKL cut
+        # it. With the other stroke, a curl grown, its flat grew by as much
+        # (y's tail, by 1.4). Not a step in a slit, which turns back in (k's)
+        for flat, tip, past, end in (
+            (a, a, ends[a][0], ends[a][0]),
+            (b, (b + 1) % n, ends[(b + 1) % n][1], (ends[(b + 1) % n][1] + 1) % n),
+        ):
+            short = math.dist(pts[flat], pts[(flat + 1) % n]) <= FLOOR
+            if short and turn(tip) >= CORNER and turn(end) > -CORNER:
+                move = moves[past]
+        # And the edges that carry its walls on, as far as its gap is
+        # carving: while one starts nearer the other wall than carving is
+        # wide, across from it, and would grow towards it (the curl of a
+        # terminal grows along its cut, and the cut with it)
+        for step, wall, other in ((-1, a, b), (1, b, a)):
+            far = [pts[(other - step * k) % n] for k in range(-1, WALL + 1)]
+            far = far[1:] if step == -1 else far[:-1]
+            for k in range(1, WALL):
+                leg = (wall + step * k) % n
+                start = pts[(leg + 1) % n] if step == -1 else pts[leg]
+                if not legs[leg] or leg in notch:
+                    break
+                off, (x, _) = _off(start, far)
+                closing = (moves[leg] - move) * (x - start[0]) > 0
+                if off > 2 * CUT or abs(x - start[0]) < off / 2 or not closing:
+                    break
+                notch.add(leg)
+        if taken & (notch | set(tips)):
+            continue
+        for k in notch:
+            moves[k] = move
+        walls |= notch
+        taken |= notch | set(tips)
+    for i in range(n):
+        # And the flat a terminal ends on, cut across its stroke (x's, k's):
+        # the edges it ends, with it, so it is as long
+        j = (i + 1) % n
+        a, b = ends[i][0], ends[j][1]
+        if not (legs[i] and on[i] and on[j]) or {a, i, b} & taken:
+            continue
+        if math.dist(pts[i], pts[j]) <= FLAT and min(turn(i), turn(j)) <= -CORNER:
+            if max(turn(i), turn(j)) >= CORNER:
+                moves[a] = moves[b] = moves[i]
+    return walls
+
+
+def _off(pt, line):
+    """How far `pt` is from `line`, points joined by segments, and its
+    nearest point."""
+    best = math.inf, pt
+    for (ax, ay), (bx, by) in zip(line, line[1:]):
+        dx, dy = bx - ax, by - ay
+        t = ((pt[0] - ax) * dx + (pt[1] - ay) * dy) / ((dx * dx + dy * dy) or 1)
+        near = (ax + max(0, min(1, t)) * dx, ay + max(0, min(1, t)) * dy)
+        best = min(best, (math.dist(pt, near), near))
+    return best
+
+
+def _behind(p, pts, legs, leg, end, side):
+    """How thick the stroke of `p` behind edge `leg` of a contour is, a wall
+    of a notch: across, or up and down, whichever is less (z's bar is long
+    across), by its end at the notch (its `end`, or its start), no farther
+    than FLOOR from it."""
+    (ax, ay), (bx, by) = pts[leg], pts[(leg + 1) % len(pts)]
+    ux, uy = legs[leg]
+    d = min(math.dist((ax, ay), (bx, by)) / 2, FLOOR)
+    x, y = (bx - ux * d, by - uy * d) if end else (ax + ux * d, ay + uy * d)
+    thick = []
+    # Each way, the run that ends at the edge, on the side it faces
+    for spans, at, out in ((runs(p, y=y), x, side * uy), (runs(p, x=x), y, -side * ux)):
+        run = min(spans, key=lambda r: abs(r[1 if out > 0 else 0] - at), default=None)
+        if run and abs(run[1 if out > 0 else 0] - at) < 2:
+            thick.append(run[1] - run[0])
+    return min(thick, default=0)
 
 
 class _Corners(BasePen):
@@ -386,8 +922,13 @@ def _contours(p):
     """The contours of `p` as segments [start, op, args], closed by a line."""
     rec = RecordingPen()
     p.draw(rec)
+    return _recorded(rec.value)
+
+
+def _recorded(value):
+    """_contours, of what a pen recorded."""
     contours = []
-    for op, args in rec.value:
+    for op, args in value:
         if op == "moveTo":
             contours.append([])
             start = current = args[0]
@@ -773,8 +1314,9 @@ def with_letters(style):
 
 @functools.cache
 def masters():
-    """Redaction's Regular and Bold, smooth, to blend glyphs between."""
-    return redaction(None, "Regular"), redaction(None, "Bold")
+    """Redaction's Regular and Bold, smooth, to blend glyphs between,
+    settled."""
+    return settled(redaction(None, "Regular")), settled(redaction(None, "Bold"))
 
 
 def blend(font, regular, bold, char, t, sliver=False):
@@ -1171,6 +1713,28 @@ def shaper(font):
     return hb.Font(hb.Face(hb.Blob(data.getvalue())))
 
 
+def settled(font):
+    """`font`, each glyph's bounding box that of its points, and its side
+    bearing moved as far: drawn as it was, which saving it (shaper) or
+    recalculating a box no longer changes. MCKL's fonts store some boxes
+    that are not their points' (Redaction Italic's U from 113, its points
+    from 109): recalculated, the side bearing kept, such a glyph is drawn
+    as far over (4 units right). A font kept across the fonts a process
+    draws (enclosed._font, masters) is settled as it is made:
+    it draws the same whatever that process drew before."""
+    glyf, hmtx = font["glyf"], font["hmtx"]
+    names = font.getGlyphOrder()
+    # All read first: a composite's box recalculates those of its components
+    was = {name: getattr(glyf[name], "xMin", None) for name in names}
+    for name in names:
+        glyf[name].recalcBounds(glyf)
+    for name in names:
+        if was[name] is not None and glyf[name].xMin != was[name]:
+            advance, lsb = hmtx[name]
+            hmtx[name] = advance, lsb + glyf[name].xMin - was[name]
+    return font
+
+
 def typed(font, shaper, text, grid):
     """`text` as typed in `font`, kerning included (`shaper`, of `font`): a
     glyph made of its glyphs (components), offsets on the grid, and its
@@ -1270,7 +1834,7 @@ def _placed(glyphs, grid, rows, theirs, carved, away, heavy):
     """phased: {name: its placements, best first: (how many counters drawn
     its pixels do not close, its rank, its pixels, the grid, and the spot
     it was tried at, (i, j) SHIFTS of a cell across and up)}, strokes
-    against `theirs` (widths), off `away`."""
+    against `theirs` (widths, or {name: widths}), off `away`."""
     spots = [(i, j) for i in range(SHIFTS) for j in range(1 - SHIFTS // 2, 1 + SHIFTS // 2)]
     shifted = {}
     for name, g in glyphs.items():
@@ -1295,8 +1859,17 @@ def _placed(glyphs, grid, rows, theirs, carved, away, heavy):
         ]
 
         unread = {}
+        like = theirs[name] if isinstance(theirs, dict) else theirs
 
-        def rank(key, drawn=drawn, pieces=pieces, holes=holes, gaps=gaps, unread=unread):
+        def rank(
+            key,
+            drawn=drawn,
+            pieces=pieces,
+            holes=holes,
+            gaps=gaps,
+            unread=unread,
+            theirs=like,
+        ):
             _, i, j = key
             there = drawn.transform(1, 0, 0, 1, i * grid / SHIFTS, j * grid / SHIFTS)
             lost = 0
@@ -1422,22 +1995,26 @@ def cells(g, grid, drawn=None):
 
 
 def _regions(cells, ink, steps):
-    """The regions of `cells` that are `ink`, connected by `steps`."""
-    seen, regions = np.zeros(cells.shape, bool), []
-    for start in zip(*np.nonzero(cells == ink)):
-        if seen[start]:
-            continue
-        seen[start], todo, region = True, [start], []
-        while todo:
-            i, j = todo.pop()
-            region.append((i, j))
-            for di, dj in steps:
-                n = i + di, j + dj
-                if 0 <= n[0] < cells.shape[0] and 0 <= n[1] < cells.shape[1]:
-                    if cells[n] == ink and not seen[n]:
-                        seen[n] = True
-                        todo.append(n)
-        regions.append(region)
+    """The regions of `cells` that are `ink`, connected by `steps`. On
+    lists: read cell by cell off an array, this took most of the time a
+    glyph takes to place (phased), a letter to settle (enclosed._settled)."""
+    left = (cells == ink).tolist()  # cells not yet in a region
+    rows, columns = cells.shape
+    regions = []
+    for i, row in enumerate(left):
+        for j in range(columns):
+            if not row[j]:
+                continue
+            row[j], todo, region = False, [(i, j)], []
+            while todo:
+                y, x = todo.pop()
+                region.append((y, x))
+                for dy, dx in steps:
+                    ny, nx = y + dy, x + dx
+                    if 0 <= ny < rows and 0 <= nx < columns and left[ny][nx]:
+                        left[ny][nx] = False
+                        todo.append((ny, nx))
+            regions.append(region)
     return regions
 
 
