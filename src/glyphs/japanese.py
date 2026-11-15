@@ -3,8 +3,8 @@
 
 Their figures are Redaction's, as typed, and their kanji (月 日 点) Noto
 Serif JP's, at the weight of the kanji Kuronuri sets with the style on the
-grid (family.noto_weight): lighter on the coarse grids. As in Noto Serif
-JP, both are as tall as its signs are, side by side in the em, condensed
+grid (family.noto_weight): lighter on the coarse grids, but in Bold. As in
+Noto Serif JP, both are as tall as its signs are, side by side in the em, condensed
 when they would not fit, their vertical stems a little thinner than before
 (the figures' than those of n), as much as Noto Serif JP's: emboldened
 mostly sideways, in a space stretched upright, so horizontal strokes stay

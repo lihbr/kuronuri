@@ -9,7 +9,8 @@ TrueType contours.
 On the coarse grids, from PHASED, where a cell is about as thick as a stem,
 where a glyph falls in a cell decides what it looks like: an 85-unit stem
 fills one 70-unit cell, or two. There, the kanji and kana of Noto Serif JP
-(build.py asks, pixelate_font; which ones, phased_glyphs) are also tried
+lightened in Regular and Italic (family.light; build.py asks,
+pixelate_font; which ones, phased_glyphs) are also tried
 at PHASES spots across a cell and as many up and down, as the glyphs drawn
 in glyphs/ are (shapes.phased), with a dropout pass that puts each thin
 stroke back in one row or column (_thin). Of the spots that keep the top
@@ -25,8 +26,8 @@ differently come out within APART cells of each other, or failing that the
 same, where a spot keeps them apart (_distinct): a spot that draws one
 worse only for the few of WORSE, logged. On FOLLOW, the vertical forms of
 the kanji and kana take the cells of the glyph they stand for (_follow), so
-read alike across and down. Other glyphs, punctuation
-and brackets, and every glyph on the finer grids, are placed as they
+read alike across and down. Other glyphs, punctuation and brackets, every
+glyph on the finer grids, and Bold's kanji and kana, are placed as they
 stand, as before any of this.
 
 build.py caches pixelated fonts under a hash of this file.
@@ -58,7 +59,7 @@ APART = 3  # kanji and kana come out this many cells apart, or at least unlike, 
 # Kanji that take a spot drawing them worse (a stroke end or a piece more)
 # where every other comes out the same as another kanji, a variant of
 # theirs (_distinct): the build logs each
-WORSE = "熙閶\U0002b789"
+WORSE = "熙閶"
 FOLLOW = 100  # grids this coarse: vertical forms of kana take the cells of their horizontal ones
 BLOCK = 4  # pixels at PPEM: the outline's counters and pieces are read in blocks this size
 READ = ("Hani", "Hira", "Kana")  # scripts of the kanji and kana: no two of them come out alike

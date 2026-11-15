@@ -61,6 +61,7 @@ from family import (  # noqa: E402
     STYLES,
     VERSION,
     family_name,
+    light,
     log,
     noto_weight,
     ps_name,
@@ -191,22 +192,22 @@ def lighten(font, lighter):
 def notos(grids, styles, fresh=True):
     """{(Noto weight, grid): path} of the Noto Serif JP the fonts of `grids`
     and `styles` merge, by the weight of their kanji and kana
-    (family.noto_weight), pixelated on their grid: noto(), or noto_light()
-    where the kanji and kana are lighter. Instanced again unless not `fresh`
-    (instance())."""
+    (family.noto_weight), pixelated on their grid: noto(), or, where the
+    kanji and kana are lightened (family.light), noto_light(), placed by
+    phase. Instanced again unless not `fresh` (instance())."""
     out, made = {}, {}
     for weight in sorted({STYLES[s]["weight"] for s in styles}):
         for grid in grids:
-            base, kanji = NOTO_WEIGHT[weight], noto_weight(weight, grid)
+            base, kanji, lit = NOTO_WEIGHT[weight], noto_weight(weight, grid), light(weight, grid)
             if kanji not in made:
-                made[kanji] = (
-                    instance(base, fresh) if kanji == base else noto_light(base, kanji, fresh)
-                )
+                made[kanji] = noto_light(base, kanji, fresh) if lit else instance(base, fresh)
             if grid is None:
                 out[kanji, grid] = made[kanji]
-            else:
-                stands = instance(base, fresh) if kanji != base else None
+            elif lit:
+                stands = instance(base, fresh)
                 out[kanji, grid] = noto_pixel(made[kanji], grid, stands, pinned(weight, grid))
+            else:
+                out[kanji, grid] = noto_pixel(made[kanji], grid)
     return out
 
 
@@ -228,10 +229,11 @@ def pinned(weight, grid):
 
 
 def noto_pixel(path, grid, stands=None, cells=None):
-    """The Noto instance at `path` pixelated on `grid`, its kanji and kana
-    placed by phase on the rows of those of the instance at `stands`
-    (pixel.pixelate_font), but those drawn by hand, `cells` ({code point:
-    cells}), cached under a hash of the instances, the cells and pixel.py."""
+    """The Noto instance at `path` pixelated on `grid`, cached under a hash
+    of the instances, the cells and pixel.py. Given `stands`, its kanji and
+    kana are placed by phase on the rows of those of the instance at
+    `stands` (pixel.pixelate_font), but those drawn by hand, `cells` ({code
+    point: cells}); without, every glyph is placed as it stands."""
     source = path.read_bytes() + (stands.read_bytes() if stands else b"")
     source += repr(sorted((cp, list(c), c.at) for cp, c in (cells or {}).items())).encode()
     key = hashlib.sha1(source + Path(pixel.__file__).read_bytes()).hexdigest()[:8]
@@ -242,7 +244,7 @@ def noto_pixel(path, grid, stands=None, cells=None):
             stale.unlink()
         reference = TTFont(stands) if stands else None
         pixel.pixelate_font(
-            TTFont(path), grid, phased=True, stands=reference, pinned=cells, log=log
+            TTFont(path), grid, phased=bool(stands), stands=reference, pinned=cells, log=log
         ).save(out)
     return out
 
