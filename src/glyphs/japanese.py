@@ -2,7 +2,8 @@
 ㏾, and ㍘ (0 o'clock) to ㍰.
 
 Their figures are Redaction's, as typed, and their kanji (月 日 点) Noto
-Serif JP's, at the weight Kuronuri pairs with the style. As in Noto Serif
+Serif JP's, at the weight of the kanji Kuronuri sets with the style on the
+grid (family.noto_weight): lighter on the coarse grids. As in Noto Serif
 JP, both are as tall as its signs are, side by side in the em, condensed
 when they would not fit, their vertical stems a little thinner than before
 (the figures' than those of n), as much as Noto Serif JP's: emboldened
@@ -14,7 +15,7 @@ upright in italic; the figures are italic. Pixelated on a grid.
 import pathops
 
 import pixel
-from family import NOTO_WEIGHT, noto_glyphs
+from family import noto_glyphs, noto_weight
 
 from .shapes import add, content, embolden, glyph, path, pixelate_glyphs, runs, shaper, stem
 
@@ -51,7 +52,7 @@ def _condensed(p, squeeze, thick, own):
 def add_glyphs(font, smooth, grid=None):
     em = pixel.snap_advance(1000, grid or 1)
     x0, y0, x1, y1 = (v * em / 1000 for v in BOX)
-    weight = NOTO_WEIGHT[700 if smooth["OS/2"].usWeightClass >= 700 else 400]
+    weight = noto_weight(700 if smooth["OS/2"].usWeightClass >= 700 else 400, grid)
     noto = noto_glyphs(weight, "".join(sorted({k for _, k in SIGNS.values()})))
     target = stem(path(smooth, "n"))
     s = shaper(smooth)

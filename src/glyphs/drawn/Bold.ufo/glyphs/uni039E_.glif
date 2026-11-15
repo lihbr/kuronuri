@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni039E" format="2">
+  <advance width="659"/>
+  <unicode hex="039E"/>
+  <outline>
+    <contour>
+      <point x="49" y="700" type="line"/>
+      <point x="610" y="700" type="line"/>
+      <point x="624" y="465" type="line"/>
+      <point x="583" y="465" type="line"/>
+      <point x="561" y="535" type="line"/>
+      <point x="542" y="597"/>
+      <point x="465" y="653"/>
+      <point x="402" y="653" type="qcurve"/>
+      <point x="257" y="653" type="line"/>
+      <point x="194" y="653"/>
+      <point x="117" y="597"/>
+      <point x="98" y="535" type="qcurve"/>
+      <point x="76" y="465" type="line"/>
+      <point x="35" y="465" type="line"/>
+    </contour>
+    <contour>
+      <point x="252" y="47" type="qcurve"/>
+      <point x="407" y="47" type="line"/>
+      <point x="470" y="47"/>
+      <point x="549" y="115"/>
+      <point x="571" y="184" type="qcurve"/>
+      <point x="589" y="240" type="line"/>
+      <point x="631" y="240" type="line"/>
+      <point x="599" y="0" type="line"/>
+      <point x="60" y="0" type="line"/>
+      <point x="28" y="240" type="line"/>
+      <point x="70" y="240" type="line"/>
+      <point x="88" y="184" type="line"/>
+      <point x="110" y="115"/>
+      <point x="189" y="47"/>
+    </contour>
+    <contour>
+      <point x="279" y="382" type="qcurve"/>
+      <point x="380" y="382" type="line"/>
+      <point x="417" y="382"/>
+      <point x="470" y="419"/>
+      <point x="480" y="463" type="qcurve"/>
+      <point x="490" y="506" type="line"/>
+      <point x="526" y="506" type="line"/>
+      <point x="526" y="214" type="line"/>
+      <point x="490" y="214" type="line"/>
+      <point x="480" y="257" type="line"/>
+      <point x="470" y="300"/>
+      <point x="417" y="337"/>
+      <point x="380" y="337" type="qcurve"/>
+      <point x="279" y="337" type="line"/>
+      <point x="242" y="337"/>
+      <point x="189" y="300"/>
+      <point x="179" y="257" type="qcurve"/>
+      <point x="169" y="214" type="line"/>
+      <point x="133" y="214" type="line"/>
+      <point x="133" y="506" type="line"/>
+      <point x="169" y="506" type="line"/>
+      <point x="179" y="463" type="line"/>
+      <point x="189" y="419"/>
+      <point x="242" y="382"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>28</integer>
+        <integer>28</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction E, its three arms, each mirrored, without its stem</string>
+    </dict>
+  </lib>
+</glyph>

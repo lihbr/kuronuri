@@ -43,7 +43,9 @@ def plan(cmap):
     them (Roman numerals) go to an extra "misc" slice. Kuronuri's arrows
     are part of its Latin design: they go in the latin slice. Mirrored
     pairs like ＜＞ stay together: right-to-left text swaps one for the
-    other within the same font (and the subsetter adds the mirror anyway)."""
+    other within the same font (and the subsetter adds the mirror anyway).
+    So do halfwidth katakana, with their sound marks: `fwid` joins ｶ and ﾞ
+    into ガ, which it cannot across fonts."""
     owner = {}
     for sl in reversed(SLICES):  # latin, latin-ext, cyrillic, 119 ... 0
         for a, b in sl["ranges"]:
@@ -57,6 +59,10 @@ def plan(cmap):
         m = mirrored(c)
         if m is not None and m > c and m in cmap:
             owner[m] = owner.get(c, "misc")
+    halfwidth = [c for c in range(0xFF61, 0xFFA0) if c in cmap]
+    if halfwidth:  # in the slice of the sound marks, the last ones
+        marks = owner.get(halfwidth[-1], "misc")
+        owner.update(dict.fromkeys(halfwidth, marks))
     groups = {}
     for c in sorted(cmap):
         groups.setdefault(owner.get(c, "misc"), []).append(c)

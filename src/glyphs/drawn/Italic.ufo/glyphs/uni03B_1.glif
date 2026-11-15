@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03B1" format="2">
+  <advance width="607"/>
+  <unicode hex="03B1"/>
+  <outline>
+    <contour>
+      <point x="143" y="-8" type="qcurve"/>
+      <point x="90" y="-8"/>
+      <point x="29" y="74"/>
+      <point x="29" y="147" type="qcurve"/>
+      <point x="29" y="196"/>
+      <point x="77" y="312"/>
+      <point x="162" y="411"/>
+      <point x="253" y="478"/>
+      <point x="323" y="478" type="qcurve"/>
+      <point x="365" y="478"/>
+      <point x="410" y="459"/>
+      <point x="432" y="431"/>
+      <point x="438" y="385" type="qcurve"/>
+      <point x="448" y="317" type="line"/>
+      <point x="417" y="280" type="line"/>
+      <point x="430" y="268" type="line"/>
+      <point x="452" y="293" type="line"/>
+      <point x="490" y="383" type="line"/>
+      <point x="511" y="434"/>
+      <point x="537" y="478"/>
+      <point x="563" y="478" type="qcurve"/>
+      <point x="581" y="477"/>
+      <point x="607" y="454"/>
+      <point x="607" y="435" type="qcurve"/>
+      <point x="607" y="417"/>
+      <point x="586" y="390"/>
+      <point x="563" y="390" type="qcurve"/>
+      <point x="558" y="390"/>
+      <point x="546" y="392"/>
+      <point x="538" y="395" type="qcurve"/>
+      <point x="538" y="427" type="line"/>
+      <point x="529" y="411"/>
+      <point x="506" y="356" type="qcurve"/>
+      <point x="497" y="335" type="line"/>
+      <point x="473" y="278"/>
+      <point x="457" y="259" type="qcurve"/>
+      <point x="479" y="111" type="line"/>
+      <point x="483" y="84"/>
+      <point x="487" y="53"/>
+      <point x="503" y="53" type="qcurve"/>
+      <point x="517" y="53"/>
+      <point x="554" y="90"/>
+      <point x="582" y="130" type="qcurve"/>
+      <point x="589" y="125" type="line"/>
+      <point x="547" y="56"/>
+      <point x="483" y="-6"/>
+      <point x="449" y="-6" type="qcurve"/>
+      <point x="431" y="-6"/>
+      <point x="407" y="26"/>
+      <point x="397" y="70" type="qcurve"/>
+      <point x="386" y="147" type="line"/>
+      <point x="417" y="184" type="line"/>
+      <point x="404" y="196" type="line"/>
+      <point x="344" y="126" type="line"/>
+      <point x="271" y="40"/>
+      <point x="201" y="-8"/>
+    </contour>
+    <contour>
+      <point x="123" y="149" type="qcurve"/>
+      <point x="123" y="100"/>
+      <point x="154" y="53"/>
+      <point x="183" y="53" type="qcurve"/>
+      <point x="221" y="53"/>
+      <point x="286" y="98"/>
+      <point x="335" y="155" type="qcurve"/>
+      <point x="377" y="205" type="line"/>
+      <point x="355" y="350" type="line"/>
+      <point x="348" y="396"/>
+      <point x="327" y="439"/>
+      <point x="297" y="439" type="qcurve"/>
+      <point x="269" y="439"/>
+      <point x="217" y="381"/>
+      <point x="158" y="294"/>
+      <point x="123" y="192"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>29</integer>
+        <integer>0</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Drawn, one script stroke that crosses itself: Redaction Italic a's bowl, its top stroke turning down, thick, into a stem that ends in a's tail, its bottom stroke going up, thin, through that stem to a small ball at the x-height, as x's: the stroke over its top, x's step under the stroke, the ball over its side bearing as x's is; x's notches where they cross, cut along the thin stroke into the thick one</string>
+    </dict>
+  </lib>
+</glyph>

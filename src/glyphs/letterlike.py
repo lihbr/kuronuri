@@ -1,13 +1,21 @@
 """Letters Redaction lacks, for maths and units, drawn by hand from its own
 (shapes.drawn): Σ Π, the Greek capitals, are ∑ ∏ of maths.py as tall as
 capitals; μ (and µ, the micro sign) is u, its left stem carried down to p's
-descender; ℏ is Italic's ħ, in every style, Bold's emboldened as ∫ is. Each
-is set between the side bearings of the letter it is drawn from, MCKL's
-pixel letter's on a grid. There, they are pixelated where in a cell they
-fall best, their strokes as thick as those of that letter.
+descender and cut there, plain, its right one cut at the baseline, as wide
+as it runs, under the carved join of its bowl: Greek lowercase has no feet
+(greek.py); Italic's ends as its u does, in the stroke it leaves by, which
+is no foot. ℏ is Italic's ħ, in every style, Bold's emboldened as ∫ is.
+Each is set between the side bearings of the letter it is drawn from, MCKL's
+pixel letter's on a grid, as far from them as its outline says (SIDES):
+Italic's μ is u where u is, its descender under the letter before it, as
+p's is; Regular's and Bold's μ is as wide as u, its right side bearing the
+wider by the reach of the foot it lost (83 units, Bold's 84). There, they
+are pixelated where in a cell they fall best, their strokes as thick as
+those of that letter.
 
-Ω ℧ ℵ ℊ ℓ ℮ have no letter of Redaction to be drawn from: they stay Noto
-Serif JP's, as the rest of Greek does. Units (squared.py) set ℓ and Ω
+℧ ℵ ℊ ℓ ℮ have no letter of Redaction to be drawn from: they stay Noto
+Serif JP's (the Greek letters, Ω too, are greek.py's). Units (squared.py)
+set ℓ and Ω
 among Redaction's letters: for them alone (add_noto), they are Noto Serif
 JP's scaled as tall as Redaction's l and O.
 """
@@ -27,6 +35,16 @@ LETTERS = {
 CODEPOINTS = {cp: name for cp, (name, _, _) in LETTERS.items()}
 # Noto Serif JP's, for units: {code point: Redaction's letter it is as tall as}
 NOTO = {0x2113: "l", 0x03A9: "O"}
+SIDES = "com.lihbr.kuronuri.sides"  # in an outline's lib: its side bearings
+# On a grid, units off those side bearings: {(code point, style, grid): (left,
+# right)}. μ's right foot came off in its outline, its side bearing the wider
+# by its reach, but its cells lost less than that (a cell of the foot on
+# Regular's and Bold's 50), none (Regular's 100, pixelated without it), or
+# stand a column to the left (Bold's 20, its left stem where u's and η's
+# are), and a side bearing rounds to a cell more or less than they lost: μ
+# is as wide as it was with its foot, its right stem on the same columns
+REFITTED = {(0x03BC, "Regular", 50): (0, -50), (0x03BC, "Regular", 100): (0, -100)}
+REFITTED |= {(0x03BC, "Bold", 20): (0, 20), (0x03BC, "Bold", 50): (0, -50)}
 ALTERNATES = []
 SAMPLES = [
     "ΣΠμℏ",
@@ -56,15 +74,21 @@ def add_glyphs(font, smooth, grid=None):
             source = glyf[cmap[ord(letter)]]
             source.recalcBounds(glyf)
             shape = phased({name: shape}, grid, None, [source], carved=True)[name]
-        # Between the side bearings of its letter, MCKL's own on a grid
-        if grid:
-            spacing = redaction(grid, "Italic") if of_italic else font
-        else:
-            spacing = italic if of_italic else smooth
+        # Between the side bearings of its letter, MCKL's own on a grid, each
+        # as far from that letter's as its outline says (μ), and REFITTED
+        of = italic if of_italic else smooth
+        spacing = (redaction(grid, "Italic") if of_italic else font) if grid else of
+        og = of["glyf"][of.getBestCmap()[ord(letter)]]
+        og.recalcBounds(of["glyf"])
         sg = spacing["glyf"][spacing.getBestCmap()[ord(letter)]]
         sg.recalcBounds(spacing["glyf"])
-        lsb = pixel.snap(sg.xMin, g)
-        rsb = pixel.snap(spacing["hmtx"][spacing.getBestCmap()[ord(letter)]][0] - sg.xMax, g)
+        sides, more = hand[chr(cp)][1][SIDES], REFITTED.get((cp, style, grid), (0, 0))
+        theirs, own = (
+            f["hmtx"][f.getBestCmap()[ord(letter)]][0] - x.xMax
+            for f, x in ((spacing, sg), (of, og))
+        )
+        lsb = pixel.snap(sg.xMin + sides[0] - og.xMin, g) + more[0]
+        rsb = pixel.snap(theirs + sides[1] - own, g) + more[1]
         shape.recalcBounds(None)
         shape.coordinates.translate((lsb - shape.xMin, 0))
         out[name] = shape, pixel.snap(shape.xMax - shape.xMin + lsb + rsb, g)

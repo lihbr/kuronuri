@@ -1,0 +1,481 @@
+// Kanji and kana drawn by hand on a grid (pixel.JAPANESE, build.pinned):
+// placed by phase, they read as another character, or lose a stroke the
+// grid has room for. Each keeps the bottom row it stood on
+// (pixel.pixelate_font) and its ink within its advance; on 100, it leaves
+// the top row of its em free, as most kanji do, so that in vertical text
+// it meets nothing above it. Regular and Italic share their Noto Serif
+// JP, so are drawn alike. On 100, the vertical forms of the kana take the
+// cells of their horizontal ones, these included (pixel._follow).
+//
+// A glyph is a line "grid styles character x,y", x,y its bottom left cell
+// (the baseline is y 0), then its cells, top row first: "#" ink, "." air.
+// Lines starting with // are notes.
+
+// 間 read as 問: inside 門, 日 with both bars, its bottom one level with
+// the ends of 門's legs
+100 Regular,Italic 間 1,-1
+###.####
+#.#.#..#
+###.####
+#......#
+#.####.#
+#.#..#.#
+#.####.#
+#.#..#.#
+#.####.#
+
+// 書 read as 昔, two verticals through its top bars, then, its top bar
+// on the top row, as 吾 or 舌: one stem, above ヨ and through it, the
+// long bar 日's top bar, as in Bold
+100 Regular,Italic 書 1,-1
+....#....
+.#######.
+....#..#.
+#########
+.#.....#.
+.#######.
+.#.....#.
+.#.....#.
+.#######.
+
+// 車 lost its middle bar and read as 巾: its box divided, the long bar
+// its bottom; its top bar and box as wide as each other, narrower than
+// the long bar, so it is no darker than the kanji around it
+100 Regular,Italic 車 1,-1
+..#####..
+....#....
+..#####..
+..#.#.#..
+..#####..
+..#.#.#..
+..#.#.#..
+#########
+....#....
+
+// き read as ぎ, two loose cells atop it a dakuten: its slant stroke
+// through both bars, in one line of steps
+100 Regular,Italic き 2,-1
+.#....
+..#...
+#####.
+...#..
+######
+....#.
+.####.
+#.....
+.####.
+
+// テ's top bar broke into a loose cell where ゛ goes, and read as デ;
+// Bold's had a loose diagonal right of its long bar
+100 Regular,Italic,Bold テ 1,-1
+..#####.
+........
+########
+....#...
+....#...
+...#....
+...#....
+..#.....
+.#......
+
+// Bold: 間 read as 問, as in Regular
+100 Bold 間 1,-1
+###.####
+#.#.#..#
+###.####
+#......#
+#.####.#
+#.#..#.#
+#.####.#
+#.#..#.#
+#.####.#
+
+// Bold: 聞, its 耳 merged into the boxes of 門, read as 冊: 門's boxes,
+// then 耳 apart from them
+100 Bold 聞 1,-1
+####.####
+#..#.#..#
+####.####
+#.......#
+#.#####.#
+#..#.#..#
+#..###..#
+#..#.#..#
+#.#####.#
+
+// Bold: 書 read as 昔, as in Regular
+100 Bold 書 0,-1
+....#....
+.#######.
+....#..#.
+#########
+.#.....#.
+.#######.
+.#.....#.
+.#.....#.
+.#######.
+
+// Bold: 土 every spot drew with a kinked stem, a stray cell and its
+// bottom bar broken under the stem; its top bar shorter than the bottom,
+// as 士's is not, by two cells each side: a row shorter, it would be one
+// cell nearer 士, and push 士 off its best placement
+100 Bold 土 0,-1
+....#....
+....#....
+....#....
+..#####..
+....#....
+....#....
+....#....
+....#....
+#########
+
+// Bold: き and さ, loose cells where ゛ goes, as in Regular's き
+100 Bold き 2,-1
+.#....
+..#...
+#####.
+...#..
+######
+....#.
+.####.
+#.....
+.####.
+
+100 Bold さ 1,-1
+..#....
+...#...
+#######
+....#..
+.....#.
+.####..
+#......
+#......
+.#####.
+
+// 主's top bar broke under its dot into a roof, and read as 全: its dot
+// apart, then 王
+100 Regular,Italic 主 0,-1
+...##....
+.........
+.#######.
+....#....
+....#....
+..#####..
+....#....
+....#....
+#########
+
+// 亜: a stray cell over the end of its top bar (Noto's uroko, a cell
+// alone): 一, the box its two verticals cross, the long bar
+100 Regular,Italic 亜 0,-1
+.#######.
+...#.#...
+.#######.
+.#.#.#.#.
+.#.#.#.#.
+.#######.
+...#.#...
+...#.#...
+#########
+
+// 末: its lower bar broke in two; shorter than the top one, as 未's is
+// longer
+100 Regular,Italic 末 0,-1
+....#....
+#########
+....#....
+.#######.
+...###...
+..#.#.#..
+.#..#..#.
+#...#...#
+....#....
+
+// ボ and ポ: every spot drew them alike, ゛ and ゜ one blot: ホ with two
+// ticks, or a ring
+100 Regular,Italic ボ 0,0
+...#...#.#
+...#...#.#
+######....
+...#......
+.#.#.#....
+#..#..#...
+...#......
+..##......
+
+100 Regular,Italic ポ 0,0
+...#...###
+...#...#.#
+######.###
+...#......
+.#.#.#....
+#..#..#...
+...#......
+..##......
+
+// 重: a stray cell beside its long bar, its top bar broken: ノ and 一,
+// the long bar, 田 on its stem, the stem, the bottom bar
+100 Regular,Italic 重 0,-1
+.#######.
+....#....
+#########
+.#..#..#.
+.#######.
+.#..#..#.
+.#######.
+....#....
+#########
+
+100 Bold 重 0,-1
+.#######.
+....#....
+#########
+.#..#..#.
+.#######.
+.#..#..#.
+.#######.
+....#....
+#########
+
+// Bold: 亜 as in Regular: its top bar broken under a stray cell
+100 Bold 亜 0,-1
+.#######.
+...#.#...
+.#######.
+.#.#.#.#.
+.#.#.#.#.
+.#######.
+...#.#...
+...#.#...
+#########
+
+// Bold: 未 and 末, their lower bar broken, or as long as the top one
+100 Bold 未 0,-1
+....#....
+.#######.
+....#....
+#########
+...###...
+..#.#.#..
+.#..#..#.
+#...#...#
+....#....
+
+100 Bold 末 0,-1
+....#....
+#########
+....#....
+.#######.
+...###...
+..#.#.#..
+.#..#..#.
+#...#...#
+....#....
+
+// Bold: 車, a stray cell under its top bar (its uroko); its stem above
+// the top bar, the long bar its box's bottom
+100 Bold 車 0,-1
+....#....
+.#######.
+....#....
+.#######.
+.#..#..#.
+.#######.
+.#..#..#.
+#########
+....#....
+
+// Bold: ボ and ポ, ゛ and ゜ blots, as in Regular
+100 Bold ボ 0,-1
+...#...#.#
+...#...#.#
+######....
+...#......
+.#.#.#....
+#..#..#...
+...#......
+...#......
+..##......
+
+100 Bold ポ 0,-1
+...#...###
+...#...#.#
+...#...###
+######....
+...#......
+.#.#.#....
+#..#..#...
+...#......
+..##......
+
+// ブ and プ: フ's top bar broke under ゛ and ゜, two cells apart: フ, its
+// bar clear of two ticks, or of a ring
+100 Regular,Italic ブ 0,-1
+.......#.#
+.......#.#
+.######...
+......#...
+.....#....
+....#.....
+...#......
+..#.......
+.#........
+
+100 Regular,Italic プ 0,-1
+.......###
+.......#.#
+.......###
+.######...
+......#...
+.....#....
+....#.....
+...#......
+..#.......
+
+// デ: its ゛ shrank to a cell, the end of its top bar: two ticks clear of
+// a shorter top bar
+100 Regular,Italic,Bold デ 0,-1
+.......#.#
+..####.#.#
+..........
+.########.
+.....#....
+....#.....
+....#.....
+...#......
+..#.......
+
+// 土 had a terminal apart from its foot, past a gap: the bottom bar whole,
+// as in Bold
+100 Regular,Italic 土 0,-1
+....#....
+....#....
+....#....
+.#######.
+....#....
+....#....
+....#....
+....#....
+#########
+
+// 価: the bar atop 西 broke, a terminal alone: 一 whole, the two strokes
+// of 儿 apart, through the box's top bar
+100 Regular,Italic,Bold 価 0,-1
+.#.#######
+#....#.#..
+#..#######
+#..#.#.#.#
+#..#.#.#.#
+#..#.....#
+#..#.....#
+#..#.....#
+#..#######
+
+// 関: 门's boxes and 关 tangled: 門 as 聞's, 丷, 一, 大 inside it
+100 Regular,Italic,Bold 関 1,-1
+####.####
+#..#.#..#
+####.####
+#.#...#.#
+#..###..#
+#...#...#
+#.#####.#
+#..#.#..#
+#.#...#.#
+
+// 順: 川 a block, or two stems: three stems apart, and 頁 narrower, open
+100 Regular,Italic,Bold 順 0,-1
+....#.####
+#.#.#..#..
+#.#.#.####
+#.#.#.#..#
+#.#.#.####
+#.#.#.#..#
+#...#.####
+#...#.#..#
+....#.....
+
+// 問: 門's boxes merged, or its leg broken: 間's 門, 口 apart from it
+100 Regular,Italic,Bold 問 1,-1
+###.####
+#.#.#..#
+###.####
+#......#
+#.####.#
+#.#..#.#
+#.#..#.#
+#.####.#
+#......#
+
+// 単: its three dots a bar, or 田 without its middle or bottom bar: dots,
+// 田, the long bar on the stem
+100 Regular,Italic,Bold 単 1,-1
+.#..#..#.
+.#######.
+.#..#..#.
+.#######.
+.#..#..#.
+.#######.
+....#....
+#########
+....#....
+
+// Bold: 主, the long bar broken under the stem: its dot apart, then 王
+100 Bold 主 0,-1
+...##....
+.........
+.#######.
+....#....
+..#####..
+....#....
+....#....
+....#....
+#########
+
+// 会: 人's roof shut into a bar under its apex, and read as 去: the roof
+// open, 一 under it, 二's long bar, ム
+100 Regular,Italic,Bold 会 0,-1
+....#....
+...#.#...
+..#...#..
+.#.....#.
+#.#####.#
+.........
+#########
+..#...#..
+.#######.
+
+// Bold: 吾, its top bar broken, a stray cell above it: 五 whole over 口
+100 Bold 吾 0,-1
+.#######.
+...#.....
+..#####..
+...#..#..
+#########
+.........
+..#####..
+..#...#..
+..#####..
+
+// 上 on 50: a stem of two cells, darker than before it was lightened and
+// than 下's: one cell
+50 Regular,Italic 上 1,-1
+.........#........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.....##..
+........########..
+........#.........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.........
+........#.......#.
+##################

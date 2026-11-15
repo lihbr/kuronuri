@@ -19,7 +19,21 @@ Italic's T unslanted, its stem as thick as its slanted one. On 10 to 70 it
 is pixelated where in a cell it falls best, its bars whole cells apart so
 they come out alike; on 100 it is cut from MCKL's pixel T, whose bar row is
 carved there, its lower bar laid straight as the top one.
+
+`fwid`, `hwid` and `pwid` swap characters for their width forms. Noto Serif
+JP's lose what the build replaces: its ASCII by Redaction's, its fullwidth
+forms by these, each substitution going with either side of it (fwid kept
+29 of 253, and ABC stayed ABC), and it never had halfwidth katakana in
+`hwid`. They are made again on the merged font, from what Unicode decomposes
+to what (width_forms): `fwid` turns ABC123 into ＡＢＣ１２３ and ｱｲｳ ｶﾞ into アイウ ガ;
+`hwid` turns ＡＢＣ into Redaction's ABC, there being no halfwidth Latin, and
+アイウ ガ into ｱｲｳ ｶﾞ (voiced kana into two); `pwid` turns ＡＢＣ into ABC,
+which are proportional. Noto Serif JP's that are left stay first: its
+proportional and halfwidth punctuation. `ruby` is Noto Serif JP's: of five
+substitutions, for Bopomofo tone marks, the two whose glyphs are left.
 """
+
+import unicodedata
 
 import numpy as np
 import pathops
@@ -71,6 +85,21 @@ GAP = 0.18  # between the bars of 〒 cut from T, over its height
 STEM = 0.3  # of the height of 〒 and T, where their stems are measured on a grid
 CUT = (100,)  # grids 〒 is cut from MCKL's pixel T on, not pixelated from its drawing
 CODEPOINTS = {cp: f"uni{cp:04X}" for cp in [*SOURCES, *HALFWIDTH, *PUNCTUATION, POSTAL]}
+# Halfwidth sound marks: the spacing ones they are the halfwidth forms of,
+# which Unicode decomposes to the combining ones
+MARKS = {0xFF9E: 0x309B, 0xFF9F: 0x309C}
+# What Noto Serif JP's width features map besides Unicode's width forms
+# that both characters are left of after the build, by feature, {from: to}:
+# ￨ is | in half an em. Where they differ from Unicode's, Unicode's are kept
+# (/ to ／, not ∕), and its spaces are left out: it makes the space an en
+# space and an en space an em one, so spaces would change width to whatever
+# the font's en and em spaces are, which are not Noto's; `fwid` makes the
+# space the ideographic one instead, Unicode's mapping
+NOTO = {
+    "fwid": {0xB7: 0x30FB, 0x2014: 0x2015},
+    "hwid": {0x7C: 0xFFE8},
+    "pwid": {0x2015: 0x2014, 0x301C: 0x7E, 0x2215: 0x2F, 0x2035: 0x60, 0xFFE8: 0x7C},
+}
 ALTERNATES = []
 SAMPLES = [
     "２０２６年１０月２２日",
@@ -81,6 +110,8 @@ SAMPLES = [
     "本当！？ ええ；「ＯＫ」",
     "〒100-0001 東京都",
     "はい、そうです。１，０００円：＝－",
+    "ABC abc 123 !? ¥ ｱｲｳ ｶﾞﾊﾟｳﾞ (fwid)",
+    "ＡＢＣ ａｂｃ １２３ アイウ ガパヴ。「ー」 (hwid, pwid)",
 ]
 
 
@@ -124,10 +155,90 @@ def add_glyphs(font, smooth, grid=None):
 
 
 def add_features(font):
-    """Add the vertical forms to `vert` and `vrt2`, of the merged font."""
+    """Add the vertical forms to `vert` and `vrt2`, and the width forms to
+    `fwid`, `hwid` and `pwid` (width_forms), of the merged font."""
     table = font["GSUB"].table
     for tag in ("vert", "vrt2"):
         layout.extend_feature(table, tag, otl.buildLookup([otl.buildSingleSubstSubtable(VERTICAL)]))
+    cmap = font.getBestCmap()
+    for tag, (ligatures, single, multiple) in width_forms(set(cmap)).items():
+        covered = _covered(table, tag)
+        ligatures = {
+            tuple(cmap[c] for c in seq): cmap[cp]
+            for seq, cp in ligatures.items()
+            if cmap[seq[0]] not in covered
+        }
+        single = {cmap[a]: cmap[b] for a, b in single.items() if cmap[a] not in covered}
+        multiple = {
+            cmap[a]: [cmap[c] for c in b] for a, b in multiple.items() if cmap[a] not in covered
+        }
+        # ﾊﾟ to パ before ﾊ to ハ
+        for built in (
+            ligatures and otl.buildLigatureSubstSubtable(ligatures),
+            single and otl.buildSingleSubstSubtable(single),
+            multiple and otl.buildMultipleSubstSubtable(multiple),
+        ):
+            if built:
+                layout.extend_feature(table, tag, otl.buildLookup([built]))
+
+
+def width_forms(cps):
+    """The width forms among the code points `cps`, by feature: ({sequence:
+    code point}, {code point: code point}, {code point: sequence}), to
+    ligate, swap and split. `fwid` turns characters into their fullwidth
+    form (A to Ａ, the space to the ideographic one) and halfwidth ones into
+    theirs (ｱ to ア, ﾊﾟ to パ); `hwid` the other way, voiced kana into two
+    (パ to ﾊﾟ), and fullwidth Latin into Redaction's, there being no
+    halfwidth Latin; `pwid` fullwidth Latin into Redaction's, which is
+    proportional. Each as Unicode decomposes them (<wide>, <narrow>), and
+    as Noto Serif JP's did before the build replaced either side (NOTO)."""
+    out = {tag: ({}, {}, {}) for tag in ("fwid", "hwid", "pwid")}
+    fwid, hwid, pwid = (out[tag][1] for tag in ("fwid", "hwid", "pwid"))
+    narrow = {}  # full: half
+    for cp in sorted(cps):
+        kind, *of = unicodedata.decomposition(chr(cp)).split() or [""]
+        if kind in ("<wide>", "<narrow>") and len(of) == 1:
+            of = MARKS.get(cp, int(of[0], 16))
+            if of not in cps:
+                continue
+            if kind == "<wide>":
+                fwid.setdefault(of, cp)
+                hwid.setdefault(cp, of)
+                pwid.setdefault(cp, of)
+            else:
+                narrow.setdefault(of, cp)
+                fwid.setdefault(cp, of)
+    for half in MARKS:  # the combining sound marks become halfwidth too
+        narrow[int(unicodedata.decomposition(chr(half)).split()[1], 16)] = half
+    for full, half in narrow.items():
+        if full in cps and half in cps:
+            hwid.setdefault(full, half)
+    for cp in sorted(cps):  # ガ: カ and the voiced sound mark, canonically
+        decomposed = unicodedata.decomposition(chr(cp)).split()
+        halves = [narrow.get(int(c, 16)) for c in decomposed if c[0] != "<"]
+        if len(halves) == 2 and decomposed[0][0] != "<" and all(h in cps for h in halves):
+            out["hwid"][2][cp] = halves
+            out["fwid"][0][tuple(halves)] = cp
+    for tag, pairs in NOTO.items():
+        for a, b in pairs.items():
+            if a in cps and b in cps:
+                out[tag][1].setdefault(a, b)
+    return out
+
+
+def _covered(table, tag):
+    """The glyphs the lookups of the features `tag` of `table` substitute
+    already: Noto Serif JP's, those of its glyphs the build kept."""
+    covered = set()
+    for rec in table.FeatureList.FeatureRecord:
+        if rec.FeatureTag != tag:
+            continue
+        for i in rec.Feature.LookupListIndex:
+            for st in table.LookupList.Lookup[i].SubTable:
+                st = getattr(st, "ExtSubTable", st)
+                for attr in ("mapping", "ligatures", "alternates"):
+                    covered |= set(getattr(st, attr, {}))
+    return covered
 
 
 def _postal(font, smooth, grid, em):

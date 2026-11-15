@@ -29,7 +29,9 @@ Bold's n is a cell heavier than Regular's, but its minus is Regular's, so
 its shafts stay so: on 70 (HEAVY), its heads are swept a cell further back,
 but 45° ones. On 100, pairs are drawn by hand, cell by cell (CELLS):
 pixelated, their heads came out a cell over and under the shaft, crosses;
-and so are Bold's →, and its pairs on 70, whose heads met swept.
+and so are Bold's →, and its pairs on 70, whose heads met swept; the
+diagonals on 100, a cell bigger, whose heads swallowed their shafts, black
+corners.
 
 `calt` turns -> <- <-> -^ ^- => <=> =^ into arrows, but leaves the ^-^ ^=^
 =^.^= emoticons alone. `ss01` swaps in the alt arrows.
@@ -132,6 +134,8 @@ SOURCES = "→"  # the owner's head, in Regular's drawn UFO
 SAMPLES = [
     "H←↑→↓↔↕↖↗↘↙H",
     "H⇐⇑⇒⇓⇔⇕⇖⇗⇘⇙H",
+    "↑↕↓ ⇑⇕⇓ H↕H⇕H",
+    "↖↗↘↙ ⇖⇗⇘⇙ x↗y↘z",
     "a → b ⇒ c ↔ d ⇔ e",
     "東京→大阪⇒京都",
     "−+→ =⇒",
@@ -694,7 +698,14 @@ def _pixels(a, paths):
         on = _turned(on, steps)
         x0, y0, x1, y1 = paths[name].bounds  # where its drawing falls
         left = round((x0 + x1) / 2 / g - on.shape[1] / 2)
-        ink[name] = _ink(on, left, round((y0 + y1) / 2 / g + len(on) / 2))
+        top = round((y0 + y1) / 2 / g + len(on) / 2)
+        was, wx0, wtop = _grid(ink[of])
+        if _by_hand(a, of) and was.shape == on.shape and not a.pen.slant:
+            # drawn by hand, mirrored in place: on its rows and columns (↖ ↗ ↘ ↙)
+            left, top = wx0, wtop
+        ink[name] = _ink(on, left, top)
+        if (rows := _by_hand(a, name)) and not a.pen.slant:  # its own, not turned
+            ink[name] = _centred(rows, ink[name])
     out = {}
     for name, cells_ in ink.items():
         slant, p = a.pen.slant, paths[name]
@@ -723,8 +734,14 @@ def _pixels(a, paths):
 
 def _by_hand(a, name):
     """The cells of arrow `name` drawn by hand on the grid of the drawing `a`
-    (CELLS), for its style, or None: the arrow's and its alt's."""
-    return drawn_cells(CELLS).get((a.grid, a.pen.style, CHARACTERS[name.split(".")[0]]))
+    (CELLS), for its style, or None: the arrow's and its alt's, or the
+    alt's own, where it is drawn apart ("↗.ss01")."""
+    char = CHARACTERS.get(name.split(".")[0])
+    by_hand = drawn_cells(CELLS)
+    alt = name[len(name.split(".")[0]) :]
+    return by_hand.get((a.grid, a.pen.style, f"{char}{alt}")) or by_hand.get(
+        (a.grid, a.pen.style, char)
+    )
 
 
 def _centred(rows, ink):

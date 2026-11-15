@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03C0" format="2">
+  <advance width="596"/>
+  <unicode hex="03C0"/>
+  <outline>
+    <contour>
+      <point x="-3" y="374" type="line"/>
+      <point x="0" y="470" type="line"/>
+      <point x="507" y="470" type="line"/>
+      <point x="507" y="429" type="line"/>
+      <point x="391" y="429" type="line"/>
+      <point x="391" y="410" type="line"/>
+      <point x="425" y="410" type="line"/>
+      <point x="425" y="107" type="line"/>
+      <point x="425" y="84"/>
+      <point x="454" y="57"/>
+      <point x="477" y="57" type="qcurve"/>
+      <point x="505" y="57"/>
+      <point x="545" y="89"/>
+      <point x="559" y="122" type="qcurve"/>
+      <point x="562" y="121" type="line"/>
+      <point x="549" y="58"/>
+      <point x="483" y="-8"/>
+      <point x="432" y="-8" type="qcurve"/>
+      <point x="390" y="-8"/>
+      <point x="333" y="46"/>
+      <point x="333" y="91" type="qcurve"/>
+      <point x="333" y="429" type="line"/>
+      <point x="140" y="429" type="line"/>
+      <point x="140" y="410" type="line"/>
+      <point x="174" y="410" type="line"/>
+      <point x="174" y="0" type="line"/>
+      <point x="82" y="0" type="line"/>
+      <point x="82" y="429" type="line"/>
+      <point x="59" y="429"/>
+      <point x="25" y="413"/>
+      <point x="22" y="401" type="qcurve"/>
+      <point x="15" y="374" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>14</integer>
+        <integer>17</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Drawn: a bar as thick as Π's, z's beak at its left end, over two legs of t's stem, nearer than n's stems by 15 in 100 of their spacing, the bar as far over each as it was, the left one cut at the baseline, the right one with t's curl; t's ledge under the bar, right of each leg</string>
+    </dict>
+  </lib>
+</glyph>

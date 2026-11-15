@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni0394" format="2">
+  <advance width="618"/>
+  <unicode hex="0394"/>
+  <outline>
+    <contour>
+      <point x="0" y="0" type="line"/>
+      <point x="557" y="733" type="line"/>
+      <point x="561" y="733" type="line"/>
+      <point x="612" y="0" type="line"/>
+    </contour>
+    <contour>
+      <point x="540" y="41" type="line"/>
+      <point x="539" y="61" type="line"/>
+      <point x="505" y="61" type="line"/>
+      <point x="474" y="562" type="line"/>
+      <point x="89" y="41" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>-80</integer>
+        <integer>86</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction A, Z: the outline of ∆ (uni2206), between A's side bearings</string>
+    </dict>
+  </lib>
+</glyph>

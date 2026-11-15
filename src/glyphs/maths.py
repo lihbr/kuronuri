@@ -8,8 +8,13 @@ or a cell. Relations stack the < of signs.py, the bars of the equals sign
 and a tilde drawn with those strokes, Redaction's being heavier than its
 other signs (≤ ≦ ≲ ≃ ≅ ≈), and are crossed by a slash (≠ ≮ ∉).
 Sets and logic (∩ ⊂ ∈ ∧ ⊥ ∠) are drawn with the same strokes, round where
-they turn, and the dots (∴) are Redaction's period, ⋯ its ellipsis. ∀ ∃ ∆ ∇ stand on the
-baseline, as tall as capitals. On a grid, they are pixelated.
+they turn, and the dots (∴) are Redaction's period, ⋯ its ellipsis. ≒ is
+its equals sign between two periods, one over its left end and one under
+its right end (≓ over its right and under its left), as far from its bars
+as those of ÷ are from its minus, so as tall as ≤. ∀ ∃ stand on the
+baseline, as tall as capitals, line work as ∈ ⊂ are, in Bold too: they are
+as heavy as its other signs, which are hardly heavier than Regular's. On a
+grid, they are pixelated.
 
 Operators are drawn by hand from Redaction's letters (shapes.drawn), so they
 keep its carving: ∑ the top of Z mirrored over the bottom of Z, their
@@ -20,7 +25,14 @@ serifs, and ∐ that turned over; ∂ 6 mirrored, upright first in Italic; ∫
 Italic's f without its bar, turned 8° counter-clockwise so it stands
 straighter, in every style (Bold's emboldened), ∬ ∭ it again as close as
 its hooks clear the next stem, and ∮ it through a ring as big as Noto Serif
-JP's, as thick as the minus. ∑ ∏ ∐ are as tall as Noto Serif JP's, as
+JP's, as thick as the minus. ∆ is a letter, the Greek capital, not line
+work: A without its bar and serifs, its thin and thick strokes carried
+down to the baseline, its point as high, on a bar as thick as Z's, plain,
+as that of the Delta of the faces Redaction is drawn from (with serifs it
+stood on a slab, and heavier it was no bar of Redaction's), A's notch
+where the bar meets the thick stroke, over the bar as Z's is; ∇ is it
+turned over, its thick stroke on the left as V's, its point cut where V's
+is. ∑ ∏ ∐ are as tall as Noto Serif JP's, as
 operators are taller than capitals (as tall as them, they are the Greek Σ
 Π of letterlike.py): drawn as tall as capitals of lighter letters, as
 Redaction's Regular is of its Bold (shapes.blend), then scaled up so, as
@@ -31,8 +43,9 @@ integrals are centred where Noto Serif JP's were, which set them before
 grid, they are
 pixelated where in a cell they fall best, on the rows of the letter drawn
 from and its strokes as thick (∫ on its own rows, as f's); upright, ∂ is
-MCKL's 6 mirrored, its pixels and carving. On 100, the integrals are drawn
-by hand, cell by cell (drawn/maths.txt), and on every grid ∬ ∭ are the
+MCKL's 6 mirrored, its pixels and carving. On 100, the integrals, and
+upright ∆ ∇, are drawn by hand, cell by cell (drawn/maths.txt), and on
+every grid ∬ ∭ are the
 pixels of ∫ again, as close as no cell touches the next.
 """
 
@@ -74,25 +87,40 @@ LINES = [0x2213, 0x2215, 0x2223, 0x2225, 0x2226, 0x22A5, 0x221F, 0x2220, 0x22BF,
 LINES += [0x221E, 0x221D, 0x2205, 0x29FA, 0x29FB]
 CIRCLED = [0x2295, 0x2296, 0x2297, 0x2298, 0x2299, 0x29BF, 0x22A0]
 DOTS = [0x2234, 0x2235, 0x2236, 0x2237, 0x22EF]
-CAPITALS = [0x2200, 0x2203, 0x2206, 0x2207]
+APPROXIMATE = {0x2252: 1, 0x2253: -1}  # ≒ ≓: the side its upper dot is on
+CAPITALS = [0x2200, 0x2203]
 # Drawn by hand, by the letter each is drawn from (its rows and strokes on a grid)
-OPERATORS = {0x2211: "Z", 0x220F: "T", 0x2210: "T", 0x2202: "6"}
+OPERATORS = {0x2211: "Z", 0x220F: "T", 0x2210: "T", 0x2202: "6", 0x2206: "A", 0x2207: "V"}
 OPERATORS |= {cp: "f" for cp in (0x222B, 0x222C, 0x222D, 0x222E)}
 CELLS = "maths.txt"  # the operators drawn by hand on a grid, cell by cell
 REPEATED = {0x222C: 2, 0x222D: 3}  # ∬ ∭: ∫ so many times; on a grid, its pixels
 CODEPOINTS = {
     cp: f"uni{cp:04X}"
-    for cp in [*RELATIONS, *TILDES, *SETS, *LINES, *CIRCLED, *DOTS, *CAPITALS, *OPERATORS]
+    for cp in [
+        *RELATIONS,
+        *TILDES,
+        *APPROXIMATE,
+        *SETS,
+        *LINES,
+        *CIRCLED,
+        *DOTS,
+        *CAPITALS,
+        *OPERATORS,
+    ]
 }
 ALTERNATES = []
 SAMPLES = [
     "a≤b≥c a≠b≡c a≈b≃c≅d",
     "≤≥≦≧≪≫≠≡≢≮≯≲≳≶≷⋚⋛",
     "≃≅≈∽≌ ∓±+−=×<>",
+    "A≒B 1≒0.99 ≒≓ =≒÷:.",
+    "π≒3.14 約≒10円",
     "∈∉∊∋∩∪⊂⊃⊄⊅⊆⊇⊊⊋∧∨",
     "∣∥∦∕⊥∟∠⊿√∞∝∅⧺⧻",
     "⊕⊖⊗⊘⊙⦿⊠ ∴∵∶∷⋯",
-    "∀x∃y ∆x∇f ∅",
+    "∀x∃y ∅ ∀∈⊂≤+",
+    "∆x ∇f ∑∆∏ A∆V∇ ∆t→0",
+    "H∆H∇H ΣΠ∆ Z∆∂",
     "x∈A∪B ∀ε∃δ p∧q⊢r",
     "∑∏∐∂∫∬∭∮ ΣΠ",
     "∂f/∂x ∑xi ∏ai ∫f dx ∬A ∮C",
@@ -232,6 +260,12 @@ class _Pen:
         oy = pixel.snap(dy - (y0 + y1) / 2, self.grid or 1)
         ox = pixel.snap(dx - (x0 + x1) / 2 + oy * self.slant, self.grid or 1) - oy * self.slant
         return p.transform(1, 0, 0, 1, ox, oy)
+
+    def own(self, char):
+        """Redaction's `char` in the square, where it stands in the font."""
+        return path(self.font, char).transform(
+            1, 0, -self.slant, 1, -self.cx + self.axis * self.slant, -self.axis
+        )
 
     def tilde(self, y, mirror=False, w=None):
         """A wave, one sine across the square on `y`, as high as TILDE of the
@@ -477,8 +511,42 @@ def _dots(pen):
     }
 
 
+def _approximate(pen):
+    """≒ ≓: Redaction's equals sign where it stands, its own on a grid, a
+    period over an end of it and one under the other: each in line with
+    the end of the bar next to it, along the slant, and as far from it as
+    the periods of ÷ are from its minus (signs.py), at the top and bottom
+    of the plus, a stroke away at least. So it is as tall as ≤, as wide as
+    the equals sign, and on a grid its periods are MCKL's, whole cells
+    clear of its bars."""
+    equals, plus, minus, period = (pen.own(c) for c in "=+−.")
+    g = pen.grid or 1
+    x0, y0, x1, y1 = period.bounds
+    size = y1 - y0
+    ((left, right),) = runs(period, y=(y0 + y1) / 2)
+    wide = right - left
+    above = max(plus.bounds[3] - size - minus.bounds[3], pen.th)
+    below = max(minus.bounds[1] - size - plus.bounds[1], pen.th)
+    low, *_, high = runs(equals, x=(equals.bounds[0] + equals.bounds[2]) / 2)
+
+    def dot(bar, side, y):
+        """A period at height `y`, its side in line with that end of `bar`
+        (-1 its left, 1 its right): on the grid once slanted."""
+        end = runs(equals, y=sum(bar) / 2)[0 if side < 0 else -1][0 if side < 0 else 1]
+        ty = pixel.snap(y - (y0 + y1) / 2, g)
+        tx = end - side * wide / 2 - (left + right) / 2
+        tx = pixel.snap(tx + ty * pen.slant, g) - ty * pen.slant
+        return period.transform(1, 0, 0, 1, tx, ty)
+
+    over, under = high[1] + above + size / 2, low[0] - below - size / 2
+    return {
+        cp: [equals, dot(high, -side, over), dot(low, side, under)]
+        for cp, side in APPROXIMATE.items()
+    }
+
+
 def _capitals(pen):
-    """∀ ∃ ∆ ∇, from the baseline to the height of capitals."""
+    """∀ ∃, from the baseline to the height of capitals."""
     th, tv = pen.th, pen.tv
     low, top = -pen.axis, pen.cap
     half = (top - low) / 2
@@ -498,12 +566,7 @@ def _capitals(pen):
         pen.hbar(-e, e, low + th / 2),
         pen.vbar(e - tv / 2, low, top),
     ]
-    return {
-        0x2200: forall,
-        0x2203: exists,
-        0x2206: [_outline(pen, [(-w, low), (w, low), (0, top)])],
-        0x2207: [_outline(pen, [(-w, top), (w, top), (0, low)])],
-    }
+    return {0x2200: forall, 0x2203: exists}
 
 
 def add_glyphs(font, smooth, grid=None):
@@ -513,7 +576,7 @@ def add_glyphs(font, smooth, grid=None):
     without a grid."""
     pen = _Pen(font, smooth, grid)
     shapes = {}
-    for group in (_relations, _tildes, _sets, _lines, _circled, _dots, _capitals):
+    for group in (_relations, _tildes, _approximate, _sets, _lines, _circled, _dots, _capitals):
         shapes |= group(pen)
     # As wide as the plus, or as their ink upright and the side bearings of
     # the plus: slanted, they lean out of it, as the plus does

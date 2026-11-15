@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni03B9" format="2">
+  <advance width="286"/>
+  <unicode hex="03B9"/>
+  <outline>
+    <contour>
+      <point x="95" y="-6" type="line"/>
+      <point x="95" y="364" type="line"/>
+      <point x="95" y="384"/>
+      <point x="78" y="404"/>
+      <point x="49" y="418" type="qcurve"/>
+      <point x="13" y="435" type="line"/>
+      <point x="187" y="480" type="line"/>
+      <point x="187" y="98" type="line"/>
+      <point x="187" y="72"/>
+      <point x="208" y="45"/>
+      <point x="232" y="35" type="qcurve"/>
+      <point x="270" y="18" type="line"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.lihbr.kuronuri.sides</key>
+      <array>
+        <integer>13</integer>
+        <integer>16</integer>
+      </array>
+      <key>com.lihbr.kuronuri.source</key>
+      <string>Redaction u, its right stem</string>
+    </dict>
+  </lib>
+</glyph>

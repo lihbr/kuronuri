@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <glyph name="uni03BC" format="2">
-  <advance width="719"/>
+  <advance width="535"/>
   <unicode hex="03BC"/>
   <unicode hex="00B5"/>
   <outline>
@@ -43,22 +43,8 @@
       <point x="236" y="149" type="line" smooth="yes"/>
       <point x="224" y="122"/>
       <point x="220" y="98" type="qcurve"/>
-      <point x="167" y="-40" type="line"/>
-      <point x="166" y="-40" type="line"/>
-      <point x="130" y="-135" type="line" smooth="yes"/>
-      <point x="119" y="-165"/>
-      <point x="81" y="-199"/>
-      <point x="52" y="-202" type="qcurve" smooth="yes"/>
-      <point x="32" y="-204" type="line"/>
-      <point x="22" y="-230" type="line"/>
-      <point x="267" y="-230" type="line"/>
-      <point x="277" y="-204" type="line"/>
-      <point x="256" y="-202" type="line" smooth="yes"/>
-      <point x="224" y="-199"/>
-      <point x="209" y="-166"/>
-      <point x="220" y="-135" type="qcurve" smooth="yes"/>
-      <point x="257" y="-40" type="line"/>
-      <point x="256" y="-40" type="line"/>
+      <point x="94" y="-230" type="line"/>
+      <point x="184" y="-230" type="line"/>
       <point x="269" y="-6" type="line"/>
       <point x="285" y="-11"/>
       <point x="305" y="-11" type="qcurve" smooth="yes"/>
@@ -73,11 +59,11 @@
     <dict>
       <key>com.lihbr.kuronuri.sides</key>
       <array>
-        <integer>22</integer>
+        <integer>-90</integer>
         <integer>6</integer>
       </array>
       <key>com.lihbr.kuronuri.source</key>
-      <string>Redaction u, p</string>
+      <string>Redaction u, its left stem carried down to p's descender and cut as ρ's and β's, plain</string>
     </dict>
   </lib>
 </glyph>

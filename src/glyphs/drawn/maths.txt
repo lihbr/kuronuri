@@ -53,3 +53,45 @@
 .######.
 ..##....
 ###.....
+
+// ∆ ∇ on 100: pixelated, ∆'s thin stroke came out lumpy, Bold's thick one
+// a cell thick in places, and the notch of ∇ broke its bar from its thin
+// stroke. A cell for the thin stroke and the bar, two for Bold's thick
+// stroke, as its A's; six cells wide, there is no cell for the point to be
+// in the middle, so it leans to the thick stroke. ∇ is ∆ turned over.
+// Italic's pixelate well: its thick stroke stands upright.
+100 Regular ∆ 0,0
+...#..
+..##..
+..#.#.
+.#..#.
+.#...#
+#....#
+######
+
+100 Regular ∇ 0,0
+######
+#....#
+#...#.
+.#..#.
+.#.#..
+..##..
+..#...
+
+100 Bold ∆ 0,0
+...#...
+..###..
+..#.##.
+.#..##.
+.#...##
+#....##
+#######
+
+100 Bold ∇ 0,0
+#######
+##....#
+##...#.
+.##..#.
+.##.#..
+..###..
+...#...
