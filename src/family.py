@@ -28,26 +28,36 @@ STYLES = {
 # Noto Serif JP weight paired with each Redaction weight, matched on stem width:
 # its metrics, punctuation and symbols on every grid...
 NOTO_WEIGHT = {400: 500, 700: 800}
-# ...and its kanji and kana but on the coarse grids, from pixel.PHASED, where
-# they are lighter (noto_weight): there each of Noto's hairlines fills a whole
-# cell, and a kanji, with many more strokes than a letter, comes out darker
-# than the Latin beside it; lighter, its stems take a cell less on 50, where
-# dense kanji close their counters first.
-NOTO_LIGHT = {400: 400, 700: 700}
+# ...and its kanji and kana in Regular and Italic but on the coarse grids,
+# from pixel.PHASED, where they are lighter (light): there each of Noto's
+# hairlines fills a whole cell, and a kanji, with many more strokes than a
+# letter, comes out darker than the Latin beside it; lighter, its stems take
+# a cell less on 50, where dense kanji close their counters first. Bold's
+# stay 800, as dark as the Latin bold beside them: 700, they no longer read
+# bold.
+NOTO_LIGHT = {400: 400}
 # Variation selectors: a kanji followed by one asks for a variant of it (葛 and
 # U+E0100), what Noto Serif JP's cmap 14 maps. Subsetting keeps a variation
 # sequence only when its selector is asked for too.
 SELECTORS = {*range(0xFE00, 0xFE10), *range(0xE0100, 0xE01F0)}
 
 
-def noto_weight(weight, grid):
-    """The Noto Serif JP weight of the kanji and kana set with Redaction's
-    `weight` on `grid` (None, smooth): the one place it is decided, for
-    the build (build.notos) and the signs drawn of Noto's kanji
-    (glyphs/japanese.py)."""
+def light(weight, grid):
+    """Whether the kanji and kana set with Redaction's `weight` on `grid`
+    (None, smooth) are lightened (NOTO_LIGHT), and so placed by phase, drawn
+    by hand where phasing loses them, and followed by their vertical forms
+    (pixel.pixelate_font, build.notos): the one place it is decided. If
+    not, they are Noto Serif JP of NOTO_WEIGHT, pixelated as they stand."""
     from pixel import PHASED
 
-    return (NOTO_LIGHT if grid and grid >= PHASED else NOTO_WEIGHT)[weight]
+    return weight in NOTO_LIGHT and grid is not None and grid >= PHASED
+
+
+def noto_weight(weight, grid):
+    """The Noto Serif JP weight of the kanji and kana set with Redaction's
+    `weight` on `grid` (light), for the build (build.notos) and the signs
+    drawn of Noto's kanji (glyphs/japanese.py)."""
+    return (NOTO_LIGHT if light(weight, grid) else NOTO_WEIGHT)[weight]
 
 
 def log(*args):

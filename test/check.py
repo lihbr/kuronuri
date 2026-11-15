@@ -126,8 +126,9 @@
 - No two superscript letters (ª º, those `ordn` raises, the c of ℅) are
   drawn alike, but on 100, where they are three cells high: there c and e
   have the same placements, and come out alike.
-- The pixelated Japanese, on 50, 70 and 100 (check_japanese): kana and
-  kanji stand on the rows they took before they were lightened, as many
+- The pixelated Japanese, on 50, 70 and 100 (check_japanese): in Regular
+  and Italic, kana and kanji stand on the rows they took before they were
+  lightened, as many
   rows in all, their ink in their advance; punctuation, brackets and marks
   are as they stand; every advance, vertical advance and origin of Noto's
   glyphs and their vertical forms is grade 0's on the grid; no two
@@ -136,7 +137,10 @@
   where the fonts before did (OVERLAPPING); pairs a stroke or a mark tells
   apart stay so many cells apart (APART), and divided counters stay
   divided (COUNTERS); and which of two look-alikes moves does not depend on
-  the order of the glyphs (check_order).
+  the order of the glyphs (check_order). In Bold, every glyph of Noto
+  Serif JP is Noto's 800 pixelated as it stands, unlightened and unphased,
+  its spacing and brackets as above, and its common kanji inked BOLDER
+  than Regular's (check_bold).
 - review.py makes the Japanese reference only from the fonts --before
   names, with where they came from, and a vertical form changed alone
   shows as changed (check_reference).
@@ -182,10 +186,12 @@ import pixel  # noqa: E402
 import web  # noqa: E402
 from family import (  # noqa: E402
     FAMILY_JA,
+    GRIDS,
     NOTO_WEIGHT,
     SELECTORS,
     STYLES,
     family_name,
+    light,
     noto_glyphs,
     noto_weight,
     ps_name,
@@ -3291,9 +3297,9 @@ def unshifted(style, grid, text):
     (build.lighten). Their bounds are calculated."""
     weight = STYLES[style]["weight"]
     out = []
-    for light in (False, True):
+    for lightened in (False, True):
         font = noto_glyphs(NOTO_WEIGHT[weight], text)
-        if light and noto_weight(weight, grid) != NOTO_WEIGHT[weight]:
+        if lightened and noto_weight(weight, grid) != NOTO_WEIGHT[weight]:
             font = build.lighten(font, noto_glyphs(noto_weight(weight, grid), text))
         pixelate_font(font, grid)
         glyf = font["glyf"]
@@ -3305,13 +3311,16 @@ def unshifted(style, grid, text):
 
 def check_japanese():
     """The Japanese of the coarse grids, in each font of dist/ttf from
-    pixel.PHASED: kana and kanji keep the rows they took unshifted before
-    they were lightened (or, failing any spot, as lightened), no more rows
-    in all, and their ink in their advance; punctuation, brackets and marks are as they stand;
-    advances and vertical metrics are those of grade 0, the Noto weight of
-    the style, on the grid; no bracket, beside another or a mark, runs into
-    it but where the fonts before phasing did (OVERLAPPING); pairs drawn
-    apart stay so (APART), and counters divided by a bar (COUNTERS)."""
+    pixel.PHASED. Where it is lightened (family.light), kana and kanji keep
+    the rows they took unshifted before they were lightened (or, failing any
+    spot, as lightened), no more rows in all, and their ink in their
+    advance; punctuation, brackets and marks are as they stand; advances
+    and vertical metrics are those of grade 0, the Noto weight of the
+    style, on the grid; no bracket, beside another or a mark, runs into it
+    but where the fonts before phasing did (OVERLAPPING); pairs drawn apart
+    stay so (APART), and counters divided by a bar (COUNTERS). Elsewhere,
+    in Bold, every glyph of Noto Serif JP is as it stands at the weight of
+    the style (stand), its spacing and brackets as above."""
     problems = []
     for ttf in sorted(DIST.glob("ttf/*.ttf")):
         grid, style = re.match(r"Kuronuri(\d+)-(\w+)", ttf.stem).groups()
@@ -3325,6 +3334,11 @@ def check_japanese():
             sorted({c for (g, s, c) in drawn_cells(pixel.JAPANESE) if g == grid} - set(common()))
         )
         stood, stands = unshifted(style, grid, common() + PLACED + hand)
+        if not light(STYLES[style]["weight"], grid):
+            problems += stand(ttf, font, stood)
+            problems += check_spacing(ttf, font, grid, style)
+            problems += check_brackets(ttf, font, grid)
+            continue
         moved, wide, placed, rows = [], [], [], defaultdict(set)
         # Drawn by hand, a glyph may leave its top row free, as other kanji
         # do, its bottom row kept (土 on 100, which meets nothing above it so)
@@ -3380,7 +3394,60 @@ def check_japanese():
             problems += [f"{ttf.name}: vertical {p}" for p in meaning(font, grid, style, True)]
             problems += [f"{ttf.name}: {p}" for p in colour(font, grid, style)]
             problems += [f"{ttf.name}: {p}" for p in meets(ttf, font, grid, style, stood)]
-    return problems + check_order()
+    return problems + check_order() + check_bold()
+
+
+def stand(path, font, stood):
+    """Glyphs of Noto Serif JP in `font` unlike `stood` ({character: (glyph,
+    glyf)}), the same pixelated as it stands (unshifted)."""
+    cmap, glyf = font.getBestCmap(), font["glyf"]
+    off = [
+        c
+        for c, (was, was_glyf) in stood.items()
+        if ord(c) in cmap
+        and ord(c) not in glyphs.CODEPOINTS
+        and glyf[cmap[ord(c)]].getCoordinates(glyf)[:2] != was.getCoordinates(was_glyf)[:2]
+    ]
+    if off:
+        return [f"{path.name}: {len(off)} of Noto's not as they stand: {''.join(off[:20])}"]
+    return []
+
+
+# Bold's common kanji are at least this much as inked as Regular's, in
+# cells, by grid: Noto's 800 against 400, 1.52, 1.38 and 1.22 times; 700,
+# lightened as Regular's, they were 1.41, 1.31 and 1.13, and did not read
+# bold
+BOLDER = {50: 1.45, 70: 1.35, 100: 1.17}
+
+
+def check_bold():
+    """Bold's kanji and kana are Noto Serif JP's at the weight of the style,
+    800, on every grid (family.noto_weight), and its common kanji, on the
+    coarse grids, at least BOLDER as inked as Regular's, where both are in
+    dist/ttf."""
+    problems = []
+    weight = STYLES["Bold"]["weight"]
+    for grid in (None, *GRIDS):
+        if noto_weight(weight, grid) != NOTO_WEIGHT[weight]:
+            problems.append(f"Bold's kanji are Noto's {noto_weight(weight, grid)} on {grid}")
+    kanji = [c for c in common() if script(ord(c)) == "Hani"]
+    for grid, least in BOLDER.items():
+        paths = [DIST / "ttf" / f"{ps_name(grid, s)}.ttf" for s in ("Regular", "Bold")]
+        if not all(p.exists() for p in paths):
+            continue
+        regular, bold = (_inked(TTFont(p), kanji, grid) for p in paths)
+        if bold < least * regular:
+            problems.append(
+                f"{paths[1].name}: its common kanji {bold / regular:.2f} as inked as Regular's,"
+                f" not {least}"
+            )
+    return problems
+
+
+def _inked(font, chars, grid):
+    """Cells inked by the glyphs of `chars` in `font`, a font on `grid`."""
+    glyf, cmap = font["glyf"], font.getBestCmap()
+    return sum(len(cells_of(glyf[cmap[ord(c)]], glyf, grid)) for c in chars if ord(c) in cmap)
 
 
 def check_spacing(path, font, grid, style):
@@ -3498,13 +3565,13 @@ def check_order():
     for pair in ("土士", "杮柿", "未末"):
         for style in ("Regular", "Bold"):
             weight = STYLES[style]["weight"]
-            for grid in (50, 70, 100):
+            for grid in (g for g in (50, 70, 100) if light(weight, g)):
                 made = {}
                 for order in (pair, pair[::-1], pair[0], pair[1]):
                     stands = _alone(noto_glyphs(NOTO_WEIGHT[weight], pair), order)
-                    light = noto_glyphs(noto_weight(weight, grid), pair)
+                    lighter = noto_glyphs(noto_weight(weight, grid), pair)
                     font = build.lighten(
-                        _alone(noto_glyphs(NOTO_WEIGHT[weight], pair), order), light
+                        _alone(noto_glyphs(NOTO_WEIGHT[weight], pair), order), lighter
                     )
                     pixelate_font(font, grid, phased=True, stands=stands, log=lambda *_: None)
                     glyf, cmap = font["glyf"], font.getBestCmap()
