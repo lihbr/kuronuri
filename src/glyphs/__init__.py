@@ -19,6 +19,7 @@ from . import (
     figures,
     fullwidth,
     greek,
+    hyphens,
     japanese,
     letterlike,
     letters,
@@ -43,6 +44,7 @@ MODULES = [
     greek,  # after maths: Δ is its ∆
     symbols,
     punctuation,
+    hyphens,
     spaces,
     mended,  # before fullwidth: ￨ is made of |
     ordinals,  # before figures: ℀ ℅ are made of ª º
