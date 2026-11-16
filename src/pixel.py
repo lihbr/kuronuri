@@ -51,7 +51,7 @@ VERT_ORIGIN = 880  # top of the ideographic em box, the vertical origin
 FILL = 0.5  # a cell is filled when the outline covers this much of it
 STROKE = 0.5  # a stroke fills this much of a cell column or row...
 MIN_STROKE = 0.15  # ...and is this thick, in cells, to be put back by the dropout pass
-PHASED = 50  # grids this coarse or coarser try kanji and kana at PHASES spots...
+PHASED = 70  # grids this coarse or coarser try kanji and kana at PHASES spots...
 PHASES = 4  # ...across and up a cell, and keep the one closest to the outline...
 COUNTER = 4  # ...where a counter of the outline closed costs as many cells as this...
 PIECE = 2  # ...and a piece lost, or one too many, as many as this
@@ -75,7 +75,7 @@ PLACED = {
 RADICALS = {"Kangxi Radicals", "CJK Radicals Supplement"}  # drawn as kanji are, symbols
 # Kanji and kana drawn by hand on a grid, in glyphs/drawn (build.pinned): on
 # 100, where a placement reads as another character (書 as 昔, 間 as 問) or
-# breaks a stroke (土's foot), and 上 on 50, its stem two cells
+# breaks a stroke (土's foot)
 JAPANESE = "japanese.txt"
 LOAD_FLAGS = freetype.FT_LOAD_NO_HINTING | freetype.FT_LOAD_RENDER | freetype.FT_LOAD_NO_BITMAP
 

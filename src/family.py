@@ -28,13 +28,13 @@ STYLES = {
 # Noto Serif JP weight paired with each Redaction weight, matched on stem width:
 # its metrics, punctuation and symbols on every grid...
 NOTO_WEIGHT = {400: 500, 700: 800}
-# ...and its kanji and kana in Regular and Italic but on the coarse grids,
+# ...and its kanji and kana in Regular and Italic but on the coarsest grids,
 # from pixel.PHASED, where they are lighter (light): there each of Noto's
 # hairlines fills a whole cell, and a kanji, with many more strokes than a
-# letter, comes out darker than the Latin beside it; lighter, its stems take
-# a cell less on 50, where dense kanji close their counters first. Bold's
-# stay 800, as dark as the Latin bold beside them: 700, they no longer read
-# bold.
+# letter, comes out darker than the Latin beside it, whose stems are a cell
+# too. On 50 they stay 500: Latin stems there are two cells, and lighter,
+# most of a kanji's come out one, thin beside them. Bold's stay 800, as dark
+# as the Latin bold beside them: 700, they no longer read bold.
 NOTO_LIGHT = {400: 400}
 # Variation selectors: a kanji followed by one asks for a variant of it (葛 and
 # U+E0100), what Noto Serif JP's cmap 14 maps. Subsetting keeps a variation

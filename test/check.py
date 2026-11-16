@@ -225,7 +225,7 @@ from glyphs.shapes import (  # noqa: E402
     slope,
     stem,
 )
-from pixel import PHASED, pixelate_font, snap, snap_advance  # noqa: E402
+from pixel import pixelate_font, snap, snap_advance  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
@@ -2758,7 +2758,9 @@ def check_web():
     return problems
 
 
-# --- The pixelated Japanese, on the coarse grids (from pixel.PHASED) ---------
+# --- The pixelated Japanese, on the coarse grids (from COARSE) ---------------
+
+COARSE = 50  # grids whose Japanese is checked, phased (pixel.PHASED) or not
 
 # Characters whose rows and spacing are checked: kana, and the most frequent
 # kanji (Google's slices from review.FREQUENT up)
@@ -3311,7 +3313,7 @@ def unshifted(style, grid, text):
 
 def check_japanese():
     """The Japanese of the coarse grids, in each font of dist/ttf from
-    pixel.PHASED. Where it is lightened (family.light), kana and kanji keep
+    COARSE. Where it is lightened (family.light), kana and kanji keep
     the rows they took unshifted before they were lightened (or, failing any
     spot, as lightened), no more rows in all, and their ink in their
     advance; punctuation, brackets and marks are as they stand; advances
@@ -3319,13 +3321,13 @@ def check_japanese():
     style, on the grid; no bracket, beside another or a mark, runs into it
     but where the fonts before phasing did (OVERLAPPING); pairs drawn apart
     stay so (APART), and counters divided by a bar (COUNTERS). Elsewhere,
-    in Bold, every glyph of Noto Serif JP is as it stands at the weight of
+    in Bold and on 50, every glyph of Noto Serif JP is as it stands at the weight of
     the style (stand), its spacing and brackets as above."""
     problems = []
     for ttf in sorted(DIST.glob("ttf/*.ttf")):
         grid, style = re.match(r"Kuronuri(\d+)-(\w+)", ttf.stem).groups()
         grid = int(grid)
-        if grid < PHASED:
+        if grid < COARSE:
             continue
         font = TTFont(ttf)
         cmap, glyf, hmtx = font.getBestCmap(), font["glyf"], font["hmtx"]
@@ -3414,10 +3416,11 @@ def stand(path, font, stood):
 
 
 # Bold's common kanji are at least this much as inked as Regular's, in
-# cells, by grid: Noto's 800 against 400, 1.52, 1.38 and 1.22 times; 700,
-# lightened as Regular's, they were 1.41, 1.31 and 1.13, and did not read
-# bold
-BOLDER = {50: 1.45, 70: 1.35, 100: 1.17}
+# cells, by grid: Noto's 800 against 500 on 50 (Regular's not lightened
+# there, family.light), 1.33 times, and against 400 on 70 and 100, 1.38 and
+# 1.22; 700, lightened as Regular's, they were 1.41 against 400 on 50, about
+# 1.23 against 500, then 1.31 and 1.13, and did not read bold
+BOLDER = {50: 1.3, 70: 1.35, 100: 1.17}
 
 
 def check_bold():
