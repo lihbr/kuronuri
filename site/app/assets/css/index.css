@@ -16,8 +16,6 @@
 	--font-50: "Kuronuri 50", "Kuronuri 0", serif;
 	--font-70: "Kuronuri 70", "Kuronuri 0", serif;
 	--font-100: "Kuronuri 100", "Kuronuri 0", serif;
-	--color-paper: #fffbf3;
-	--color-ink: #151515;
 	--color-flamingo: #e84311;
 	--color-navy: #54669c;
 }
@@ -25,7 +23,7 @@
 /* In the base layer so utilities, like dark, override them: unlayered styles win over every layer */
 @layer base {
 	html {
-		@apply bg-paper text-ink font-0 antialiased scrollbar-none;
+		@apply bg-white text-black font-0 antialiased scrollbar-none;
 
 		@variant lg {
 			font-size: calc(100svw / 90);
@@ -33,11 +31,11 @@
 	}
 
 	::selection {
-		@apply bg-ink text-paper;
+		@apply bg-black text-white;
 	}
 
 	:focus-visible {
-		@apply bg-ink text-paper;
+		@apply bg-black text-white;
 	}
 
 	:focus:not(:focus-visible) {
@@ -50,11 +48,11 @@
 }
 
 @utility dark {
-	@apply bg-ink text-paper;
+	@apply bg-black text-white;
 
 	::selection,
 	:focus-visible {
-		@apply bg-paper text-ink;
+		@apply bg-white text-black;
 	}
 }
 

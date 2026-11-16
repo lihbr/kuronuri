@@ -37,7 +37,7 @@ const quoted = (text: string) => `"${text}"`
 				v-for="feature in FEATURES"
 				:key="feature.label"
 				:title="feature.tag && `font-feature-settings: ${quoted(feature.tag)}`"
-				class="inline after:text-ink/50 not-last:after:content-['_—_']"
+				class="inline after:text-black/50 not-last:after:content-['_—_']"
 			>
 				<b
 					>{{ feature.before
@@ -45,7 +45,7 @@ const quoted = (text: string) => `"${text}"`
 						feature.sample
 					}}</span></b
 				>{{ " "
-				}}<span class="text-ink/50">
+				}}<span class="text-black/50">
 					{{ feature.label }} <i v-if="feature.tag">{{ feature.tag }}</i>
 				</span>
 			</li>

@@ -14,7 +14,7 @@ const LINES = [
 			v-for="line in LINES"
 			:key="line"
 			:class="line"
-			class="absolute inset-y-0 w-px bg-ink/50"
+			class="absolute inset-y-0 w-px bg-black/50"
 		/>
 	</div>
 </template>

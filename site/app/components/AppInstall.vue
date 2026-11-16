@@ -1,5 +1,5 @@
 <template>
-	<section class="mt-[50lvh] layout gap-y-2.5 max-md:bg-paper">
+	<section class="mt-[50lvh] layout gap-y-2.5 max-md:bg-white">
 		<InstallFeatures class="col-span-4 md:col-start-3 md:col-span-2" />
 
 		<figure class="col-span-4 md:col-start-1">

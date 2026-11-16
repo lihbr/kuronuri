@@ -21,13 +21,13 @@ onBeforeUnmount(() => observer?.disconnect())
 <template>
 	<div
 		class="min-h-lvh"
-		:class="dark ? 'dark' : 'bg-paper'"
+		:class="dark ? 'dark' : 'bg-white'"
 		:style="{
 			'--size': `${size}px`,
 			'--header': `${height}px`,
 			'--line': dark
-				? 'color-mix(in srgb, var(--color-paper) 20%, var(--color-ink))'
-				: 'color-mix(in srgb, var(--color-ink) 20%, var(--color-paper))',
+				? 'color-mix(in srgb, var(--color-white) 20%, var(--color-black))'
+				: 'color-mix(in srgb, var(--color-black) 20%, var(--color-white))',
 		}"
 	>
 		<header

@@ -10,14 +10,14 @@
 			<SpecimenNote mark="01">50 italic, 20px</SpecimenNote>
 			<SpecimenMark mark="01" class="block mb-2.5" />
 			<figure class="font-50 italic text-xl/tight lowercase">
-				<blockquote lang="en" class="bg-paper">
+				<blockquote lang="en" class="bg-white">
 					Of course it can always be improved, it can always be reimagined, it can always be
 					approached from different perspectives. There’s no single version of things, and no idea
 					is in any way finalized just because it was shown to the world. We can always go back, and
 					we can always improve, and we can always change, and we can recreate, and that’s the
 					spirit of nofinalversion.
 				</blockquote>
-				<figcaption class="bg-paper inline-block">
+				<figcaption class="bg-white inline-block">
 					Lidija Kacar,
 					<cite
 						><NuxtLink
@@ -64,7 +64,7 @@
 			<SpecimenMark mark="04" class="block mb-2.5 text-right" />
 			<figure
 				lang="ja"
-				class="w-fit max-w-full h-[52em] ml-auto md:h-[60.5em] writing-vertical font-35 text-base/tight bg-paper"
+				class="w-fit max-w-full h-[52em] ml-auto md:h-[60.5em] writing-vertical font-35 text-base/tight bg-white"
 			>
 				<blockquote>
 					事実、「闇」を条件に入れなければ漆器の美しさは考えられないと云っていゝ。今日では白漆と云うようなものも出来たけれども、昔からある漆器の肌は、黒か、茶か、赤であって、それは幾重もの「闇」が堆積した色であり、周囲を包む暗黒の中から必然的に生れ出たもののように思える。派手な蒔絵などを施したピカピカ光る蝋塗りの手箱とか、文台とか、棚とかを見ると、いかにもケバケバしくて落ち着きがなく、俗悪にさえ思えることがあるけれども、もしそれらの器物を取り囲む空白を真っ黒な闇で塗り潰し、太陽や電燈の光線に代えるに一点の燈明か蝋燭のあかりにして見給え、忽ちそのケバケバしいものが底深く沈んで、渋い、重々しいものになるであろう。
@@ -100,7 +100,7 @@
 					class="md:max-lg:col-start-2 md:max-lg:row-start-1 md:max-lg:pt-[calc(1lh+0.3125rem)] -ml-2.5 flex flex-col gap-1.25"
 				>
 					<SpecimenMark mark="03" />
-					<span class="flex-1 w-1.25 bg-ink" />
+					<span class="flex-1 w-1.25 bg-black" />
 				</div>
 			</div>
 

@@ -45,7 +45,7 @@ function step(event: KeyboardEvent) {
 				:max="100"
 				@change="settle"
 				@keydown="step"
-				class="bg-paper"
+				class="bg-white"
 			>
 				<span class="sr-only">pixel size</span>
 			</GlyphRange>
@@ -56,7 +56,7 @@ function step(event: KeyboardEvent) {
 			aria-label="Type to try Kuronuri"
 			:class="FONTS[variant]"
 			:style="STYLES[style]"
-			class="text-4xl/tight lg:text-[3.25rem]/tight bg-paper focus-visible:bg-paper focus-visible:text-ink focus:outline-none"
+			class="text-4xl/tight lg:text-[3.25rem]/tight bg-white focus-visible:bg-white focus-visible:text-black focus:outline-none"
 			v-text="
 				'黒塗り: painted or lacquered black; blacked out, as words are in a redacted document.'
 			"

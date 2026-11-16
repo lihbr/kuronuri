@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-// A checkbox, or a radio of `value`, shown by its label only: ink when on, flamingo when focused
+// A checkbox, or a radio of `value`, shown by its label only: black when on, flamingo when focused
 const model = defineModel<T>()
 defineProps<{ type?: "checkbox" | "radio"; value?: T; name?: string }>()
 </script>
@@ -19,14 +19,14 @@ defineProps<{ type?: "checkbox" | "radio"; value?: T; name?: string }>()
 }
 
 .glyph-toggle:has(:checked) {
-	@apply bg-ink text-paper;
+	@apply bg-black text-white;
 }
 
 .dark .glyph-toggle:has(:checked) {
-	@apply bg-paper text-ink;
+	@apply bg-white text-black;
 }
 
 .glyph-toggle:has(:focus-visible) {
-	@apply bg-flamingo text-paper;
+	@apply bg-flamingo text-white;
 }
 </style>

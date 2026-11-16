@@ -51,7 +51,7 @@ onBeforeUnmount(() => {
 <template>
 	<header class="min-h-svh grid grid-rows-[1fr_auto_1fr]">
 		<div
-			class="p-2.5 bg-paper max-md:space-y-2.5 md:flex flex-row-reverse flex-wrap justify-between gap-x-5 font-50 italic lowercase"
+			class="p-2.5 bg-white max-md:space-y-2.5 md:flex flex-row-reverse flex-wrap justify-between gap-x-5 font-50 italic lowercase"
 		>
 			<p class="md:text-right">
 				<NuxtLink to="https://www.redaction.us" target="_blank">Redaction</NuxtLink>
