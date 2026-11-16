@@ -3,7 +3,7 @@
 ![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--light.png#gh-light-mode-only)
 ![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--dark.png#gh-dark-mode-only)
 
-> 日本語の情報は[こちら](https://kuronuri.lihbr.com/ja)をご覧ください。
+> 日本語の情報は[こちら](https://kuronuri.lihbr.com)をご覧ください。
 
 [kuronuri](https://kuronuri.lihbr.com) (黒塗り, "blacked out") is a font family created by [lihbr](https://lihbr.com). it extends [redaction](https://www.redaction.us), by [mckl](https://www.mckltype.com), and draws kana and kanji using [noto serif jp](https://fonts.google.com/noto/specimen/Noto+Serif+JP) as a base. like redaction, it comes in seven families, from smooth to pixelated: kuronuri 0, 10, 20, 35, 50, 70, and 100.
 

@@ -2,7 +2,7 @@
 	<!-- On large screens, after the first one, specimens flow in three lanes: columns 3 to 5, 6, and 7
 	to 10. On tablets, the first two are on columns 1 to 3 and 4, the specimens of the third on rows of
 	their own, after 03 on columns 5 to 6. Lanes are `contents` on phones, their specimens one flow, in
-	the order of their notes -->
+	the order of their notes. The tester, last, is on the three middle lanes -->
 	<section class="relative layout pt-60">
 		<h2 class="sr-only">Specimen</h2>
 
@@ -107,7 +107,7 @@
 			<figure class="col-span-4 md:max-lg:col-start-3 max-md:order-5 mt-20 md:mt-5 lg:mt-70">
 				<figcaption class="mb-2.5 font-35 text-right lowercase">specimen, blender cg</figcaption>
 				<img
-					src="/specimen/poster.webp"
+					src="https://images.prismic.io/lihbr/qvyKVJX_hJLvAkq1_kuronuri-velum.png?auto=format"
 					width="1600"
 					height="1280"
 					alt="A poster set in Kuronuri on a wall, 黒塗り over a pixelated red sun, above pangrams in Polish, Czech, and Hungarian"
@@ -131,5 +131,9 @@
 				<SpecimenCalendar class="max-lg:row-span-2" />
 			</div>
 		</div>
+
+		<SpecimenTester
+			class="col-span-full lg:col-start-3 lg:col-span-6 max-md:order-7 mt-40 lg:mt-80"
+		/>
 	</section>
 </template>

@@ -15,7 +15,7 @@ defineProps<{ type?: "checkbox" | "radio"; value?: T; name?: string }>()
 @reference "~/assets/css/index.css";
 
 .glyph-toggle {
-	@apply px-2 cursor-pointer select-none lowercase;
+	@apply px-1 cursor-pointer select-none lowercase;
 }
 
 .glyph-toggle:has(:checked) {

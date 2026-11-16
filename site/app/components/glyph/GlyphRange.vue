@@ -1,13 +1,13 @@
 <script setup lang="ts">
-// The size of glyphs, in pixels
+// The size of glyphs, in pixels, unless another value is labelled in the slot
 const model = defineModel<number>({ required: true })
-const { min = 16 } = defineProps<{ min?: number }>()
+const { min = 16, max = 240 } = defineProps<{ min?: number; max?: number }>()
 </script>
 
 <template>
 	<label class="flex items-center gap-2">
-		size
-		<input v-model.number="model" type="range" :min max="240" class="range" />
+		<slot>size</slot>
+		<input v-model.number="model" type="range" :min :max class="range" />
 	</label>
 </template>
 

@@ -4,7 +4,7 @@
 
 		<figure class="col-span-4 md:col-start-1">
 			<img
-				src="/specimen/notice.webp"
+				src="https://images.prismic.io/lihbr/WlEI7_K8DOISrZ0j_kuronuri-meishi.png?auto=format"
 				width="1280"
 				height="1600"
 				alt="A notice of partial disclosure, 開示決定通知書, set in Kuronuri: 黒塗り going from 000 to 100, over names and addresses"
