@@ -62,7 +62,8 @@ onBeforeUnmount(() => {
 			<p>
 				Kuronuri, created by <NuxtLink to="https://lihbr.com">lihbr</NuxtLink><br />fonts are
 				<NuxtLink to="https://github.com/lihbr/kuronuri/blob/HEAD/OFL.txt">OFL</NuxtLink>,
-				<NuxtLink to="https://github.com/lihbr/kuronuri">code</NuxtLink> is mit
+				<NuxtLink to="https://github.com/lihbr/kuronuri">code</NuxtLink> is mit<br /><br />
+				<NuxtLink to="#install">install ^-</NuxtLink>
 			</p>
 		</div>
 		<hgroup class="row-span-2 layout grid-rows-subgrid">

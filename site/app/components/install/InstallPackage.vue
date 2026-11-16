@@ -16,7 +16,7 @@ async function copy() {
 </script>
 
 <template>
-	<div class="space-y-2.5">
+	<div class="space-y-2.5" id="install">
 		<h2 lang="ja" class="border-b-[0.15625rem] font-50 font-bold text-[2rem]/tight text-center">
 			インストール
 		</h2>
@@ -42,7 +42,8 @@ async function copy() {
 		<section class="space-y-2.5 font-50">
 			<InstallHeading ja="ウェブ">Web</InstallHeading>
 			<button class="block w-full text-left cursor-copy" @click="copy">
-				<i class="text-black/50"># {{ copied ? "copied!" : "click to copy" }}</i><br />{{ COMMAND }}
+				<i class="text-black/50"># {{ copied ? "copied!" : "click to copy" }}</i
+				><br />{{ COMMAND }}
 			</button>
 			<hr class="border-black/50" />
 			<pre
