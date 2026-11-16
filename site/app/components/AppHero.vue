@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import latin20 from "kuronuri/files/kuronuri-20-latin-400-normal.woff2?url"
-import latin50Italic from "kuronuri/files/kuronuri-50-latin-400-italic.woff2?url"
+import latin20 from "@lihbr/kuronuri/files/kuronuri-20-latin-400-normal.woff2?url"
+import latin50Italic from "@lihbr/kuronuri/files/kuronuri-50-latin-400-italic.woff2?url"
 
 const TITLE = import.meta.glob<string>("../assets/title/*.svg", {
 	query: "?raw",

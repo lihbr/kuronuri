@@ -1,6 +1,6 @@
 {
   "name": "@lihbr/kuronuri",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "redaction, with japanese support, and more",
   "keywords": [
     "font",
@@ -30,6 +30,9 @@
     "./files/*": "./dist/web/files/*",
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "venv": "python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt && sh src/fetch_sources.sh",
     "review": ".venv/bin/python src/review.py",
@@ -44,5 +47,5 @@
   "devDependencies": {
     "bumpp": "^12.3.0"
   },
-  "packageManager": "pnpm@12.6.0"
+  "packageManager": "pnpm@12.21.0"
 }

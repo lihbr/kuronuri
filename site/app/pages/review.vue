@@ -415,8 +415,8 @@ const before = (font: Font) =>
 			</p>
 			<p v-if="notCompared.length" class="my-4">
 				<span class="font-bold">Not compared</span>, kept by neither review font, the built fonts'
-				in every row: <span class="text-flamingo">{{ notCompared.join(" ") }}</span
-				>. Add them to .tmp/watch.txt.
+				in every row: <span class="text-flamingo">{{ notCompared.join(" ") }}</span>. Add them to
+				.tmp/watch.txt.
 			</p>
 			<section v-for="font in fonts" :key="font.name" class="font">
 				<h3 class="flex items-center gap-2">

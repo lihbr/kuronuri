@@ -42,7 +42,7 @@ jobs:
       - run: pnpm install
       - run: pnpm venv
       - run: pnpm build
-      - run: pnpm test
+      - run: pnpm unit
 
       - name: Publish ${{ github.ref_name }}
         run: |

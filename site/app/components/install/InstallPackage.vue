@@ -42,8 +42,7 @@ async function copy() {
 		<section class="space-y-2.5 font-50">
 			<InstallHeading ja="ウェブ">Web</InstallHeading>
 			<button class="block w-full text-left cursor-copy" @click="copy">
-				<i class="text-ink/50"># {{ copied ? "copied!" : "click to copy" }}</i
-				><br />{{ COMMAND }}
+				<i class="text-ink/50"># {{ copied ? "copied!" : "click to copy" }}</i><br />{{ COMMAND }}
 			</button>
 			<hr class="border-ink/50" />
 			<pre
