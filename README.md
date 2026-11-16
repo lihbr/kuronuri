@@ -19,15 +19,15 @@ download the [latest release](https://github.com/lihbr/kuronuri/releases/latest)
 ### web ウェブ
 
 ```sh
-npm install kuronuri
+npm install @lihbr/kuronuri
 ```
 
 ```css
 /* css, -0, -10, -20, -35, -50, -70, -100 */
-@import "kuronuri/kuronuri-35.css";
+@import "@lihbr/kuronuri/kuronuri-35.css";
 
 /* latin only */
-@import "kuronuri/kuronuri-35-latin.css";
+@import "@lihbr/kuronuri/kuronuri-35-latin.css";
 
 body {
 	font-family: "kuronuri 35", serif;

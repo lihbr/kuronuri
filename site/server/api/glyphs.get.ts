@@ -4,7 +4,7 @@ import { defineEventHandler } from "nuxt/server"
 import origins from "../data/glyphs.json"
 
 // Nitro imports CSS as text
-import css from "kuronuri/kuronuri-0.css"
+import css from "@lihbr/kuronuri/kuronuri-0.css"
 
 export type Kind = { kind: string; characters: string }
 /** Characters that are Redaction's as they are, and drawn from them: the rest is Noto Serif JP's */

@@ -1,12 +1,12 @@
 @import "tailwindcss";
 /* Only the Latin of each family blocks the render, the hero's title is outlines, and the rest loads after: see plugins/fonts.client.ts */
-@import "kuronuri/kuronuri-0-latin.css";
-@import "kuronuri/kuronuri-10-latin.css";
-@import "kuronuri/kuronuri-20-latin.css";
-@import "kuronuri/kuronuri-35-latin.css";
-@import "kuronuri/kuronuri-50-latin.css";
-@import "kuronuri/kuronuri-70-latin.css";
-@import "kuronuri/kuronuri-100-latin.css";
+@import "@lihbr/kuronuri/kuronuri-0-latin.css";
+@import "@lihbr/kuronuri/kuronuri-10-latin.css";
+@import "@lihbr/kuronuri/kuronuri-20-latin.css";
+@import "@lihbr/kuronuri/kuronuri-35-latin.css";
+@import "@lihbr/kuronuri/kuronuri-50-latin.css";
+@import "@lihbr/kuronuri/kuronuri-70-latin.css";
+@import "@lihbr/kuronuri/kuronuri-100-latin.css";
 
 @theme {
 	--font-0: "Kuronuri 0", serif;

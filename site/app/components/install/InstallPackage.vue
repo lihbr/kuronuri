@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const COMMAND = "npm install kuronuri"
+const COMMAND = "npm install @lihbr/kuronuri"
 const copied = ref(false)
 let timeout: ReturnType<typeof setTimeout> | undefined
 
@@ -49,10 +49,10 @@ async function copy() {
 			<pre
 				class="font-50 whitespace-pre-wrap"
 			><code class="font-50"><i class="text-ink/50">/* css, -0, -10, -20, -35, -50, -70, -100 */</i>
-@import "kuronuri/kuronuri-35.css";
+@import "@lihbr/kuronuri/kuronuri-35.css";
 
 <i class="text-ink/50">/* latin only */</i>
-@import "kuronuri/kuronuri-35-latin.css";
+@import "@lihbr/kuronuri/kuronuri-35-latin.css";
 
 body {
 	font-family: "kuronuri 35", serif;
