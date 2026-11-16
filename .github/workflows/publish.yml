@@ -1,4 +1,4 @@
-name: release
+name: publish
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
