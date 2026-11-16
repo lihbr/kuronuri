@@ -1,7 +1,7 @@
 # kuronuri 黒塗り
 
-![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--light.jpg#gh-light-mode-only)
-![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--dark.jpg#gh-dark-mode-only)
+![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--light.png#gh-light-mode-only)
+![kuronuri specimen: 黒塗り set large, going from smooth to pixelated; the seven families, 0 to 100, in regular, italic, and bold; hiragana, katakana, kanji, latin letters, figures, and signs; and the pangram “Caviardez vos aveux, juge kafkaïen : que le noir masque whisky, complots et biffures.”](./.github/specimen--dark.png#gh-dark-mode-only)
 
 > 日本語の情報は[こちら](https://kuronuri.lihbr.com/ja)をご覧ください。
 
