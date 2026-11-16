@@ -56,19 +56,9 @@ export default defineNuxtConfig({
 	},
 
 	$production: {
-		modules: ["@nuxtjs/plausible"],
-		plausible: {
-			apiHost: "/p7e",
-			autoOutboundTracking: true,
-		},
 		ignore: ["**/pages/glyphs.vue", "**/pages/review.vue"],
 		nitro: {
 			ignore: ["**/api/glyphs.get.ts"],
-			vercel: {
-				config: {
-					routes: [{ src: "/p7e/(.*)", dest: "https://plausible.io/$1" }],
-				},
-			},
 		},
 	},
 
