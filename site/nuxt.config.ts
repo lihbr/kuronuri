@@ -38,6 +38,14 @@ export default defineNuxtConfig({
 
 	seo: {
 		fallbackTitle: false,
+		meta: {
+			ogImage: {
+				url: "https://images.prismic.io/lihbr/W0YEiqNmn3o7rj6n_og.jpg?auto=format,compress",
+				width: 1200,
+				height: 630,
+				alt: "黒塗りフォント, set white on black from smooth to pixelated, above “kuronuri font, redaction, with japanese support, and more.”",
+			},
+		},
 	},
 
 	ogImage: false,
