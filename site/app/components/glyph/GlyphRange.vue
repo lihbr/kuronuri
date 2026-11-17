@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// The size of glyphs, in pixels, unless another value is labelled in the slot
 const model = defineModel<number>({ required: true })
 const { min = 16, max = 240 } = defineProps<{ min?: number; max?: number }>()
 </script>

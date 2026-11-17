@@ -3,7 +3,6 @@ import { defineCachedEventHandler } from "nitropack/runtime"
 import snapshot from "../data/nikkei.json"
 
 export type Day = {
-	/** Trading day, in Tokyo: YYYY-MM-DD */
 	date: string
 	open: number
 	high: number
@@ -21,8 +20,6 @@ type Chart = {
 	}
 }
 
-// The last 31 trading days of the Nikkei 225: 30 days, and the close before them to compute the
-// first day's change. Falls back to a snapshot when Yahoo is down, so the build never fails on it.
 export default defineCachedEventHandler(
 	async (): Promise<Day[]> => {
 		try {
@@ -44,7 +41,6 @@ export default defineCachedEventHandler(
 					quote.low[i],
 					quote.close[i],
 				]
-				// Yahoo sometimes has an empty row for a trading day
 				if (open == null || high == null || low == null || close == null) return
 				const date = new Date((time + meta.gmtoffset) * 1000).toISOString().slice(0, 10)
 				days.push({ date, open, high, low, close })

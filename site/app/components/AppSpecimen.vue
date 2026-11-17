@@ -1,8 +1,4 @@
 <template>
-	<!-- On large screens, after the first one, specimens flow in three lanes: columns 3 to 5, 6, and 7
-	to 10. On tablets, the first two are on columns 1 to 3 and 4, the specimens of the third on rows of
-	their own, after 03 on columns 5 to 6. Lanes are `contents` on phones, their specimens one flow, in
-	the order of their notes. The tester, last, is on the three middle lanes -->
 	<section class="relative layout pt-60">
 		<h2 class="sr-only">Specimen</h2>
 

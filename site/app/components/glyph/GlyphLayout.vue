@@ -1,9 +1,7 @@
 <script setup lang="ts">
-// A page of glyphs: a sticky header, and glyphs `size` pixels big in --size. The header wraps: its
-// height is --header, for what sticks under it. --line is the colour of lines, opaque
 defineProps<{ size: number; dark: boolean }>()
 
-// Tools, not the marketing page: text at a fixed size, not fluid with the viewport (index.css)
+// Text doesn't need to be fluid.
 useHead({ htmlAttrs: { style: "font-size: 16px" } })
 
 const header = useTemplateRef("header")

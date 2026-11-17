@@ -2,19 +2,14 @@
 import { useWindowVirtualizer } from "@tanstack/vue-virtual"
 import type { StyleValue } from "vue"
 
-// Glyphs set in `font`, `size` pixels big, in square cells for glyphs `width` ems wide. Only the
-// rows on screen are rendered: a grid can have thousands of glyphs, in as many font slices to
-// download. Full bleed, out of the padding of main (GlyphLayout) or of what bleeds out of it too
 const props = defineProps<{ glyphs: GridGlyph[]; font: StyleValue; size: number; width?: number }>()
 
-// Cells are at least this big, square, and overlap their neighbours by their border, in one colour
 const minimum = computed(() => Math.floor(props.size * (Math.max(props.width ?? 1, 1) + 0.3) + 20))
-const PADDING = 14 // on each side of a glyph, and the borders of its cell
+const PADDING = 14
 
 const grid = useTemplateRef("grid")
 const available = ref(0)
 const top = ref(0)
-// Its width for the columns, and where it starts on the page, which moves when what is above grows
 const observer = import.meta.client
 	? new ResizeObserver(() => {
 			if (!grid.value) return
@@ -28,9 +23,6 @@ watch(grid, (element, previous) => {
 	if (element) observer?.observe(element)
 })
 onBeforeUnmount(() => observer?.disconnect())
-// Full bleed: rows start a pixel early and the grid clips them, hiding the outer borders of the
-// first and last columns. As many columns as fit, grown to fill the width, and rows as tall, in
-// whole pixels
 const columns = computed(() => Math.max(1, Math.floor((available.value + 1) / (minimum.value - 1))))
 const track = computed(() =>
 	Math.max(minimum.value - 1, Math.round((available.value + 1) / columns.value)),
@@ -124,12 +116,10 @@ onBeforeUnmount(() => document.fonts.removeEventListener("loadingdone", measure)
 <style>
 @reference "~/assets/css/index.css";
 
-/* Not scoped: the review page sets its own cells too */
 .glyph-cell {
 	@apply flex flex-col items-center min-w-0 pt-1 px-1.5 -mr-px -mb-px border border-(--line);
 }
 
-/* New and changed (review): their advance shaded in flamingo and navy, easier to spot than frames */
 .glyph-cell.new .glyph {
 	@apply bg-flamingo/16;
 }
@@ -142,7 +132,6 @@ onBeforeUnmount(() => document.fonts.removeEventListener("loadingdone", measure)
 	@apply font-0 not-italic font-normal text-xs opacity-60;
 }
 
-/* Where glyphs come from: Redaction's as they are in flamingo, drawn from them in navy */
 .glyph-cell.redaction .glyph {
 	@apply bg-flamingo/16;
 }
@@ -151,7 +140,6 @@ onBeforeUnmount(() => document.fonts.removeEventListener("loadingdone", measure)
 	@apply bg-navy/16;
 }
 
-/* The advance of the glyph, shaded */
 .glyph {
 	@apply bg-current/8 whitespace-pre;
 	font-size: var(--size);

@@ -11,11 +11,6 @@ export const FONTS = ["font-0", "font-10", "font-20", "font-35", "font-50", "fon
 
 export const familyOf = (variant: string): string => `Kuronuri ${variant}`
 
-/**
- * A glyph in a GlyphGrid, its advance shaded: on the review page, in flamingo when new and in navy
- * when changed; on the glyphs page, in flamingo when it is Redaction's as it is, in navy when drawn
- * from them (src/glyphs); in grey otherwise (Noto Serif JP's, unchanged)
- */
 export type GridGlyph = {
 	character: string
 	caption: string

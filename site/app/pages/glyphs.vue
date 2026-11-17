@@ -1,10 +1,8 @@
 <script setup lang="ts">
-// Every glyph of Kuronuri, by kind, in one family and style at a time
 useHead({ title: "Glyphs" })
 
 const { data } = await useFetch("/api/glyphs")
 const kinds = computed(() => data.value?.kinds)
-// Where each glyph comes from, in the title of its cell and the shade of its advance
 const origins = computed(() => ({
 	redaction: new Set(data.value?.origins.redaction),
 	drawn: new Set(data.value?.origins.drawn),
@@ -16,7 +14,6 @@ const origin = (character: string) =>
 			? "drawn from Redaction"
 			: "Noto Serif JP"
 
-// Text to start with, per kind
 const SAMPLES: Record<string, string> = {
 	latin: "The quick brown fox jumps over the lazy dog  Ça va, l’œuvre ? \\libʁ\\",
 	punctuation: "「こんにちは、世界。」  “Hello,” she said — … ‘world’‼",
@@ -37,7 +34,7 @@ const settings = useStoredSettings("kuronuri:glyphs", {
 	style: "Regular" as Style,
 	variant: "0",
 	kind: "latin",
-	texts: {} as Record<string, string>, // per kind, the sample until edited
+	texts: {} as Record<string, string>,
 	ss01: false,
 	dark: false,
 })

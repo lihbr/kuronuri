@@ -302,7 +302,8 @@ BESIDE += ["⅓", "⅞", "½", "⅟", "℅"]
 # What a glyph of each class is set before (each digit first, of one or two
 # digits) and after (each digit last, after the slash or another)
 CLASSED = [f"{d}/1" for d in DIGITS] + ["12/3", "1/11", "1/23"] + [f"1/{d}" for d in DIGITS]
-CLASSED += ["⅓", "⅞", "½", "℅"]
+# ...and every drawn fraction: each may take a class of its own (⅗)
+CLASSED += list("¼½¾⅐⅑⅒⅓⅔⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞↉℅")
 # Fractions with the glyph before or after them, `frac` on the fraction
 # only (and ⁄ typed, where HarfBuzz turns it on there): set as with `frac`
 # on all of it

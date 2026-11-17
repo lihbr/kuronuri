@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T">
-// A checkbox, or a radio of `value`, shown by its label only: black when on, flamingo when focused
 const model = defineModel<T>()
 defineProps<{ type?: "checkbox" | "radio"; value?: T; name?: string }>()
 </script>

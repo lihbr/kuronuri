@@ -1,10 +1,4 @@
 <script setup lang="ts">
-// The glyphs drawn in src/glyphs, in development only (nuxt.config.ts), from what `pnpm review`
-// writes to .tmp/review: the drawn fonts, with the built ones behind them for everything else, and
-// what changed since they were approved. The noto tab sets text in the Japanese src/pixel.py makes
-// of Noto Serif JP, cut down to the characters review.py lists, next to the Latin: before (the built
-// fonts review.py --before names), now, and at grade 0
-
 type Font = {
 	name: string
 	grid: number | null
@@ -14,13 +8,11 @@ type Font = {
 	italic: boolean
 	characters: Record<string, string>
 	changed: string[]
-	watch: string[] // in .tmp/watch.txt, to look at closely
+	watch: string[]
 	new: string[]
-	before: "approved" | "built" | null // what its text is compared with: see review.py
-	// of its Japanese review font: the characters changed since the reference, how many it keeps, and
-	// whether the reference has this font
+	before: "approved" | "built" | null
 	noto: { changed: string; count: number; before: boolean }
-	revisions: Record<string, string> // module, "changed", "watch" or "noto": hash of its glyphs
+	revisions: Record<string, string>
 }
 type Review = {
 	version: number
@@ -29,30 +21,27 @@ type Review = {
 		name: string
 		about: string
 		samples: string[]
-		features: string[] // on in its text
+		features: string[]
 		glyphs: string[]
 		width: number
 	}[]
-	watch: string // text to set the watched glyphs in
-	features: string[] // to turn on and off in the text of a tab, each module's on at first
-	// the built fonts text is compared with until approved, copied from source when taken
+	watch: string
+	features: string[]
 	reference: { source: string; built: string; taken: string; hash: string } | null
 	noto: {
-		text: string[] // lines of the text of the noto tab
-		vertical: string // set vertically
-		kept: string // the characters the Japanese review fonts keep...
-		characters: string // ...of all those of Noto Serif JP the fonts have
-		// the built fonts before: the same snapshot as reference
+		text: string[]
+		vertical: string
+		kept: string
+		characters: string
 		reference: { from: string; at: string; hash: string } | null
 	}
 }
 
-const PUA = 0xf0000 // review fonts map glyphs without a code point (alternates) from here
+const PUA = 0xf0000 // alternates without a code point start here
 
 const review = ref<Review>()
 const missing = ref(false)
 
-// Reloads when `pnpm review` runs again
 let poll: ReturnType<typeof setInterval> | undefined
 async function load() {
 	try {
@@ -67,14 +56,14 @@ async function load() {
 const settings = useStoredSettings("kuronuri:review", {
 	size: 48,
 	tab: "",
-	texts: {} as Record<string, string>, // per tab, the samples until edited
+	texts: {} as Record<string, string>,
 	hidden: [] as string[],
-	reviewed: {} as Record<string, string>, // "module font": the revision reviewed
+	reviewed: {} as Record<string, string>,
 	ss01: false,
-	features: {} as Record<string, string[]>, // per tab, those on until changed
-	ja: false, // the text in Japanese: its language systems (latn JAN, kana, hani)
+	features: {} as Record<string, string[]>,
+	ja: false,
 	kern: true,
-	before: true, // the text in the fonts before too
+	before: true,
 	dark: false,
 })
 onMounted(() => {
@@ -84,7 +73,6 @@ onMounted(() => {
 onBeforeUnmount(() => clearInterval(poll))
 
 const variant = (font: Font) => String(font.grid ?? 0)
-// Style and variant toggles, of the fonts there are, each set in its own font
 const styles = computed(
 	() => [...new Set(review.value?.fonts.map((font) => font.style))] as Style[],
 )
@@ -100,7 +88,6 @@ const fonts = computed(
 			(font) => !settings.hidden.includes(font.style) && !settings.hidden.includes(variant(font)),
 		) ?? [],
 )
-// Fonts with glyphs to compare, changed or watched
 type Compared = "changed" | "watch"
 const compared = (key: Compared) => fonts.value.filter((font) => font[key].length)
 const count = (key: "changed" | "new" | "watch") =>
@@ -114,7 +101,6 @@ const tabs = computed(() => [
 const tab = computed(() => (tabs.value.includes(settings.tab) ? settings.tab : tabs.value[0]))
 const module = computed(() => review.value?.modules.find((module) => module.name === tab.value))
 
-// Reviewed until its glyphs change, as GitHub's viewed files
 const isReviewed = (module: string, font: Font) =>
 	settings.reviewed[`${module} ${font.name}`] === font.revisions[module]
 async function markReviewed(module: string, font: Font, event: Event) {
@@ -124,8 +110,6 @@ async function markReviewed(module: string, font: Font, event: Event) {
 		return
 	}
 	settings.reviewed[`${module} ${font.name}`] = font.revisions[module]!
-	// Once collapsed, scrolled back to it if it was scrolled past, to where its title sticks: the
-	// next section starts below
 	await nextTick()
 	const section = input.closest("section")!
 	const top =
@@ -138,8 +122,6 @@ const progress = (module: string) => {
 	return `${of.filter((font) => isReviewed(module, font)).length}/${of.length}`
 }
 
-// The drawn fonts, for glyphs, now and approved; and, for text, merged with Noto Serif JP as built,
-// now and before (review.py)
 type Kind = "" | "approved" | "text" | "before"
 const family = (font: Font, kind: Kind = "") => `review ${font.name}${kind && ` ${kind}`}`
 const face = (font: Font, kind: Kind = "") => `@font-face {
@@ -187,7 +169,6 @@ const glyphs = (font: Font, names: string[]): GridGlyph[] =>
 		}))
 const label = (font: Font) => `Kuronuri ${variant(font)} ${font.style}`
 
-// The noto tab: its Japanese review fonts, now and before, after the drawn font for the Latin
 type Japanese = "now" | "before"
 const jpFamily = (font: Font, kind: Japanese) => `review jp ${kind} ${font.name}`
 const jpFace = (font: Font, kind: Japanese) => `@font-face {
@@ -211,13 +192,11 @@ useHead({
 		},
 	],
 })
-// Others than those it keeps fall back to the built fonts, the same in every row
 const jpSet = (font: Font, kind: Japanese) => ({
 	fontFamily: `"${family(font)}", "${jpFamily(font, kind)}", "${font.family}", serif`,
 	fontWeight: font.weight,
 	fontStyle: font.italic ? "italic" : "normal",
 })
-// Grade 0 of its style, for reference: its review fonts, or the built ones
 const zero = (font: Font) => {
 	const base = review.value?.fonts.find((f) => f.grid === null && f.style === font.style)
 	return base
@@ -226,7 +205,6 @@ const zero = (font: Font) => {
 }
 const japaneseText = computed(() => settings.texts.noto ?? review.value?.noto.text.join("\n") ?? "")
 const verticalText = computed(() => settings.texts.vertical ?? review.value?.noto.vertical ?? "")
-// Characters of the text set in neither Japanese review font, the same before and now
 const notCompared = computed(() => {
 	const kept = new Set(review.value?.noto.kept)
 	const noto = new Set(review.value?.noto.characters)
@@ -234,7 +212,6 @@ const notCompared = computed(() => {
 		(c) => noto.has(c) && !kept.has(c),
 	)
 })
-// The rows of the noto tab, top to bottom
 const jpRows = (font: Font) => [
 	{ key: "0", label: "grade 0", style: zero(font) },
 	...(font.noto.before
@@ -249,7 +226,6 @@ const jpRows = (font: Font) => [
 	{ key: "now", label: "now", style: jpSet(font, "now") },
 ]
 
-// Features on in the text of the tab: its module's, until toggled
 const on = computed(() => settings.features[tab.value ?? ""] ?? module.value?.features ?? [])
 function toggleFeature(tag: string) {
 	const tags = on.value.includes(tag) ? on.value.filter((t) => t !== tag) : [...on.value, tag]
@@ -263,7 +239,6 @@ const features = computed(() =>
 	].join(", "),
 )
 const lang = computed(() => (settings.ja ? "ja" : "en"))
-// Text, as it is set now and before, with the features on
 const text = (font: Font, kind: "text" | "before" = "text") => [
 	set(font, kind),
 	{
@@ -367,8 +342,7 @@ const before = (font: Font) =>
 								font.characters[name]
 							}}</span>
 							<span class="glyph" :style="set(font)">{{ font.characters[name] }}</span>
-							<!-- In one grid cell, on one baseline: absolutely, the second would hang from the
-							top of the box, which the page's font sets, not the glyph's -->
+							<!-- Grid, not absolute: keeps both on the glyph's baseline -->
 							<span class="glyph inline-grid items-baseline *:[grid-area:1/1]">
 								<span class="text-flamingo" :style="set(font, 'approved')">{{
 									font.characters[name]
@@ -462,7 +436,6 @@ const before = (font: Font) =>
 							@update:model-value="settings.texts.noto = $event ?? ''"
 						/>
 					</figure>
-					<!-- Over each other, in one grid cell: both wrap the same, their advances are -->
 					<figure v-if="font.noto.before">
 						<figcaption class="text-sm opacity-60">before and now, over each other</figcaption>
 						<div class="grid *:[grid-area:1/1]" aria-hidden="true" lang="ja">
@@ -551,8 +524,6 @@ const before = (font: Font) =>
 <style scoped>
 @reference "~/assets/css/index.css";
 
-/* Each font's title stays in view until the end of its section, under the header, and has a
-border only above what it is the title of: reviewed sections are only a title */
 .font h3 {
 	@apply sticky top-(--header) z-[5] -mx-5 px-5 py-2 bg-inherit;
 }
@@ -565,7 +536,6 @@ border only above what it is the title of: reviewed sections are only a title */
 	@apply pb-3;
 }
 
-/* Set as GlyphText's text, to wrap as it does */
 .overlay {
 	@apply whitespace-pre-wrap break-words;
 	font-size: var(--size);
@@ -573,14 +543,12 @@ border only above what it is the title of: reviewed sections are only a title */
 	font-kerning: normal;
 }
 
-/* Vertical text, as tall as a few lines are wide */
 .vertical {
 	writing-mode: vertical-rl;
 	text-orientation: mixed;
 	max-height: calc(var(--size) * 12);
 }
 
-/* Full bleed, out of the padding of main */
 .font {
 	@apply -mx-5 px-5 border-b border-current/20 bg-inherit;
 }

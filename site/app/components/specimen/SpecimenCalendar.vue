@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// The first half of 1999, a month in each pixel size. Every month has its first Monday on the row
-// of 月, the days before it go up: as many rows as there can be days before a Monday
 const ROWS_BEFORE = 6
 const WEEKDAYS = "月火水木金土日"
 const months = FONTS.slice(0, 6).map((font, month) => {
@@ -18,7 +16,6 @@ const months = FONTS.slice(0, 6).map((font, month) => {
 // Rows are as tall as their line
 const rows = (count: number) => ({ paddingTop: `${count * 1.25}em` })
 
-// The day hovered, its month and weekday stay, everything else fades
 const active = ref<{ month: number; day: number; weekday: number }>()
 function onPointerEnter(month: number, day: number) {
 	active.value = { month, day, weekday: (day - 1 - months[month]!.before + 7) % 7 }
