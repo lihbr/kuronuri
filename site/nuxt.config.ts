@@ -70,8 +70,39 @@ export default defineNuxtConfig({
 		},
 	},
 
+	// Vercel bills each file a visitor fetches, so the page loads one script, hints no others, and
+	// skips the app manifest. Two imports stay lazy: every family in full, which would block the
+	// render, and Nuxt's error pages, whose styles would be inlined in every page
+	experimental: {
+		appManifest: false,
+	},
+
+	hooks: {
+		"build:manifest"(manifest) {
+			for (const resource of Object.values(manifest)) {
+				resource.prefetch = false
+			}
+		},
+	},
+
 	vite: {
 		plugins: [tailwindcss()],
+		$client: {
+			build: {
+				rolldownOptions: {
+					output: {
+						codeSplitting: {
+							groups: [
+								{
+									name: "app",
+									test: (id) => !/\/dist\/web\/|\/components\/error-\d+\.vue/.test(id),
+								},
+							],
+						},
+					},
+				},
+			},
+		},
 		server: {
 			allowedHosts: [".ts.net"],
 		},
